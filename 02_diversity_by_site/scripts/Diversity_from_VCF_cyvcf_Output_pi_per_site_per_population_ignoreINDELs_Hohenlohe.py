@@ -47,6 +47,10 @@ parser.add_argument("--chrom_inc", default=None,
                     help="Default is None. Provide the name of the scaffold"
                     + " or chromosome to be analyzed.  If none provided,"
                     + " will output all sites in VCF")
+parser.add_argument("--out_directory", nargs='?', default="",
+                    help="Default is current directory. By specifying output"
+                    + " directory, all files will be generated in user-"
+                    + "provided location.")
 args = parser.parse_args()
 
 ###########################################################################
@@ -221,7 +225,6 @@ for record in vcf_reader:
 
 print "VCF traversal complete"
 
-
 # Close the vcf file
 vcf_file.close()
 
@@ -230,7 +233,7 @@ vcf_file.close()
 #############################################
 
 for pop in populations:
-    out_file = pop[1] + "_pi_output_per_site.txt"
+    out_file = args.out_directory + pop[1] + "_pi_output_per_site.txt"
     with open(out_file, "w") as f:
         w = csv.writer(f, dialect="excel-tab")
         w.writerows(pop[2])
