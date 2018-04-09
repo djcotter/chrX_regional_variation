@@ -27,6 +27,8 @@ Population and subpopulation lists are calculated using [integrated_call_samples
 
 #### Population Tables
 
+#### Super Populations
+
 POP | Females | Males
 ---|:---:|:---:
 AFR|342|319
@@ -34,6 +36,8 @@ AMR|177|170
 EAS|260|244
 EUR|263|240
 SAS|229|260
+
+#### Populations
 
 POP | Females | Males
 ---|:---:|:---:
