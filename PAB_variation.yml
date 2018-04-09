@@ -1,0 +1,21 @@
+name: PAB_variation
+channels:
+- bioconda
+- conda-forge
+- r
+- defaults
+dependencies:
+- ca-certificates=2018.1.18=0
+- certifi=2018.1.18=py27_0
+- ncurses=5.9=10
+- openssl=1.0.2n=0
+- pip=9.0.3=py27_0
+- python=2.7.14=5
+- readline=7.0=0
+- setuptools=39.0.1=py27_0
+- sqlite=3.20.1=2
+- tk=8.6.7=0
+- wheel=0.31.0=py27_0
+- zlib=1.2.11=0
+prefix: /Users/djcotter/anaconda/envs/PAB_variation
+
