@@ -65,3 +65,7 @@ TSI|54|53
 YRI|56|52
 
 Population codes can be found [here](http://www.internationalgenome.org/faq/which-populations-are-part-your-study/).
+
+## Analysis
+
+### Step 1: Parse populations into lists
