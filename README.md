@@ -18,7 +18,7 @@ The strict mask as provided by The 1000 genomes Project is used for filtering fo
 
 **Strict Mask chrX:** [20141020.chrX.strict_mask.fasta.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/StrictMask/20141020.chrX.strict_mask.fasta.gz "chrX")
 
-**Strict Mask chrY:** [20141020.chrY.strict_mask.fasta.gzg](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/StrictMask/20141020.chrY.strict_mask.fasta.gz "chrY")
+**Strict Mask chrY:** [20141020.chrY.strict_mask.fasta.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/StrictMask/20141020.chrY.strict_mask.fasta.gz "chrY")
 
 **Strict Mask chr8:** [20140520.chr8.strict_mask.fasta.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/StrictMask/20140520.chr8.strict_mask.fasta.gz "chr8")
 
