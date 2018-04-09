@@ -51,6 +51,9 @@ parser.add_argument("--out_directory", nargs='?', default="",
                     help="Default is current directory. By specifying output"
                     + " directory, all files will be generated in user-"
                     + "provided location.")
+parser.add_argument("--haploid", action='store_true', help="This flag"
+                    + " indicates that the chromosome is haploid and only"
+                    + " grabs one allele/looks at the first genotype.")
 args = parser.parse_args()
 
 ###########################################################################
@@ -200,7 +203,7 @@ def bootstrap_pi_distribution(data_input, n_sites, replicates):
 print "Beginning diversity calculations"
 counter = 0
 for record in vcf_reader:
-    if record.CHROM == args.chrom_inc:
+    if record.CHROM == args.chrom_inc and not args.haploid:
         for pop in populations:
             allele_list = []
             for indv in pop[0]:
@@ -219,6 +222,27 @@ for record in vcf_reader:
             allele_count = collections.Counter(allele_list)
             pop[2].append([record.CHROM, record.POS, pi_site(
                 [allele_count[x] for x in allele_count])])
+
+    if record.CHROM == args.chrom_inc and args.haploid:
+        for pop in populations:
+            allele_list = []
+            for indv in pop[0]:
+                call = record.genotype(indv)
+                if call['GT'] is not None:
+                    # call.gt_bases returns in the format "A/T",
+                    # so this grabs the A and
+                    #        the T, while skipping the / (or |)
+                    if len(call.gt_bases) < 4:
+                        allele_list.append(call.gt_bases[0])
+                        allele_list.append(call.gt_bases[2])
+            # Process allele list and calculate pi and number of differences
+            #  pop[2].append([record.CHROM,record.POS,\
+            # pi_overall(count_diffs(allele_list), len(allele_list), 1.0)])
+            # Code to calculate Hohenlohe et al pi instead
+            allele_count = collections.Counter(allele_list)
+            pop[2].append([record.CHROM, record.POS, pi_site(
+                [allele_count[x] for x in allele_count])])
+
     counter += 1
     if counter % 50000 == 0:
         print "%d records complete..." % (counter)
