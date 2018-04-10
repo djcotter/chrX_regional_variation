@@ -77,7 +77,7 @@ Population codes can be found [here](http://www.internationalgenome.org/faq/whic
 - Item 1
 - Item 2
 
-### Step 2:
+### Step 2: Compute diversity by population
 
 - Item 1
 - Item 2
