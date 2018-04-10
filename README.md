@@ -73,5 +73,6 @@ Population codes can be found [here](http://www.internationalgenome.org/faq/whic
 ## Analysis
 
 ### Step 1: Parse populations into lists
+- 
 
-### Step 2: 
+- ### Step 2:
