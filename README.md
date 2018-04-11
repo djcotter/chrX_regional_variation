@@ -1,4 +1,4 @@
-# Human Pseudoautosomal Boundary Diversity Analysis
+# Human Pseudoautosomal Boundary Analysis
 ### Daniel Cotter
 #### 2018
 
