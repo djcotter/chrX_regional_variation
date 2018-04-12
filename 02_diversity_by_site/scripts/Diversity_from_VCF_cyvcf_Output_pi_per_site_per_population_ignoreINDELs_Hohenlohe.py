@@ -37,24 +37,24 @@ if len(sys.argv) == 1:
 
 # Parse the command line
 parser.add_argument("--vcf", nargs='?', default=sys.stdin,
-                    help="Input VCF file. Can be gzipped. Reads from stdin by"
-                    + " default")
+                    help="Input VCF file. Can be gzipped. Reads from stdin" +
+                    " by default")
 parser.add_argument("--population_lists", nargs="*", default=None,
-                    help="Default is None. If None, script will treat all"
-                    + " individuals as coming from the same population."
-                    + " Else, will read files and treat all individuals in"
-                    + " each file as coming from the same population.")
+                    help="Default is None. If None, script will treat all" +
+                    " individuals as coming from the same population." +
+                    " Else, will read files and treat all individuals in" +
+                    " each file as coming from the same population.")
 parser.add_argument("--chrom_inc", default=None,
-                    help="Default is None. Provide the name of the scaffold"
-                    + " or chromosome to be analyzed.  If none provided,"
-                    + " will output all sites in VCF")
+                    help="Default is None. Provide the name of the scaffold" +
+                    " or chromosome to be analyzed.  If none provided," +
+                    " will output all sites in VCF")
 parser.add_argument("--out_directory", nargs='?', default="",
-                    help="Default is current directory. By specifying output"
-                    + " directory, all files will be generated in user-"
-                    + "provided location.")
-parser.add_argument("--haploid", action='store_true', help="This flag"
-                    + " indicates that the chromosome is haploid and only"
-                    + " grabs one allele/looks at the first genotype.")
+                    help="Default is current directory. By specifying output" +
+                    " directory, all files will be generated in user-" +
+                    "provided location.")
+parser.add_argument("--haploid", action='store_true', help="This flag" +
+                    " indicates that the chromosome is haploid and only" +
+                    " grabs one allele/looks at the first genotype.")
 args = parser.parse_args()
 
 ###########################################################################
