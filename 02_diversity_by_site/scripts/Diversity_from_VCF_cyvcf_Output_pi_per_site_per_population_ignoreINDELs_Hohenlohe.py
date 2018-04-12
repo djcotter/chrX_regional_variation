@@ -3,6 +3,7 @@
 # Written by Tim Webster
 # Last updated on April 19, 2016 by Tim Webster
 # Edited by Daniel Cotter 4/9/18
+# update to Python 3.5 compatibility - 4/12/18
 
 
 #############################
@@ -60,8 +61,8 @@ args = parser.parse_args()
 
 # Update this to follow the format of the population list reader below
 # and grab names from the command line ###########
-print "Reading input files..."
-print ""
+print("Reading input files...")
+print("")
 
 # Open vcf file and initiate the CyVCF parser
 vcf_file = open(args.vcf, "r")
@@ -200,7 +201,7 @@ def bootstrap_pi_distribution(data_input, n_sites, replicates):
 ###########################################################################
 
 
-print "Beginning diversity calculations"
+print("Beginning diversity calculations")
 counter = 0
 for record in vcf_reader:
     if record.CHROM == args.chrom_inc and not args.haploid:
@@ -245,9 +246,9 @@ for record in vcf_reader:
 
     counter += 1
     if counter % 50000 == 0:
-        print "%d records complete..." % (counter)
+        print("{} records complete...".format(counter))
 
-print "VCF traversal complete"
+print("VCF traversal complete")
 
 # Close the vcf file
 vcf_file.close()
