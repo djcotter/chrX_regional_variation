@@ -1,0 +1,2 @@
+# path to JSON file with population codes
+POPS_CODES: "populations.json"
