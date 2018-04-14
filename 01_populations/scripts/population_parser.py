@@ -1,7 +1,7 @@
 from sys import argv
 import csv
 
-# usage is population_parser.py input_file out_directory
+# usage is population_parser.py input_file output_directory
 script, input_file, output_directory = argv
 
 with open(input_file, 'rU') as f:
