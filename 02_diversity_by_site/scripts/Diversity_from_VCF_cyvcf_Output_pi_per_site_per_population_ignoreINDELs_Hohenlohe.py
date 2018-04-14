@@ -233,9 +233,8 @@ for record in vcf_reader:
                     # call.gt_bases returns in the format "A/T",
                     # so this grabs the A and
                     #        the T, while skipping the / (or |)
-                    if len(call.gt_bases) < 4:
-                        allele_list.append(call.gt_bases[0])
-                        allele_list.append(call.gt_bases[2])
+                    if len(call.gt_bases) < 2:
+                        allele_list.append(call.gt_bases)
             # Process allele list and calculate pi and number of differences
             #  pop[2].append([record.CHROM,record.POS,\
             # pi_overall(count_diffs(allele_list), len(allele_list), 1.0)])
