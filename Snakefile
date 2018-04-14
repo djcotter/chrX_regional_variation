@@ -13,13 +13,14 @@ Requires:
 # import statements
 
 import json
+from os.path import join
 
 # Global configurations -------------------------------------------------------
 
 configfile: 'config.yml'
 
-POP_CODES = sorted(json.load(open(confif['POPS_CODES']))["Populations"])
-SUBPOP_CODES = sorted(json.load(open(confif['POPS_CODES']))["Subpopulations"])
+POP_CODES = sorted(json.load(open(config['POPS_CODES']))["Populations"])
+SUBPOP_CODES = sorted(json.load(open(config['POPS_CODES']))["Subpopulations"])
 
 rule all:
     input:
@@ -29,26 +30,28 @@ rule parse_populations:
     input:
         panel = "data/integrated_call_samples_v3.20130502.ALL.panel"
     params:
-        out_dir = "01_populations/results"
+        out_dir = "01_populations/results",
+        pop_parse = "01_populations/scripts/population_parser.py"
     output:
-        out_subpops = expand(join(params.out_dir, 'populations/', {pops}, '_',
-                                  {group}, '.txt'),
-                             pops=SUBPOP_CODES,
-                             group=["_males", "_females, _individuals"])
-        out_pops = expand(join(params.out_dir, 'populations/', {pops}, '_',
-                               {group}, '.txt'),
+        out_subs = expand('{out_dir}/subpopulations/{pops}_{group}.txt',
+                          pops=SUBPOP_CODES,
+                          group=["_males", "_females", "_individuals"],
+                          out_dir={params.out_dir}),
+        out_pops = expand('{out_dir}/populations/{pops}_{group}.txt',
                           pops=POP_CODES,
-                          group=["_males", "_females, _individuals"])
-        join(params.out_dir, 'pop_table.txt')
-        join(params.out_dir, 'subpop_table.txt')
+                          group=["_males", "_females", "_individuals"],
+                          out_dir={params.out_dir}),
+        pop_table = join({params.out_dir}, 'pop_table.txt'),
+        subpop_table = join({params.out_dir}, 'subpop_table.txt')
+    shell:
+        " ".join(params.pop_parse, input.panel, params.out_dir)
 
 rule merge_files:
     input:
-        expand(join(params.out_dir, 'populations/', {pops}, '_',
-                    {group}, '.txt'),
-               pops=POP_CODES,
+        expand('01_populations/results/subpopulations/{pops}_{group}.txt',
+               pops=SUBPOP_CODES,
                group=["_males", "_females, _individuals"])
-    ouput:
-        "results.html"
+    output:
+        out_file = "results.html"
     shell:
         "touch results.html"
