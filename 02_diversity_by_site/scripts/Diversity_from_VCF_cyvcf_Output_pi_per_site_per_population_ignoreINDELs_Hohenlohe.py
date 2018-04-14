@@ -230,15 +230,9 @@ for record in vcf_reader:
             for indv in pop[0]:
                 call = record.genotype(indv)
                 if call['GT'] is not None:
-<<<<<<< HEAD
                     # call.gt_bases returns in the format "A",
                     # when processing haploid samples
                     # this grabs just the single basec
-=======
-                    # call.gt_bases returns in the format "A/T",
-                    # so this grabs the A and
-                    #        the T, while skipping the / (or |)
->>>>>>> 31706f29251dcb381860392280437f26199a1ede
                     if len(call.gt_bases) < 2:
                         allele_list.append(call.gt_bases)
             # Process allele list and calculate pi and number of differences
