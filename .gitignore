@@ -2,4 +2,6 @@
 ###############
 .DS_Store
 .DS_Store?
+
+# Snakemake hidden directory #
 .snakemake/
