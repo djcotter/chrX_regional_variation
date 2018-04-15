@@ -48,6 +48,22 @@ rule parse_populations:
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
 
+rule prepare_data:
+    input:
+        chrX = config['CHR_X_VCF'],
+        chrY = config['CHR_Y_VCF'],
+        chr8 = config['CHR_8_VCF']
+    output:
+        temp('data/chrX_PARs_allIndividuals.vcf'),
+        temp('data/chrX_nonPAR_females.vcf'),
+        temp('data/chrX_nonPAR_males.vcf'),
+        temp('data/chrY_allSites_allIndividuals.vcf'),
+        temp('data/chr8_allSites_allIndivdiuals.vcf')
+    shell:
+        """
+        vcftools --gzvcf {input.chrX}
+        """
+
 rule merge_files:
     input:
         expand('01_populations/results/subpopulations/{pops}_{group}.txt',
