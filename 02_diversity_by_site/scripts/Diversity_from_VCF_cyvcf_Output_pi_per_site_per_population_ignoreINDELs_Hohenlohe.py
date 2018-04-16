@@ -53,8 +53,10 @@ parser.add_argument("--out_directory", nargs='?', default="",
                     " directory, all files will be generated in user-" +
                     "provided location.")
 parser.add_argument("--haploid", action='store_true', help="This flag" +
-                    " indicates that the chromosome is haploid and only" +
-                    " grabs one allele/looks at the first genotype.")
+                    " indicates that the chromosome has haploid sites and" +
+                    " grabs one allele if a call is haploid (e.g. returns" +
+                    " \"A/T\"). Only use this flag if the chromosome being" +
+                    " processed is all haploid or partly (e.g. nonPAR of X).")
 args = parser.parse_args()
 
 ###########################################################################
@@ -230,11 +232,15 @@ for record in vcf_reader:
             for indv in pop[0]:
                 call = record.genotype(indv)
                 if call['GT'] is not None:
-                    # call.gt_bases returns in the format "A",
+                    # call.gt_bases returns in the format "A"
                     # when processing haploid samples
-                    # this grabs just the single basec
-                    if len(call.gt_bases) < 2:
+                    # this grabs just "A" if only one allele
+                    # and grabs both alleles if the format is "A/T"
+                    if len(call.gt_bases) == 1:
                         allele_list.append(call.gt_bases)
+                    elif len(call.gt_bases) < 4:
+                        allele_list.append(call.gt_bases[0])
+                        allele_list.append(call.gt_bases[2])
             # Process allele list and calculate pi and number of differences
             #  pop[2].append([record.CHROM,record.POS,\
             # pi_overall(count_diffs(allele_list), len(allele_list), 1.0)])
