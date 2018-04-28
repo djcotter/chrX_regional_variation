@@ -48,20 +48,40 @@ rule parse_populations:
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
 
-rule prepare_data:
+rule calculate_pi:
     input:
-        chrX = config['CHR_X_VCF'],
-        chrY = config['CHR_Y_VCF'],
-        chr8 = config['CHR_8_VCF']
+        individuals = expand('{out_dir}/{pops}_{group}.txt',
+                             pops=SUBPOP_CODES + POP_CODES,
+                             group="individuals",
+                             out_dir='01_populations/results/subpopulations'),
+        males_only = expand('{out_dir}/{pops}_{group}.txt',
+                            pops=SUBPOP_CODES + POP_CODES,
+                            group="males",
+                            out_dir='01_populations/results/populations')
+    params:
+        calc_pi = "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_" + \
+            "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py",
+        chrX = config['chromsomes']['chrX'],
+        chrY = config['chromsomes']['chrY'],
+        chr8 = config['chromsomes']['chr8'],
+        out_dir = '02_diversity_by_site/results',
+        individuals = (" ").join([x for x in input.individuals]),
+        males_only = (" ").join([x for x in input.males_only])
     output:
-        temp('data/chrX_PARs_allIndividuals.vcf'),
-        temp('data/chrX_nonPAR_females.vcf'),
-        temp('data/chrX_nonPAR_males.vcf'),
-        temp('data/chrY_allSites_allIndividuals.vcf'),
-        temp('data/chr8_allSites_allIndivdiuals.vcf')
+        expand('{pop}_chr{chr}_diversity_by_site.txt',
+               pops=POP_CODES + SUBPOP_CODES,
+               chr=['X', 'Y', '8'])
     shell:
         """
-        vcftools --gzvcf {input.chrX}
+        python {params.calc_pi} --vcf {params.chrX} --population_lists \
+        {params.individuals} --chrom_inc chrX --out_directory {params.out_dir}
+
+        python {params.calc_pi} --vcf {params.chrY} --population_lists \
+        {params.males_only} --chrom_inc chrY --haploid --out_directory \
+        {params.out_dir}
+
+        python {params.calc_pi} --vcf {params.chr8} --population_lists \
+        {params.indivduals} --chrom_inc chr8 --out_directory {params.out_dir}
         """
 
 rule merge_files:
