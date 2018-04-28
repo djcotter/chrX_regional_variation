@@ -263,7 +263,8 @@ vcf_file.close()
 #############################################
 
 for pop in populations:
-    out_file = args.out_directory + pop[1] + "_pi_output_per_site.txt"
+    out_file = args.out_directory + pop[1] + "_" + args.chrom_inc + \
+        "_pi_output_per_site.txt"
     with open(out_file, "w") as f:
         w = csv.writer(f, dialect="excel-tab")
         w.writerows(pop[2])
