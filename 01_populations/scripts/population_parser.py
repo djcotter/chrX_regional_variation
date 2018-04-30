@@ -67,6 +67,8 @@ for samp in samples:
         else:
             subpop_dict_females[samp[1]] = [samp[0]]
 
+"""
+# Functionality to print a table of the number of males and number of females
 # print a table with the number of males and females by super_pop
 file1 = output_directory + 'pop_table.txt'
 with open(file1, 'w') as csvfile:
@@ -84,6 +86,7 @@ with open(file2, 'w') as csvfile:
     for pop in subpop_dict_females:
         writer.writerow([pop, len(subpop_dict_females[pop]),
                          len(subpop_dict_males[pop])])
+"""
 
 # loop through files and print parsed lists of individuals
 for pop in pop_dict_females:
