@@ -12,7 +12,6 @@ usage is population_parser.py input_file output_directory
 
 from sys import argv
 import csv
-import pathlib
 
 # -----------------------------------------------------------------------------
 # declare argument variables
@@ -86,42 +85,34 @@ with open(file2, 'w') as csvfile:
         writer.writerow([pop, len(subpop_dict_females[pop]),
                          len(subpop_dict_males[pop])])
 
-# set the output subdirectory and create it if it doesn't exist
-outpath1 = output_directory + 'populations/'
-pathlib.Path(outpath1).mkdir(parents=True, exist_ok=True)
-
 # loop through files and print parsed lists of individuals
 for pop in pop_dict_females:
-    temp_path = outpath1 + pop + '_females.txt'
+    temp_path = output_directory + pop + '_females'
     with open(temp_path, 'w') as file:
         for samp in pop_dict_females[pop]:
             file.write(samp + '\n')
-    temp_path2 = outpath1 + pop + '_males.txt'
+    temp_path2 = output_directory + pop + '_males'
     with open(temp_path2, 'w') as file:
         for samp in pop_dict_males[pop]:
             file.write(samp + '\n')
-    temp_path3 = outpath1 + pop + '_individuals.txt'
+    temp_path3 = output_directory + pop + '_individuals'
     with open(temp_path3, 'w') as file:
         for samp in pop_dict_females[pop]:
             file.write(samp + '\n')
         for samp in pop_dict_males[pop]:
             file.write(samp + '\n')
 
-# set the output subdirectory and create it if it doesn't exist
-outpath2 = output_directory + 'subpopulations/'
-pathlib.Path(outpath2).mkdir(parents=True, exist_ok=True)
-
 # loop through the files and print parsed lists of individuals
 for pop in subpop_dict_females:
-    temp_path = outpath2 + pop + '_females.txt'
+    temp_path = output_directory + pop + '_females'
     with open(temp_path, 'w') as file:
         for samp in subpop_dict_females[pop]:
             file.write(samp + '\n')
-    temp_path2 = outpath2 + pop + '_males.txt'
+    temp_path2 = output_directory + pop + '_males'
     with open(temp_path2, 'w') as file:
         for samp in subpop_dict_males[pop]:
             file.write(samp + '\n')
-    temp_path3 = outpath2 + pop + '_individuals.txt'
+    temp_path3 = output_directory + pop + '_individuals'
     with open(temp_path3, 'w') as file:
         for samp in subpop_dict_females[pop]:
             file.write(samp + '\n')
@@ -129,17 +120,17 @@ for pop in subpop_dict_females:
             file.write(samp + '\n')
 
 # write a file with a list of all individuals parsed only by genders
-temp_path = outpath1 + 'ALL' + '_females.txt'
+temp_path = output_directory + 'ALL' + '_females'
 with open(temp_path, 'w') as file:
     for samp in females:
         file.write(samp + '\n')
 
-temp_path = outpath1 + 'ALL' + '_males.txt'
+temp_path = output_directory + 'ALL' + '_males'
 with open(temp_path, 'w') as file:
     for samp in males:
         file.write(samp + '\n')
 
-temp_path = outpath1 + 'ALL' + '_individuals.txt'
+temp_path = output_directory + 'ALL' + '_individuals'
 with open(temp_path, 'w') as file:
     for samp in females:
         file.write(samp + '\n')
