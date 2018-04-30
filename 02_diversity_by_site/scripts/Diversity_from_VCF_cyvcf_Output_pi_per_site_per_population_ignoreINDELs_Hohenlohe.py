@@ -21,8 +21,8 @@ import sys
 # from Bio import SeqIO
 import numpy as np
 import sympy
-import cyvcf
-
+import vcf
+from os import path
 
 ########################################
 # Import files from the command line   #
@@ -67,8 +67,7 @@ print("Reading input files...")
 print("")
 
 # Open vcf file and initiate the CyVCF parser
-vcf_file = open(args.vcf, "r")
-vcf_reader = cyvcf.Reader(vcf_file)
+vcf_reader = vcf.Reader(filename=args.vcf)
 
 # Process input population lists
 # Includes a number of cleaning and filtering steps to clean up accidental
@@ -211,7 +210,8 @@ for record in vcf_reader:
             allele_list = []
             for indv in pop[0]:
                 call = record.genotype(indv)
-                if call['GT'] is not None:
+                if call['GT'] is not None and call['GT'] is not '.' \
+                        and record.is_snp is True:
                     # call.gt_bases returns in the format "A/T",
                     # so this grabs the A and
                     #        the T, while skipping the / (or |)
@@ -231,7 +231,8 @@ for record in vcf_reader:
             allele_list = []
             for indv in pop[0]:
                 call = record.genotype(indv)
-                if call['GT'] is not None:
+                if call['GT'] is not None and call['GT'] is not '.' \
+                        and record.is_snp is True:
                     # call.gt_bases returns in the format "A"
                     # when processing haploid samples
                     # this grabs just "A" if only one allele
@@ -255,16 +256,13 @@ for record in vcf_reader:
 
 print("VCF traversal complete")
 
-# Close the vcf file
-vcf_file.close()
-
 #############################################
 #  Print Output Files - one per population ##
 #############################################
 
 for pop in populations:
-    out_file = args.out_directory + pop[1] + "_" + args.chrom_inc + \
-        "_pi_output_per_site.txt"
+    out_file = args.out_directory + path.basename(pop[1]) + "_chr" + \
+        args.chrom_inc + "_pi_output_by_site.txt"
     with open(out_file, "w") as f:
         w = csv.writer(f, dialect="excel-tab")
         w.writerows(pop[2])
