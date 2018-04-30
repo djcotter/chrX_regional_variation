@@ -17,10 +17,14 @@ from os.path import join
 
 # Global configurations -------------------------------------------------------
 
+# declare a path to the configuration file
 configfile: 'config.yml'
 
+# parse the populations from the provided .json file into arrays of pop codes
 POP_CODES = sorted(json.load(open(config['POPS_CODES']))["Populations"])
 SUBPOP_CODES = sorted(json.load(open(config['POPS_CODES']))["Subpopulations"])
+# select the filter from the configfile that should be used
+FILTER = "filter1"
 
 # Rules -----------------------------------------------------------------------
 
@@ -88,6 +92,19 @@ rule calculate_pi:
                     "8 --out_directory {params.out_dir}"]
         for c in commands:
             shell(c)
+
+rule create_filter:
+    input:
+        expand('{filter_directory}/{filter_type}_{chr}_filter.bed',
+               filter_directory="",
+               filter_type=config[''],
+               chr=["chrX", "chrY", "chr8"])
+    params:
+        ""
+    output:
+        ""
+    shell:
+        ""
 
 rule merge_files:
     input:

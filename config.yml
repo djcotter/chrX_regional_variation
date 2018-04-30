@@ -6,3 +6,12 @@ chromosomes:
   chrX: "data/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz"
   chrY: "data/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz"
   chr8: "data/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz"
+
+#chromosome filters
+filter1:
+  coding_sequence: "UCSC_refseq_gencode_gene_transcripts_GRCh37"
+  repetetive_elements: "simple_repeats_GRCh37"
+  segmental_duplications: "segmental_dups_GRCh37"
+  telomeres_centromeres: "centromere_telomere_coordinates_GRCh37"
+  cpg_islands: "CpG_islands_GRCh37"
+filter2:
