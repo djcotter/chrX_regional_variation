@@ -1,10 +1,27 @@
 # Human Pseudoautosomal Boundary Analysis
-### Daniel Cotter
-#### 2018
+**Daniel Cotter**
 
-## Data
+Arizona State University
 
-### Variant Data
+Wilson Sayres Lab
+
+2018
+
+## Analysis Steps
+
+### Step 1: Install/Set-up
+
+Clone this repository and make sure [conda](https://conda.io/docs/user-guide/install/index.html) is installed. Then use the provided *PAB_variation.yml* environment file to set up a new conda environment.
+
+```shell
+conda env create -f PAB_variation.yml
+```
+
+### Step 2: Get data
+
+Data should be downloaded from the provided links and copied into the **data/** directory of the project folder.
+
+#### Variant Data
 Variant data is from The 1000 Genomes Project phase3 VCF files for chrX, chrY, & chr8
 
 - **chrX:** [ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz "chrX")
@@ -13,7 +30,7 @@ Variant data is from The 1000 Genomes Project phase3 VCF files for chrX, chrY, &
 
 - **chr8:** [ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz "chr8")
 
-### Genome masks
+#### Genome masks
 The strict mask as provided by The 1000 genomes Project is used for identifying monomorphic sites
 
 - **Strict Mask chrX:** [20141020.chrX.strict_mask.fasta.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/StrictMask/20141020.chrX.strict_mask.fasta.gz "chrX")
@@ -22,12 +39,13 @@ The strict mask as provided by The 1000 genomes Project is used for identifying 
 
 - **Strict Mask chr8:** [20140520.chr8.strict_mask.fasta.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/StrictMask/20140520.chr8.strict_mask.fasta.gz "chr8")
 
-### Population Lists
+#### Population Lists
 Population and subpopulation lists are calculated using [integrated_call_samples_v3.20130502.ALL.panel](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel "Population panel")
 
-#### Population Tables
 
-#### Super Populations
+We analyze all individuals across the X chromosome and chromosome 8 and we analyze all males across the Y chromosome. We have included the breakdown of the number of males and females in each population.
+
+##### Super Populations
 
 POP | Females | Males
 ---|:---:|:---:
@@ -37,7 +55,7 @@ EAS|260|244
 EUR|263|240
 SAS|229|260
 
-#### Populations
+##### Populations
 
 POP | Females | Males
 ---|:---:|:---:
@@ -70,14 +88,21 @@ YRI|56|52
 
 Population codes can be found [here](http://www.internationalgenome.org/faq/which-populations-are-part-your-study/).
 
-## Analysis
+### Step 3: Run the analysis
 
-### Step 1: Parse populations into lists
+Run the analysis using `snakemake` once all of the raw data files are downloaded. Navigate to the top of the project directory and type the following commands:
 
-- Item 1
-- Item 2
+```shell
+source activate PAB_variation
+snakemake
+```
 
-### Step 2: Compute diversity by population
+## What do the rules in the Snakefile do?
+### Rule 1: Parse populations
+
+We use a simple python script to parse the panel file into several lists with the IDs of each individual broken up by **male/female/individual** and by **super-population/population**. The resulting files are simple text-files stored in the results subdirectory of the `01_populations/` folder
+
+### Rule 2: Calculate diversity
 
 - Item 1
 - Item 2
