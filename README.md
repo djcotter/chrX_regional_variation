@@ -104,7 +104,7 @@ We use a simple python script to parse the panel file into several lists with th
 
 ### Rule 2: Calculate diversity
 
-Diversity is calculated as **π**, or the average number of pairwise nucleotide differences per site.  is calculated for our purposes as ***π = ( ∑ ( n<sub>i</sub> choose 2 ) ) / ( n choose 2 )***. Diversity is calculated at each site for each population that is supplied in a separate population file. We calculate diversity for each chromosome (chrX, chrY, chr8) for all populations at once.
+Diversity is calculated as **π**, or the average number of pairwise nucleotide differences per site.  is calculated for our purposes as **π = ( ∑ ( n<sub>i</sub> choose 2 ) ) / ( n choose 2 )**. Diversity is calculated at each site for each population that is supplied in a separate population file. We calculate diversity for each chromosome (chrX, chrY, chr8) for all populations at once.
 
 ### Rule 3: Create filter
 
