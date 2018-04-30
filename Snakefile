@@ -26,7 +26,7 @@ SUBPOP_CODES = sorted(json.load(open(config['POPS_CODES']))["Subpopulations"])
 
 rule all:
     input:
-        "01_populations/results/results.html"
+        "01_populations/results/results2.html"
 
 rule parse_populations:
     input:
@@ -35,14 +35,10 @@ rule parse_populations:
         out_dir = "01_populations/results/",
         pop_parse = "01_populations/scripts/population_parser.py"
     output:
-        out_subs = expand('{out_dir}/{pops}_{group}.txt',
-                          pops=SUBPOP_CODES,
+        out_pops = expand('{out_dir}/{pops}_{group}',
+                          pops=SUBPOP_CODES + POP_CODES,
                           group=["males", "females", "individuals"],
-                          out_dir='01_populations/results/subpopulations'),
-        out_pops = expand('{out_dir}/{pops}_{group}.txt',
-                          pops=POP_CODES,
-                          group=["males", "females", "individuals"],
-                          out_dir='01_populations/results/populations'),
+                          out_dir='01_populations/results'),
         pop_table = '01_populations/results/pop_table.txt',
         subpop_table = '01_populations/results/subpop_table.txt'
     shell:
@@ -50,46 +46,53 @@ rule parse_populations:
 
 rule calculate_pi:
     input:
-        individuals = expand('{out_dir}/{pops}_{group}.txt',
+        individuals = expand('01_populations/results/{pops}_{group}',
                              pops=SUBPOP_CODES + POP_CODES,
-                             group="individuals",
-                             out_dir='01_populations/results/subpopulations'),
-        males_only = expand('{out_dir}/{pops}_{group}.txt',
+                             group="individuals"),
+        males_only = expand('01_populations/results/{pops}_{group}',
                             pops=SUBPOP_CODES + POP_CODES,
-                            group="males",
-                            out_dir='01_populations/results/populations')
+                            group="males")
     params:
         calc_pi = "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_" + \
             "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py",
-        chrX = config['chromsomes']['chrX'],
-        chrY = config['chromsomes']['chrY'],
-        chr8 = config['chromsomes']['chr8'],
-        out_dir = '02_diversity_by_site/results',
-        individuals = (" ").join([x for x in input.individuals]),
-        males_only = (" ").join([x for x in input.males_only])
+        chrX = config['chromosomes']['chrX'],
+        chrY = config['chromosomes']['chrY'],
+        chr8 = config['chromosomes']['chr8'],
+        out_dir = '02_diversity_by_site/results/',
+        individuals = " ".join(expand('{out_dir}/{pops}_{group}',
+                                      pops=SUBPOP_CODES + POP_CODES,
+                                      group="individuals",
+                                      out_dir='01_populations/results')),
+        males_only = " ".join(expand('{out_dir}/{pops}_{group}',
+                                     pops=SUBPOP_CODES + POP_CODES,
+                                     group="males",
+                                     out_dir='01_populations/results'))
     output:
-        expand('{pop}_chr{chr}_diversity_by_site.txt',
+        expand('{out_dir}/{pops}_individuals_chr{chr}_pi_output_by_site.txt',
                pops=POP_CODES + SUBPOP_CODES,
-               chr=['X', 'Y', '8'])
-    shell:
-        """
-        python {params.calc_pi} --vcf {params.chrX} --population_lists \
-        {params.individuals} --chrom_inc chrX --out_directory {params.out_dir}
-
-        python {params.calc_pi} --vcf {params.chrY} --population_lists \
-        {params.males_only} --chrom_inc chrY --haploid --out_directory \
-        {params.out_dir}
-
-        python {params.calc_pi} --vcf {params.chr8} --population_lists \
-        {params.indivduals} --chrom_inc chr8 --out_directory {params.out_dir}
-        """
+               chr=['X', '8'],
+               out_dir='02_diversity_by_site/results'),
+        expand('{out_dir}/{pops}_males_chrY_pi_output_by_site.txt',
+               pops=POP_CODES + SUBPOP_CODES,
+               chr='Y',
+               out_dir='02_diversity_by_site/results')
+    run:
+        commands = ["python {params.calc_pi} --vcf {params.chrX} " +
+                    "--population_lists {params.individuals} --chrom_inc " +
+                    "X --haploid --out_directory {params.out_dir}",
+                    "python {params.calc_pi} --vcf {params.chrY} " +
+                    "--population_lists {params.males_only} --chrom_inc " +
+                    "Y --haploid --out_directory {params.out_dir}",
+                    "python {params.calc_pi} --vcf {params.chr8} " +
+                    "--population_lists {params.individuals} --chrom_inc " +
+                    "8 --out_directory {params.out_dir}"]
+        for c in commands:
+            shell(c)
 
 rule merge_files:
     input:
-        expand('01_populations/results/subpopulations/{pops}_{group}.txt',
-               pops=SUBPOP_CODES,
-               group=["males", "females", "individuals"])
+        rules.calculate_pi.output
     output:
-        out_file = "01_populations/results/results.html"
+        out_file = "01_populations/results/results2.html"
     shell:
-        "touch 01_populations/results/results.html"
+        "touch 01_populations/results/results2.html"
