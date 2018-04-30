@@ -104,5 +104,15 @@ We use a simple python script to parse the panel file into several lists with th
 
 ### Rule 2: Calculate diversity
 
-- Item 1
-- Item 2
+Diversity is calculated as **π**, or the average number of pairwise nucleotide differences per site.  is calculated for our purposes as ***π = ( ∑ ( n<sub>i</sub> choose 2 ) ) / ( n choose 2 )***. Diversity is calculated at each site for each population that is supplied in a separate population file. We calculate diversity for each chromosome (chrX, chrY, chr8) for all populations at once.
+
+### Rule 3: Create filter
+
+The filter is created by merging a collection of bed files (for each chromosome) that are taken from the UCSC genome browser. Some filters and how we obtain them are as follows:
+- **Coding sequence:** We filter for coding sequence by merging known genes from UCSC, RefSeq, and GENCODE. We use the following commands to accomplish this:
+ ```shell
+ cat file1 file2 file3 | sort -k1,1 -k2,2n | awk 'BEGIN{OFS="\t"} {print $1,$2,$3,$4}' | bedtools merge -i stdin > merged_genes_filter.bed
+ ```
+- **Repetitive elements:** We get repetitive elements from the simple-repeats track.
+- **Segmental duplications:** We get segmental duplications from the Segmental Dups track.
+- **Telomeres & Centromere:** We use the Gap table and define the gap types that we want in the filter (*"centromere telomere"*).
