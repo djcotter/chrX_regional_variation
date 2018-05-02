@@ -11,9 +11,7 @@ panel:
   - "data/integrated_call_samples_v3.20130502.ALL.panel"
 
 callable_sites:
-  chrX: "20141020.chrX.strict_mask.fasta.gz"
-  chrY: "20141020.chrY.strict_mask.fasta.gz"
-  chr8: "20140520.chr8.strict_mask.fasta.gz"
+  - "20141020.strict_mask.whole_genome.bed"
 
 #chromosome filters
 filters:
