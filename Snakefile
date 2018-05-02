@@ -27,110 +27,85 @@ SUBPOP_CODES = sorted(json.load(open(config['POPS_CODES']))['Subpopulations'])
 FILTER = ['filter1']
 # link to diversity script
 DIVERSITY_SCRIPT = ""
+CHR = ['chrX', 'chrY', 'chr8']
 
 # Rules -----------------------------------------------------------------------
 
 rule all:
     input:
-        expand('02_diversity_by_site/results/{pops}_individuals_{chr}' +
+        expand('02_diversity_by_site/results/{pops}_{chr_group}' +
                '_pi_output_by_site.txt', pops=POP_CODES + SUBPOP_CODES,
-               chr=['chrX', 'chr8']),
-        expand('02_diversity_by_site/results/{pops}_males_{chr}' +
-               '_pi_output_by_site.txt', pops=POP_CODES + SUBPOP_CODES,
-               chr=['chrY']),
+               chr_group=['individuals_chrX', 'individuals_chr8',
+                          'males_chrY']),
         expand('03_filters/results/complete_{chr}_{filter_iter}.bed',
-               chr=['chrX', 'chrY', 'chr8'],
-               filter_iter=FILTER)
+               chr=CHR, filter_iter=FILTER)
 
 rule parse_populations:
     input:
-        panel = 'data/integrated_call_samples_v3.20130502.ALL.panel'
+        panel = config['panel']
     params:
         out_dir = '01_populations/results/',
         pop_parse = '01_populations/scripts/population_parser.py'
     output:
-        out_pops = '01_populations/results/{pops}_{group}'
+        out_pops = expand('01_populations/results/{pops}_{group}',
+                          pops=POP_CODES + SUBPOP_CODES,
+                          group=['males', 'females', 'individuals'])
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
 
-rule calculate_pi:
+rule calculate_pi_chrX:
     input:
         individuals = expand('01_populations/results/{pops}_individuals',
                              pops=POP_CODES + SUBPOP_CODES),
+        chrX = config['chromosomes']['chrX']
+    params:
+        calc_pi = "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_" + \
+            "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py",
+        out_dir = '02_diversity_by_site/results/'
+    output:
+        expand(path.join('02_diversity_by_site/results',
+                         '{pops}_individuals_chrX_pi_output_by_site.txt'),
+               pops=POP_CODES + SUBPOP_CODES)
+    shell:
+        "python {params.calc_pi} --vcf {input.chrX} "
+        "--population_lists {input.individuals} --chrom_inc X "
+        "--haploid --out_directory {params.out_dir}"
+
+rule calculate_pi_chr8:
+    input:
+        individuals = expand('01_populations/results/{pops}_individuals',
+                             pops=POP_CODES + SUBPOP_CODES),
+        chr8 = config['chromosomes']['chr8']
+    params:
+        calc_pi = "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_" + \
+            "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py",
+        out_dir = '02_diversity_by_site/results/'
+    output:
+        expand(path.join('02_diversity_by_site/results',
+                         '{pops}_individuals_chr8_pi_output_by_site.txt'),
+               pops=POP_CODES + SUBPOP_CODES)
+    shell:
+        "python {params.calc_pi} --vcf {input.chr8} "
+        "--population_lists {input.individuals} --chrom_inc 8 "
+        "--out_directory {params.out_dir}"
+
+rule calculate_pi_chrY:
+    input:
         males_only = expand('01_populations/results/{pops}_males',
                             pops=POP_CODES + SUBPOP_CODES),
-        chrom_file = lambda wildcards: config['chromosomes'][wildcards.chr]
+        chrY = config['chromosomes']['chrY']
     params:
-        calc_pi = path.join(
-            "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_",
-            "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py"),
-        out_dir = '02_diversity_by_site/results/',
-        chrom = lambda wildcards: wildcards.chr,
-        opts = lambda wildcards: '--population_lists {{input.individuals}}' + \
-            ' --chrom_inc X --haploid'if wildcards.chr == 'chrX' else \
-            ('--population_lists {{input.males_only}}' +
-             ' --chrom_inc Y --haploid' if wildcards.chr == 'chrY'
-             else '--population_lists {{input.individuals}} --chrom_inc 8')
+        calc_pi = "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_" + \
+            "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py",
+        out_dir = '02_diversity_by_site/results/'
     output:
-        path.join('02_diversity_by_site/results/{pops}_{group}_{chr}' +
-                  '_pi_output_by_site.txt')
+        expand(path.join('02_diversity_by_site/results',
+                         '{pops}_males_chrY_pi_output_by_site.txt'),
+               pops=POP_CODES + SUBPOP_CODES)
     shell:
-        "python {params.calc_pi} --vcf {input.chrom_file} {params.opts} "
-        "--out_directory {params.out_dir}"
-#     run:
-#         commands = ["python {params.calc_pi} --vcf {input.chrX} " +
-#                     "--population_lists {input.individuals} --chrom_inc " +
-#                     "X --haploid --out_directory {params.out_dir}",
-#
-#                     "python {params.calc_pi} --vcf {input.chrY} " +
-#                     "--population_lists {input.males_only} --chrom_inc " +
-#                     "Y --haploid --out_directory {params.out_dir}",
-#
-#                     "python {params.calc_pi} --vcf {input.chr8} " +
-#                     "--population_lists {input.individuals} --chrom_inc " +
-#                     "8 --out_directory {params.out_dir}"]
-#         if params.chrom == 'chrX':
-#             shell(commands[0])
-#         elif params.chrom == 'chrY':
-#             shell(commands[1])
-#         elif params.chrom == 'chr8':
-#             shell(commands[2])
-#
-# rule calculate_pi_chrX:
-#     input:
-#         individuals = expand('01_populations/results/{pops}_individuals',
-#                              pops=POP_CODES + SUBPOP_CODES),
-#         chrX = config['chromsome']['chrX']
-#     params:
-#         calc_pi = path.join(
-#             "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_",
-#             "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py"),
-#         out_dir = '02_diversity_by_site/results/'
-#     output:
-#         path.join('02_diversity_by_site/results/{pops}_{group}_{chr}',
-#                   '_pi_output_by_site.txt')
-#     shell:
-#         "python {params.calc_pi} --vcf {input.chrX} "
-#         "--population_lists {input.individuals} --chrom_inc X "
-#         "--haploid --out_directory {params.out_dir}"
-#
-# rule calculate_pi_chrY:
-#     input:
-#         males_only = expand('01_populations/results/{pops}_males',
-#                             pops=POP_CODES + SUBPOP_CODES),
-#         chrY = config['chromsome']['chrY']
-#     params:
-#         calc_pi = path.join(
-#             "02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_",
-#             "Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py"),
-#         out_dir = '02_diversity_by_site/results/'
-#     output:
-#         path.join('02_diversity_by_site/results/{pops}_{group}_{chr}',
-#                   '_pi_output_by_site.txt')
-#     shell:
-#         "python {params.calc_pi} --vcf {input.chrY} "
-#         "--population_lists {input.males_only} --chrom_inc Y "
-#         "--haploid --out_directory {params.out_dir}"
+        "python {params.calc_pi} --vcf {input.chrY} "
+        "--population_lists {input.males_only} --chrom_inc Y "
+        "--haploid --out_directory {params.out_dir}"
 
 rule create_filter:
     input:
@@ -145,13 +120,13 @@ rule create_filter:
         "awk \'BEGIN{{OFS=" "}}{{print $1,$2,$3,$4}}\' | "
         "bedtools merge -i stdin > {output}"
 
-# rule callable_sites_to_BED:
-#     input:
-#         ""
-#     output:
-#         ""
-#     shell:
-#         ""
+rule callable_sites_to_BED:
+    input:
+        callable = config['callable_sites']
+    output:
+        temp(callable_sites_{chr}.bed)
+    shell:
+        ""
 
 rule apply_filter:
     input:
@@ -161,11 +136,13 @@ rule apply_filter:
                                 "{pops}_{group}_{chr}_pi_output_by_site.txt")
     output:
         path.join("04_window_analysis/results/",
-                  "{pops}_{group}_{chr}_{filter_iter}_{window}_diversity.bed")
+                  "{pops}_{chr}_{filter_iter}_{window}_diversity.bed")
 
 rule merge_files:
     input:
-        rules.calculate_pi.output
+        rules.calculate_pi_chrX.output,
+        rules.calculate_pi_chr8.output,
+        rules.calculate_pi_chrY.output
     output:
         out_file = "01_populations/results/results2.html"
     shell:
