@@ -11,7 +11,7 @@ panel:
   - "data/integrated_call_samples_v3.20130502.ALL.panel"
 
 callable_sites:
-  - "20141020.strict_mask.whole_genome.bed"
+  - "data/20141020.strict_mask.whole_genome.bed"
 
 #chromosome filters
 filters:
