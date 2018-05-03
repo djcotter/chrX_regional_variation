@@ -25,12 +25,20 @@ POPULATIONS = sorted(json.load(open(config['POP_CODES']))['Populations'])
 SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 # select the filter from the configfile that should be used
 FILTER = ['filter1']
+WINDOW = '100kb'
+POPS = POPULATIONS + SUBPOPULATIONS
+CHR = ['chrX', 'chr8', 'chrY']  # script not built for additional chromosomes
+# select a sex to use for analysis of chrX and chr8
+# use "males", "females", or "individuals" (for all)
+SEX = "individuals"
+
 # link to diversity script
 DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_' + \
     'Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py'
-CHR = ['chrX', 'chrY', 'chr8']
-WINDOW = '100kb'
-POPS = POPULATIONS + SUBPOPULATIONS
+
+# takes the provided SEX and combines it with chromosomes to generate group_chr
+GROUP = [SEX, SEX, MALES]
+GROUP_CHR = [x + "_" + y for x, y in zip(GROUP, CHR)]
 
 # Rules -----------------------------------------------------------------------
 
@@ -67,8 +75,8 @@ rule parse_populations:
 
 rule calculate_pi_chrX:
     input:
-        individuals = expand('01_populations/results/{pops}_individuals',
-                             pops=POPS),
+        individuals = expand('01_populations/results/{pops}_{group}',
+                             pops=POPS, group=SEX),
         chrX = config['chromosomes']['chrX']
     params:
         calc_pi = DIVERSITY_SCRIPT,
