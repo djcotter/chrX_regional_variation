@@ -24,3 +24,10 @@ filters:
   filter2:
     coding_sequence: "UCSC_refseq_gencode_gene_transcripts_GRCh37"
     repetetive_elements: "simple_repeats_GRCh37"
+
+# windows for Analysis
+windows:
+  100kb:
+    win_size: 100000
+    overlap: True
+    slide_size: 0
