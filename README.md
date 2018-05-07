@@ -112,3 +112,14 @@ The filter is created by merging a collection of bed files (for each chromosome)
 - **Repetitive elements:** We get repetitive elements from the simple-repeats track.
 - **Segmental duplications:** We get segmental duplications from the Segmental Dups track.
 - **Telomeres & Centromere:** We use the Gap table and define the gap types that we want in the filter (*"centromere telomere"*).
+- **etc...**
+
+### Rule 4: Create windows
+
+We create windows using ```bedtools makewindows``` to create windows for the windowed analysis of diversity across the sex chromosomes. We provide information about the windows in *config.yml* in the following format:
+- Window name
+  - Window Size: *int*
+  - Sliding: *boolean*
+  - Overlap size: *int*
+
+We can then select the window(s) that we want to do at the top of the *Snakefile*.
