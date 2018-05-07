@@ -156,7 +156,7 @@ rule create_windows:
         '04_window_analysis/inputs/{chr}_{window}_window.bed'
     shell:
         "cat {input} | awk \'$1 == {params.chrom} {{ print }}\' | "
-        "bedtools -b stdin -w {params.win}{params.slide} "
+        "bedtools makewindows -b stdin -w {params.win}{params.slide} "
         "> {output}"
 
 rule convert_diverstiy_to_bed:
