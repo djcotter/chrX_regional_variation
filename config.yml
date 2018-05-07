@@ -22,8 +22,8 @@ filters:
     - "centromere_telomere_coordinates_GRCh37"
     - "CpG_islands_GRCh37"
   filter2:
-    coding_sequence: "UCSC_refseq_gencode_gene_transcripts_GRCh37"
-    repetetive_elements: "simple_repeats_GRCh37"
+    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
+    - "simple_repeats_GRCh37"
 
 # windows for Analysis
 windows:
@@ -31,3 +31,7 @@ windows:
     win_size: 100000
     overlap: False
     slide_size: 0
+  100kb-50kb-overlapping:
+    win_size: 100000
+    overlap: True
+    slide_size: 50000
