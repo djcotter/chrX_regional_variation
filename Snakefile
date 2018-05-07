@@ -46,26 +46,19 @@ DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_' + \
     'Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py'
 
 # takes the provided SEX and combines it with chromosomes to generate group_chr
+# this is only in order to keep group and chr associated in rule all
 GROUP = [SEX, SEX, 'males']
-GROUP_CHR = [x + '-' + y for x, y in zip(GROUP, CHR)]
+GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
 
 # Rules -----------------------------------------------------------------------
 
 rule all:
     input:
-        expand('02_diversity_by_site/results/{pops}_{group_chr}' +
-               '_pi_output_by_site.txt', pops=POPS,
-               group_chr=GROUP_CHR),
-        expand('03_filters/results/complete_{chr}_{filter_iter}.bed',
-               chr=CHR, filter_iter=FILTER),
-        '01_populations/results/results2.html',
         expand('04_window_analysis/results/' +
                '{pops}_{group_chr}_{filter_iter}_{window}_diversity.bed',
                pops=POPS,
                group_chr=GROUP_CHR,
-               filter_iter=FILTER, window=WINDOW),
-        expand("04_window_analysis/inputs/{chr}_{window}_window.bed",
-               chr=CHR, window=WINDOW)
+               filter_iter=FILTER, window=WINDOW)
 
 rule parse_populations:
     input:
@@ -82,16 +75,14 @@ rule parse_populations:
 
 rule calculate_pi_chrX:
     input:
-        groups = expand('01_populations/results/{pops}_{group}',
-                        pops=POPS, group=SEX),
+        groups = '01_populations/results/{pops}_{group}',
         chrX = config['chromosomes']['chrX']
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
-        expand(path.join('02_diversity_by_site/results',
-                         '{pops}_' + SEX + '-chrX_pi_output_by_site.txt'),
-               pops=POPS)
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_chrX_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.chrX} "
         "--population_lists {input.groups} --chrom_inc X "
@@ -99,16 +90,14 @@ rule calculate_pi_chrX:
 
 rule calculate_pi_chr8:
     input:
-        groups = expand('01_populations/results/{pops}_{group}',
-                        pops=POPS, group=SEX),
+        groups = '01_populations/results/{pops}_{group}',
         chr8 = config['chromosomes']['chr8']
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
-        expand(path.join('02_diversity_by_site/results',
-                         '{pops}_' + SEX + '-chr8_pi_output_by_site.txt'),
-               pops=POPS)
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_chr8_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.chr8} "
         "--population_lists {input.groups} --chrom_inc 8 "
@@ -116,19 +105,17 @@ rule calculate_pi_chr8:
 
 rule calculate_pi_chrY:
     input:
-        males_only = expand('01_populations/results/{pops}_{group}',
-                            pops=POPS, group='males'),
+        groups = '01_populations/results/{pops}_{group}',
         chrY = config['chromosomes']['chrY']
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
-        expand(path.join('02_diversity_by_site/results',
-                         '{pops}_males-chrY_pi_output_by_site.txt'),
-               pops=POPS)
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_chrY_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.chrY} "
-        "--population_lists {input.males_only} --chrom_inc Y "
+        "--population_lists {input.groups} --chrom_inc Y "
         "--haploid --out_directory {params.out_dir}"
 
 rule create_filter:
@@ -150,14 +137,14 @@ rule split_callable_sites:
     params:
         chrom = lambda wildcards: "\"" + wildcards.chr + "\""
     output:
-        temp('callable_sites_{chr}.bed')
+        temp('data/callable_sites_{chr}.bed')
     shell:
         "cat {input} | awk \'$1 == {params.chrom} {{ print }}\' "
         "> {output}"
 
 rule create_windows:
     input:
-        "data/GRCh37_chromosome_coordinates.bed"
+        'data/GRCh37_chromosome_coordinates.bed'
     params:
         win = lambda wildcards:
             config["windows"][wildcards.window]["win_size"],
@@ -166,41 +153,63 @@ rule create_windows:
             (" -s " + str(config["windows"][wildcards.window]["slide_size"])),
         chrom = lambda wildcards: "\"" + wildcards.chr + "\""
     output:
-        "04_window_analysis/inputs/{chr}_{window}_window.bed"
+        '04_window_analysis/inputs/{chr}_{window}_window.bed'
     shell:
         "cat {input} | awk \'$1 == {params.chrom} {{ print }}\' | "
         "bedtools -b stdin -w {params.win}{params.slide} "
         "> {output}"
 
-rule apply_filter:
+rule convert_diverstiy_to_bed:
     input:
-        filter = expand('03_filters/results/complete_{chr}_{filter_iter}.bed',
-                        chr=CHR, filter_iter=FILTER),
-        callable_sites = expand('callable_sites_{chr}.bed',
-                                chr=CHR),
-        chrX_pi = rules.calculate_pi_chrX.output,
-        chr8_pi = rules.calculate_pi_chr8.output,
-        chrY_pi = rules.calculate_pi_chrY.output
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_{chr}' +
+                  '_pi_output_by_site.txt')
+    params:
+        bedConvert = path.join('02_diversity_by_site', 'scripts',
+                               'bedConvert.py')
     output:
-        ""
+        temp(path.join('02_diversity_by_site/results',
+                       '{pops}_{group}_{chr}' +
+                       '_pi_output_by_site.bed'))
+    shell:
+        "python {params.bedConvert} {input} {output}"
+
+rule filter_diversity_by_site:
+    input:
+        filter = '03_filters/results/complete_{chr}_{filter_iter}.bed',
+        diversity_by_site = path.join('02_diversity_by_site/results',
+                                      '{pops}_{group}_{chr}' +
+                                      '_pi_output_by_site.bed')
+    output:
+        filtered_diversity = path.join('04_window_analysis', 'inputs',
+                                       '{pops}_{group}_{chr}_{filter_iter}' +
+                                       '_pi_by_site.bed')
+    shell:
+        "bedtools intersect {input.filter} {input.diversity_by_site} "
+        "{output.filtered_diversity}"
+
+rule filter_callable_sites:
+    input:
+        filter = '03_filters/results/complete_{chr}_{filter_iter}.bed',
+        callable_sites = 'data/callable_sites_{chr}.bed'
+    output:
+        filtered_callable = path.join('04_window_analysis', 'inputs',
+                                      'callable_sites_{chr}_{filter_iter}.bed')
     shell:
         ""
 
 rule window_analysis:
     input:
-        ""
+        filtered_diversity = path.join('04_window_analysis', 'inputs',
+                                       '{pop}_{group}_{chr}_{filter_iter}' +
+                                       '_pi_by_site.bed'),
+        filtered_callable = path.join('04_window_analysis', 'inputs',
+                                      'callable_sites_{chr}' +
+                                      '_{filter_iter}.bed'),
+        windows = '04_window_analysis/inputs/{chr}_{window}_window.bed'
     output:
         path.join('04_window_analysis/results/',
-                  '{pop}_{group_chr}_{filter_iter}_{window}_diversity.bed')
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
     shell:
-        ""
-
-rule merge_files:
-    input:
-        rules.calculate_pi_chrX.output,
-        rules.calculate_pi_chr8.output,
-        rules.calculate_pi_chrY.output
-    output:
-        out_file = '01_populations/results/results2.html'
-    shell:
-        'touch 01_populations/results/results2.html'
+        "input: {input.filtered_diversity} {input.filtered_callable} "
+        "output: {output}"

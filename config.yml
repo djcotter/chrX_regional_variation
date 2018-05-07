@@ -29,5 +29,5 @@ filters:
 windows:
   100kb:
     win_size: 100000
-    overlap: True
+    overlap: False
     slide_size: 0
