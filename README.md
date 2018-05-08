@@ -42,7 +42,7 @@ Population and subpopulation lists are calculated using [integrated_call_samples
 We analyze all individuals across the X chromosome and chromosome 8 and we analyze all males across the Y chromosome. The option to analyze males or females for chrX and chr8 can be changed at the top by altering the global variable, **SEX**. Below, we have included the breakdown of the number of males and females in each population:
 
 <table>
-<tr><th> **AFR Populations** </th><th> **AMR Populations** </th><th> **EAS Populations** </th><th> **EUR Populations** </th><th> **SAS Populations** </th></tr>
+<tr><th> AFR Populations </th><th> AMR Populations </th><th> EAS Populations </th><th> EUR Populations </th><th> SAS Populations </th></tr>
 <tr><td>
 
 <table>
