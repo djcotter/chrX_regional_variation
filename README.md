@@ -39,48 +39,63 @@ The strict mask as provided by The 1000 genomes Project is used for identifying 
 Population and subpopulation lists are calculated using [integrated_call_samples_v3.20130502.ALL.panel](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel "Population panel")
 
 
-We analyze all individuals across the X chromosome and chromosome 8 and we analyze all males across the Y chromosome. We have included the breakdown of the number of males and females in each population.
+We analyze all individuals across the X chromosome and chromosome 8 and we analyze all males across the Y chromosome. The option to analyze males or females for chrX and chr8 can be changed at the top by altering the global variable, **SEX**. Below, we have included the breakdown of the number of males and females in each population:
 
-##### Super Populations
+<table>
+<tr><th> **AFR Populations** </th><th> **AMR Populations** </th><th> **EAS Populations** </th><th> **EUR Populations** </th><th> **SAS Populations** </th></tr>
+<tr><td>
 
-POP | Females | Males
----|:---:|:---:
-AFR|342|319
-AMR|177|170
-EAS|260|244
-EUR|263|240
-SAS|229|260
-
-##### Populations
-
-POP | Females | Males
----|:---:|:---:
-ACB|49|47
-ASW|35|26
-BEB|44|42
-CDX|49|44
-CEU|50|49
-CHB|57|46
-CHS|53|52
-CLM|51|43
-ESN|46|53
-FIN|61|38
-GBR|45|46
-GIH|47|56
-GWD|58|55
-IBS|53|54
-ITU|43|59
-JPT|48|56
-KHV|53|46
-LWK|55|44
-MSL|43|42
-MXL|32|32
-PEL|44|41
-PJL|48|48
-PUR|50|54
-STU|47|55
-TSI|54|53
-YRI|56|52
+<table>
+<tr><th>POP</th><th>Females</th><th>Males</th></tr>
+<tr><td>ACB</td><td>49</td><td>47</td></tr>
+<tr><td>YRI</td><td>56</td><td>52</td></tr>
+<tr><td>ASW</td><td>35</td><td>26</td></tr>
+<tr><td>ESN</td><td>46</td><td>53</td></tr>
+<tr><td>MSL</td><td>43</td><td>42</td></tr>
+<tr><td>GWD</td><td>58</td><td>55</td></tr>
+<tr><td>LWK</td><td>55</td><td>44</td></tr>
+<tr><th>TOTAL</th><th>342</th><th>319</th></tr>
+</table>
+</td><td>
+<table>
+<tr><th>POP</th><th>Females</th><th>Males</th></tr>
+<tr><td>MXL</td><td>32</td><td>32</td></tr>
+<tr><td>PUR</td><td>50</td><td>54</td></tr>
+<tr><td>CLM</td><td>51</td><td>43</td></tr>
+<tr><td>PEL</td><td>44</td><td>41</td></tr>
+<tr><th>TOTAL</th><th>177</th><th>170</th></tr>
+</table>
+</td><td>
+<table>
+<tr><th>POP</th><th>Females</th><th>Males</th></tr>
+<tr><td>CHB</td><td>57</td><td>46</td></tr>
+<tr><td>JPT</td><td>48</td><td>56</td></tr>
+<tr><td>CHS</td><td>53</td><td>52</td></tr>
+<tr><td>CDX</td><td>49</td><td>44</td></tr>
+<tr><td>KHV</td><td>53</td><td>46</td></tr>
+<tr><th>TOTAL</th><th>260</th><th>244</th></tr>
+</table>
+</td><td>
+<table>
+<tr><th>POP</th><th>Females</th><th>Males</th></tr>
+<tr><td>CEU</td><td>50</td><td>49</td></tr>
+<tr><td>TSI</td><td>54</td><td>53</td></tr>
+<tr><td>FIN</td><td>61</td><td>38</td></tr>
+<tr><td>GBR</td><td>45</td><td>46</td></tr>
+<tr><td>IBS</td><td>53</td><td>54</td></tr>
+<tr><th>TOTAL</th><th>263</th><th>240</th></tr>
+</table>
+</td><td>
+<table>
+<tr><th>POP</th><th>Females</th><th>Males</th></tr>
+<tr><td>GIH</td><td>47</td><td>56</td></tr>
+<tr><td>PJL</td><td>48</td><td>48</td></tr>
+<tr><td>BEB</td><td>44</td><td>42</td></tr>
+<tr><td>STU</td><td>47</td><td>55</td></tr>
+<tr><td>ITU</td><td>43</td><td>59</td></tr>
+<tr><th>TOTAL</th><th>229</th><th>260</th></tr>
+</table>
+</td></tr></table>
 
 Population codes can be found [here](http://www.internationalgenome.org/faq/which-populations-are-part-your-study/).
 
