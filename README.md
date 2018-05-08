@@ -114,6 +114,8 @@ The filter is created by merging a collection of bed files (for each chromosome)
 - **Telomeres & Centromere:** We use the Gap table and define the gap types that we want in the filter (*"centromere telomere"*).
 - **etc...**
 
+We can run the *Snakefile* for any combination of these filter files by defining the combination of filters in config.yml as a list and then providing a list of the filter titles using the global variable **FILTER** at the top of the file.
+
 ### Rule 4: Create windows
 
 We create windows using ```bedtools makewindows``` to create windows for the windowed analysis of diversity across the sex chromosomes. We provide information about the windows in *config.yml* in the following format:
@@ -122,4 +124,4 @@ We create windows using ```bedtools makewindows``` to create windows for the win
   - Sliding: *boolean*
   - Overlap size: *int*
 
-We can then select the window(s) that we want to do at the top of the *Snakefile*.
+We can then select the window(s) that we want to use for the analysis at the top of the *Snakefile*. They can be listed using the global variable **WINDOW**.
