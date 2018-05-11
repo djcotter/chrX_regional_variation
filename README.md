@@ -36,7 +36,8 @@ The strict mask as provided by The 1000 genomes Project is used for identifying 
 - **Strict Mask:** [20141020.strict_mask.whole_genome.bed](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/20141020.strict_mask.whole_genome.bed)
 
 #### Population Lists
-Population and subpopulation lists are calculated using [integrated_call_samples_v3.20130502.ALL.panel](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel "Population panel")
+Population and subpopulation lists are calculated using:
+ - **Population Panel:**  [integrated_call_samples_v3.20130502.ALL.panel](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel "Population panel")
 
 
 We analyze all individuals across the X chromosome and chromosome 8 and we analyze all males across the Y chromosome. The option to analyze males or females for chrX and chr8 can be changed at the top by altering the global variable, **SEX**. Below, we have included the breakdown of the number of males and females in each population:
@@ -109,15 +110,15 @@ snakemake
 ```
 
 ## What do the rules in the Snakefile do?
-### Rule 1: Parse populations
+### Rule: Parse populations
 
 We use a simple python script to parse the panel file into several lists with the IDs of each individual broken up by **male/female/individual** and by **super-population/population**. The resulting files are simple text-files stored in the results subdirectory of the `01_populations/` folder
 
-### Rule 2: Calculate diversity
+### Rule: Calculate diversity
 
 Diversity is calculated as **π**, or the average number of pairwise nucleotide differences per site.  is calculated for our purposes as **π = ( ∑ ( n<sub>i</sub> choose 2 ) ) / ( n choose 2 )**, where **n<sub>i</sub>** is the count of allele 1 in the sample and **n** is **∑ n<sub>i</sub>** (in this case, this is n<sub>1</sub> + n<sub>2</sub> as we assume all biallelic sites). Diversity is calculated at each site for each population that is supplied in a separate population file. We calculate diversity for each chromosome (chrX, chrY, chr8) for all populations at once.
 
-### Rule 3: Create filter
+### Rule: Create filter
 
 The filter is created by merging a collection of bed files (for each chromosome) that are taken from the UCSC genome browser. Some filters and how we obtain them are as follows:
 - **Coding sequence:** We filter for coding sequence by merging known genes from UCSC, RefSeq, and GENCODE. We use the following commands to accomplish this:
@@ -131,7 +132,7 @@ The filter is created by merging a collection of bed files (for each chromosome)
 
 We can run the *Snakefile* for any combination of these filter files by defining the combination of filters in config.yml as a list and then providing a list of the filter titles using the global variable **FILTER** at the top of the file.
 
-### Rule 4: Create windows
+### Rule: Create windows
 
 We create windows using ```bedtools makewindows``` to create windows for the windowed analysis of diversity across the sex chromosomes. We provide information about the windows in *config.yml* in the following format:
 - Window name
@@ -140,3 +141,49 @@ We create windows using ```bedtools makewindows``` to create windows for the win
   - Overlap size: *int*
 
 We can then select the window(s) that we want to use for the analysis at the top of the *Snakefile*. They can be listed using the global variable **WINDOW**.
+
+### Rule: Split callable sites
+
+The callable sites for the analysis can be generated using the strict whole genome mask from The 1000 Genomes Project:
+
+- **Strict Mask:** [20141020.strict_mask.whole_genome.bed](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/accessible_genome_masks/20141020.strict_mask.whole_genome.bed)
+
+This rule uses the following awk command to split the BED file into smaller temp files defining the callable sites for a specific chromosome (where **CHR** = ['chr8', 'chrX', 'chrY']):
+
+```shell
+cat INPUT_FILE | awk '$1 == CHR { print }' > OUTPUT_FILE
+```
+
+### Rule: Convert diversity to BED
+
+This rule uses a simple python script to convert the output of **Rule: Calculate Diversity** to BED format. The script takes as input (w/ chrY for example) a file that is tab-delimited with the following columns:
+
+<table>
+<tr><th>Y</th><th>POS</th><th><i>pi</i></th></tr>
+</table>
+
+The output of the script is a new file in BED format with the following tab-delimited columns:
+
+<table>
+<tr><th>chrY</th><th> POS - 1 </th><th>POS</th><th><i>pi</i></th></tr>
+</table>
+
+We convert the coordinates and alter the chromosome ID's in the same script to make the data compatible with the rest of the analysis.
+
+### Rule: Filter callable sites
+
+We filter the callable sites files that are generated for each chromosome using `bedtools subtract`. We use the following command in order to remove the regions in our filter directly from the callable sites file and keep intervals that are callable and not in the filter. We use the following command:
+
+```shell
+bedtools subtract -a CALLABLE_SITES -b FILTER > FILTERED_CALLABLE_SITES
+```
+
+### Rule: Filter diversity by site
+
+We filter the diversity files using `bedtools intersect`. Since we have already filtered the callable sites file, we can intersect FILTERED_CALLABLE_SITES with the diversity BED files in order to only get sites that are both callable and that pass the filter. We use the following command:
+
+```shell
+bedtools intersect -a DIVERSITY_FILE -b FILTERED_CALLABLE_SITES > FILTERED_DIVERSITY_BY_SITE
+```
+
+### Rule: Window analysis
