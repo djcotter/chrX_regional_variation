@@ -18,12 +18,18 @@ filters:
   filter1:
     - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
     - "simple_repeats_GRCh37"
-    - "segmental_dups_GRCh37"
     - "centromere_telomere_coordinates_GRCh37"
     - "CpG_islands_GRCh37"
   filter2:
     - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
     - "simple_repeats_GRCh37"
+    - "segmental_dups_GRCh37"
+  filter_all:
+    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
+    - "simple_repeats_GRCh37"
+    - "centromere_telomere_coordinates_GRCh37"
+    - "CpG_islands_GRCh37"
+    - "segmental_dups_GRCh37"
 
 # windows for Analysis
 windows:

@@ -128,7 +128,7 @@ rule create_filter:
         '03_filters/results/complete_{chr}_{filter_iter}.bed'
     shell:
         "cat {input} | sort -k1,1 -k2,2n | "
-        "awk \'BEGIN{{OFS=" "}}{{print $1,$2,$3,$4}}\' | "
+        "awk \'BEGIN{{OFS=\"\t\"}}{{print $1,$2,$3}}\' | "
         "bedtools merge -i stdin > {output}"
 
 rule split_callable_sites:
@@ -137,7 +137,7 @@ rule split_callable_sites:
     params:
         chrom = lambda wildcards: "\"" + wildcards.chr + "\""
     output:
-        temp('data/callable_sites_{chr}.bed')
+        'data/callable_sites_{chr}.bed'
     shell:
         "cat {input} | awk \'$1 == {params.chrom} {{ print }}\' "
         "> {output}"
@@ -174,29 +174,31 @@ rule convert_diverstiy_to_bed:
     shell:
         "python {params.bedConvert} {input} {output}"
 
-rule filter_diversity_by_site:
-    input:
-        filter = '03_filters/results/complete_{chr}_{filter_iter}.bed',
-        diversity_by_site = path.join('02_diversity_by_site/results',
-                                      '{pops}_{group}_{chr}' +
-                                      '_pi_output_by_site.bed')
-    output:
-        filtered_diversity = path.join('04_window_analysis', 'inputs',
-                                       '{pops}_{group}_{chr}_{filter_iter}' +
-                                       '_pi_by_site.bed')
-    shell:
-        "bedtools intersect {input.filter} {input.diversity_by_site} "
-        "{output.filtered_diversity}"
-
 rule filter_callable_sites:
     input:
         filter = '03_filters/results/complete_{chr}_{filter_iter}.bed',
         callable_sites = 'data/callable_sites_{chr}.bed'
     output:
+        path.join('04_window_analysis', 'inputs',
+                  'callable_sites_{chr}_{filter_iter}.bed')
+    shell:
+        "bedtools subtract -a {input.callable_sites} -b {input.filter} "
+        "> {output}"
+
+rule filter_diversity_by_site:
+    input:
+        diversity_by_site = path.join('02_diversity_by_site/results',
+                                      '{pops}_{group}_{chr}' +
+                                      '_pi_output_by_site.bed'),
         filtered_callable = path.join('04_window_analysis', 'inputs',
                                       'callable_sites_{chr}_{filter_iter}.bed')
+    output:
+        path.join('04_window_analysis', 'inputs',
+                  '{pops}_{group}_{chr}_{filter_iter}' +
+                  '_pi_by_site.bed')
     shell:
-        ""
+        "bedtools intersect -a {input.diversity_by_site} "
+        "-b {input.filtered_callable} > {output}"
 
 rule window_analysis:
     input:
@@ -207,9 +209,11 @@ rule window_analysis:
                                       'callable_sites_{chr}' +
                                       '_{filter_iter}.bed'),
         windows = '04_window_analysis/inputs/{chr}_{window}_window.bed'
+    params:
+        window_calcs = '04_window_analysis/scripts/window_calculations.py'
     output:
         path.join('04_window_analysis/results/',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
     shell:
-        "input: {input.filtered_diversity} {input.filtered_callable} "
-        "output: {output}"
+        "python {params.window_calcs} {input.filtered_diversity} "
+        "{input.filtered_callable} {input.windows} {output}"
