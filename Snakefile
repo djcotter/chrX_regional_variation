@@ -29,10 +29,9 @@ FILTER = ['filter1']
 WINDOW = ['100kb']
 
 # sets the populations to be a list of all pops and subpops
-# POPS = POPULATIONS + SUBPOPULATIONS
-POPS = POPULATIONS
+POPS = POPULATIONS + SUBPOPULATIONS
 
-# select a sex to use for analysis of chrX and chr8
+# select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
 SEX = 'individuals'
 
@@ -42,7 +41,7 @@ SEX = 'individuals'
 CHR = ['chrX', 'chr8', 'chrY']  # script not built for additional chromosomes
 
 # link to diversity script
-DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_cyvcf_' + \
+DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
     'Output_pi_per_site_per_population_ignoreINDELs_Hohenlohe.py'
 
 # takes the provided SEX and combines it with chromosomes to generate group_chr
