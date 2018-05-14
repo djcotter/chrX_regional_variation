@@ -5,13 +5,14 @@ channels:
 - r
 - defaults
 dependencies:
-- cyvcf=0.8.0=py36_0
+- bedtools=2.27.1=1
 - filechunkio=1.6=py36_0
 - ftputil=3.2=py36_0
 - libdeflate=0.8=0
 - libffi=3.2.1=1
 - pyasn1-modules=0.0.5=py36_0
 - pysftp=0.2.9=py36_0
+- pyvcf=0.6.8=py36_0
 - rsa=3.1.4=py36_0
 - samtools=1.8=3
 - snakemake=4.8.0=py36_0
@@ -110,7 +111,6 @@ dependencies:
 - libgcc=4.8.5=hdbeacc1_10
 - libgfortran=3.0.1=h93005f0_2
 - pip:
-  - cyvcf2==0.8.0
   - idna-ssl==1.0.0
 prefix: /Users/djcotter/anaconda/envs/PAB_variation
 
