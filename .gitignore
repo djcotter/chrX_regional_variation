@@ -3,5 +3,8 @@
 .DS_Store
 .DS_Store?
 
+# cluster information for Snakemake
+cluster/
+
 # Snakemake hidden directory #
 .snakemake/
