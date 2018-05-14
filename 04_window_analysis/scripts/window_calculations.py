@@ -67,21 +67,13 @@ for w in window_coordinates:
                 continue
             except StopIteration:
                 break
-
-    """
-    When running through the Y chromosome the script gets caught in an infinite
-    loop from what appears to be the for loop advancing to the next iteration
-    before it is required. This causes the if statements in the callable block
-    to not catch anything and the while loop runs indefinitely until ended. The
-    coordinates that this starts at are as follows:
-
-    w:  28800000 28900000   c:  28800008 28800044
-    w:  28800000 28900000   c:  28801765 28801841
-    w:  28800000 28900000   c:  28802050 28802057
-    w:  28900000 29000000   c:  28802050 28802057
-
-    """
-    print(c[1] + " < " + w[2])
+        else:
+            # in case the callable sites file stops before the window file
+            # this block will keep advancing the script instead of catching
+            # inside of an infinite while loop
+            called = 0
+            sum_called += 0
+            break
 
     # analyze the diversity by site file
     while int(d[2]) > int(w[1]) and int(d[2]) <= int(w[2]):
