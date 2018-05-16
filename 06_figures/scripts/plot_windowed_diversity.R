@@ -5,16 +5,16 @@ option_list = list(
   make_option(c('-i', '--input'), type='character', default=NULL,
               help="path to input file"),
   make_option(c('-o', '--output'), type='character', default=NULL,
-              help="path to ouput file"),
-  make_option(c('-c', '--chromosome'), type='chracter', default=NULL,
-              help='identifer of the chromosome to be plotted'),
+              help="path to output file"),
+  make_option(c('-c', '--chromosome'), type='character', default=NULL,
+              help='identifier of the chromosome to be plotted'),
   make_option(c('--width'), type='double', default=12.0,
               help='width for figure'),
   make_option(c('--height'), type='double', default=7.0,
               help='height for figure'),
   make_option(c('-u', '--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']")
-  
+
 )
 
 opt_parser = OptionParser(option_list=option_list)
@@ -48,7 +48,7 @@ if(opt$chromosome == 'chrX') {
     else{'black'}
   })
 }else if(opt$chromosome == 'chrY') {
-  
+
 } else {
   df$colors <- sapply(df$position, function(x){'black'})
 }
@@ -57,9 +57,7 @@ if(opt$chromosome == 'chrX') {
 p1 <- ggplot(df, aes(x=position, y=pi))
 
 p1 <- p1 + geom_point(col=df$colors) +
-  labs(list(x='Position (' + win_type +')', 
+  labs(list(x='Position (' + win_type +')',
             y=expression(paste('Diversity (', pi, ')')))) +
   theme(axis.title=element_text(size=14))
 ggsave(file=opt$output, height=opt$height, width=opt$width, units=opt$units)
-
-
