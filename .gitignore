@@ -5,6 +5,7 @@
 
 # cluster information for Snakemake
 cluster/
+cluster.json
 
 # Snakemake hidden directory #
 .snakemake/
