@@ -14,7 +14,7 @@ import csv
 import argparse
 
 # parse arguments -------------------------------------------------------------
-parser = argparse.ArgumentParser(description="Calculate windowed diversity " +
+parser = argparse.ArgumentParser(description="Calculate windowed diversity" +
                                  " across a chromosome.")
 
 # Parse the command line
