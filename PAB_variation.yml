@@ -1,16 +1,20 @@
 name: PAB_variation
 channels:
-- bioconda
-- conda-forge
-- r
-- defaults
+  - bioconda
+  - conda-forge
+  - r
+  - defaults
 dependencies:
-- python=3
-- snakemake
-- pyvcf
-- samtools
-- bedtools
-- vcftools
-- bcftools
-- sympy
-- numpy
+  - python=3
+  - snakemake
+  - pyvcf
+  - samtools
+  - bedtools
+  - vcftools
+  - bcftools
+  - sympy
+  - numpy
+  # R packages:
+  - r-base
+  - r-optparse
+  - r-ggplot2
