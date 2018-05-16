@@ -218,10 +218,14 @@ rule window_analysis:
                                       '_{filter_iter}.bed'),
         windows = '04_window_analysis/inputs/{chr}_{window}_window.bed'
     params:
-        window_calcs = '04_window_analysis/scripts/window_calculations.py'
+        window_calcs = '04_window_analysis/scripts/window_calculations.py',
+        slide = lambda wildcards: "" if \
+            config["windows"][wildcards.window]["overlap"] is False else \
+            "--sliding "
     output:
         path.join('04_window_analysis/results/',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
     shell:
-        "python {params.window_calcs} {input.filtered_diversity} "
-        "{input.filtered_callable} {input.windows} {output}"
+        "python {params.window_calcs} --diversity {input.filtered_diversity} "
+        "--callable {input.filtered_callable} --windows {input.windows} "
+        "{params.slide}--output {output}"
