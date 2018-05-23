@@ -58,7 +58,8 @@ parser.add_argument("--haploid", action='store_true', help="This flag" +
                     " \"A/T\"). Only use this flag if the chromosome being" +
                     " processed is all haploid or partly (e.g. nonPAR of X).")
 args = parser.parse_args()
-print(args)
+print("Parsing arguments from command line...")
+print("")
 
 ###########################################################################
 
@@ -252,7 +253,7 @@ for record in vcf_reader:
                 [allele_count[x] for x in allele_count])])
 
     counter += 1
-    if counter % 50000 == 0:
+    if counter % 10000 == 0:
         print("{} records complete...".format(counter))
 
 print("VCF traversal complete")
