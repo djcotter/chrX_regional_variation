@@ -204,7 +204,7 @@ def bootstrap_pi_distribution(data_input, n_sites, replicates):
 ###########################################################################
 
 
-print("Beginning diversity calculations")
+print("Beginning diversity calculations...")
 counter = 0
 for record in vcf_reader:
     if record.CHROM == args.chrom_inc and not args.haploid:
@@ -253,7 +253,7 @@ for record in vcf_reader:
                 [allele_count[x] for x in allele_count])])
 
     counter += 1
-    if counter % 10000 == 0:
+    if counter % 10 == 0:
         print("{} records complete...".format(counter))
 
 print("VCF traversal complete")
