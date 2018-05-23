@@ -43,7 +43,6 @@ if len(sys.argv) == 1:
 
 # add arguments to args variable
 args = parser.parse_args()
-print(args)
 
 # Script ----------------------------------------------------------------------
 # Open Window Coordinates File and read to a list
