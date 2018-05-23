@@ -253,7 +253,7 @@ for record in vcf_reader:
                 [allele_count[x] for x in allele_count])])
 
     counter += 1
-    if counter % 10 == 0:
+    if counter % 500 == 0:
         print("{} records complete...".format(counter))
 
 print("VCF traversal complete")
