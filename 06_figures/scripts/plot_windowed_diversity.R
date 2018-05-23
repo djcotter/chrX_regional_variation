@@ -28,7 +28,12 @@ if(is.null(opt$input) || is.null(opt$output)) {
 
 if( !(opt$units == 'in' || opt$units == 'mm' || opt$units == 'cm') ) {
   print_help(opt_parser)
-  stop("Units must be provided as 'in', 'mm', or 'cm'", call.=FALSE)
+  stop("Units must be provided as 'in', 'mm', or 'cm'.", call.=FALSE)
+}
+
+if( !(opt$width > 0 && opt$height > 0) ){
+  print_help(opt_parser)
+  stop("Width and Height must be a number greater than 0.")
 }
 
 # declare window size for use plotting values
@@ -48,7 +53,7 @@ if(opt$chromosome == 'chrX') {
     else{'black'}
   })
 }else if(opt$chromosome == 'chrY') {
-
+  df$colors <- sapply(df$position, function(x){'black'})
 } else {
   df$colors <- sapply(df$position, function(x){'black'})
 }
@@ -57,7 +62,7 @@ if(opt$chromosome == 'chrX') {
 p1 <- ggplot(df, aes(x=position, y=pi))
 
 p1 <- p1 + geom_point(col=df$colors) +
-  labs(list(x='Position (' + win_type +')',
+  labs(list(x=paste('Position (', win_type, ')'),
             y=expression(paste('Diversity (', pi, ')')))) +
   theme(axis.title=element_text(size=14))
 ggsave(file=opt$output, height=opt$height, width=opt$width, units=opt$units)
