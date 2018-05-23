@@ -58,6 +58,7 @@ parser.add_argument("--haploid", action='store_true', help="This flag" +
                     " \"A/T\"). Only use this flag if the chromosome being" +
                     " processed is all haploid or partly (e.g. nonPAR of X).")
 args = parser.parse_args()
+print(args)
 
 ###########################################################################
 
@@ -95,8 +96,8 @@ else:
 ########################################################################
 
 def pi_overall(tot_diff, k, sequence_length):
-    """ Calculates mean nucleotide diversity, pi, using equation from Box 1.3 in
-    Charlesworth and Charleswoth (2010):
+    """ Calculates mean nucleotide diversity, pi, using equation from Box 1.3
+    in Charlesworth and Charleswoth (2010):
     (tot_diff / (k choose 2)) / sequence_length
     where:
         tot_diff = the total number of differences observed in all pairwise
