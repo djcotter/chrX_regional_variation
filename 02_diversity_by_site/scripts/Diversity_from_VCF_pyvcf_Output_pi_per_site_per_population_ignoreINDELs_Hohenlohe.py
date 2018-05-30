@@ -23,6 +23,7 @@ import numpy as np
 import sympy
 import vcf
 from os import path
+import time
 
 ########################################
 # Import files from the command line   #
@@ -206,6 +207,7 @@ def bootstrap_pi_distribution(data_input, n_sites, replicates):
 
 print("Beginning diversity calculations...")
 counter = 0
+start_time = time.time()
 for record in vcf_reader:
     if record.CHROM == args.chrom_inc and not args.haploid:
         for pop in populations:
@@ -252,9 +254,13 @@ for record in vcf_reader:
             pop[2].append([record.CHROM, record.POS, pi_site(
                 [allele_count[x] for x in allele_count])])
 
+    # display ythe current count and provide time elapsed per 10000 records
     counter += 1
-    if counter % 500 == 0:
-        print("{} records complete...".format(counter))
+    if counter % 10000 == 0:
+        time_elapsed = time.time() - start_time
+        print("{} records complete ".format(counter) +
+              "(1000 records in {} sec)...".format(time_elapsed))
+        start_time = time.time()
 
 print("VCF traversal complete")
 
