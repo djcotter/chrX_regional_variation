@@ -72,58 +72,49 @@ rule parse_populations:
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
 
+rule calculate_pi_chr8:
+    input:
+        group = '01_populations/results/{pops}_{group}',
+        chrom = config['chromosomes']['chr8']
+    params:
+        calc_pi = DIVERSITY_SCRIPT,
+        out_dir = '02_diversity_by_site/results/'
+    output:
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_chr8_pi_output_by_site.txt')
+    shell:
+        "python {params.calc_pi} --vcf {input.chrom} "
+        "--population_lists {input.group} --chrom_inc 8 "
+        "--out_directory {params.out_dir}"
+
 rule calculate_pi_chrX:
     input:
-        groups = expand('01_populations/results/{pops}_{group}',
-                        pops=POPS,
-                        group=SEX),
+        group = '01_populations/results/{pops}_{group}',
         chrX = config['chromosomes']['chrX']
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
-        expand(path.join('02_diversity_by_site/results',
-                         '{pops}_{group}_chrX_pi_output_by_site.txt'),
-               pops=POPS, group=SEX)
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_chrX_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.chrX} "
-        "--population_lists {input.groups} --chrom_inc X "
+        "--population_lists {input.group} --chrom_inc X "
         "--haploid --out_directory {params.out_dir}"
-
-rule calculate_pi_chr8:
-    input:
-        groups = expand('01_populations/results/{pops}_{group}',
-                        pops=POPS,
-                        group=SEX),
-        chr8 = config['chromosomes']['chr8']
-    params:
-        calc_pi = DIVERSITY_SCRIPT,
-        out_dir = '02_diversity_by_site/results/'
-    output:
-        expand(path.join('02_diversity_by_site/results',
-                         '{pops}_{group}_chr8_pi_output_by_site.txt'),
-               pops=POPS, group=SEX)
-    shell:
-        "python {params.calc_pi} --vcf {input.chr8} "
-        "--population_lists {input.groups} --chrom_inc 8 "
-        "--out_directory {params.out_dir}"
 
 rule calculate_pi_chrY:
     input:
-        groups = expand('01_populations/results/{pops}_{group}',
-                        pops=POPS,
-                        group='males'),
+        group = '01_populations/results/{pops}_{group}',
         chrY = config['chromosomes']['chrY']
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
-        expand(path.join('02_diversity_by_site/results',
-                         '{pops}_{group}_chrY_pi_output_by_site.txt'),
-               pops=POPS, group='males')
+        path.join('02_diversity_by_site/results',
+                  '{pops}_{group}_chrY_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.chrY} "
-        "--population_lists {input.groups} --chrom_inc Y "
+        "--population_lists {input.group} --chrom_inc Y "
         "--haploid --out_directory {params.out_dir}"
 
 rule create_filter:
