@@ -29,7 +29,7 @@ FILTER = ['filter1']
 WINDOW = ['100kb']
 
 # sets the populations to be a list of all pops and subpops
-POPS = POPULATIONS + SUBPOPULATIONS
+POPS = POPULATIONS  # + SUBPOPULATIONS
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -72,10 +72,19 @@ rule parse_populations:
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
 
+rule subset_VCF:
+    input:
+        pop_file = '01_populations/results/{pops}_{group}',
+        vcf_file = lambda wildcards: config['chromosomes'][wildcards.chr]
+    output:
+        temp(path.join('data', 'subset_{chr}_{pops}_{group}.vcf'))
+    shell:
+        "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
+
 rule calculate_pi_chr8:
     input:
         group = '01_populations/results/{pops}_{group}',
-        chrom = config['chromosomes']['chr8']
+        vcf = path.join('data', 'subset_chr8_{pops}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
@@ -83,14 +92,14 @@ rule calculate_pi_chr8:
         path.join('02_diversity_by_site/results',
                   '{pops}_{group}_chr8_pi_output_by_site.txt')
     shell:
-        "python {params.calc_pi} --vcf {input.chrom} "
+        "python {params.calc_pi} --vcf {input.vcf} "
         "--population_lists {input.group} --chrom_inc 8 "
         "--out_directory {params.out_dir}"
 
 rule calculate_pi_chrX:
     input:
         group = '01_populations/results/{pops}_{group}',
-        chrX = config['chromosomes']['chrX']
+        vcf = path.join('data', 'subset_chrX_{pops}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
@@ -98,14 +107,14 @@ rule calculate_pi_chrX:
         path.join('02_diversity_by_site/results',
                   '{pops}_{group}_chrX_pi_output_by_site.txt')
     shell:
-        "python {params.calc_pi} --vcf {input.chrX} "
+        "python {params.calc_pi} --vcf {input.vcf} "
         "--population_lists {input.group} --chrom_inc X "
         "--haploid --out_directory {params.out_dir}"
 
 rule calculate_pi_chrY:
     input:
         group = '01_populations/results/{pops}_{group}',
-        chrY = config['chromosomes']['chrY']
+        vcf = path.join('data', 'subset_chrY_{pops}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
@@ -113,7 +122,7 @@ rule calculate_pi_chrY:
         path.join('02_diversity_by_site/results',
                   '{pops}_{group}_chrY_pi_output_by_site.txt')
     shell:
-        "python {params.calc_pi} --vcf {input.chrY} "
+        "python {params.calc_pi} --vcf {input.vcf} "
         "--population_lists {input.group} --chrom_inc Y "
         "--haploid --out_directory {params.out_dir}"
 
