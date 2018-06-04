@@ -47,8 +47,8 @@ DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
 # takes the provided SEX and combines it with chromosomes to generate group_chr
 # this is only in order to keep group and chr associated in rule all
 GROUP = [SEX, SEX, 'males']
-GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
-
+# GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
+GROUP_CHR = ['males_chrX', 'females_chrX', 'males_chr8', 'females_chr8']
 # Rules -----------------------------------------------------------------------
 
 rule all:
