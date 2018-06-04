@@ -29,7 +29,7 @@ FILTER = ['filter1']
 WINDOW = ['100kb']
 
 # sets the populations to be a list of all pops and subpops
-POPS = POPULATIONS + SUBPOPULATIONS
+POPS = POPULATIONS  # + SUBPOPULATIONS
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -47,14 +47,19 @@ DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
 # takes the provided SEX and combines it with chromosomes to generate group_chr
 # this is only in order to keep group and chr associated in rule all
 GROUP = [SEX, SEX, 'males']
-# GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
-GROUP_CHR = ['males_chrX', 'females_chrX', 'males_chr8', 'females_chr8']
+GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
+# GROUP_CHR = ['males_chrX', 'females_chrX', 'males_chr8', 'females_chr8']
 # Rules -----------------------------------------------------------------------
 
 rule all:
     input:
         expand('04_window_analysis/results/' +
                '{pops}_{group_chr}_{filter_iter}_{window}_diversity.bed',
+               pops=POPS,
+               group_chr=GROUP_CHR,
+               filter_iter=FILTER, window=WINDOW),
+        expand('06_figures/results/' +
+               '{pops}_{group_chr}_{filter_iter}_{window}_diversity.png',
                pops=POPS,
                group_chr=GROUP_CHR,
                filter_iter=FILTER, window=WINDOW)
@@ -229,3 +234,17 @@ rule window_analysis:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
         "{params.slide}--output {output}"
+
+rule plot_windowed_diversity:
+    input:
+        path.join('04_window_analysis/results/',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
+    params:
+        R_script = path.join('06_figures', 'scripts',
+                             'plot_windowed_diversity.R'),
+        chrom = lambda wildcards: wildcards.chr
+    output:
+        path.join('06_figures/results/',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.png')
+    shell:
+        "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom}"

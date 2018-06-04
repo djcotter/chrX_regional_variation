@@ -195,4 +195,16 @@ The window analysis uses a simple python script that takes as input three files:
 
 These three files will be used to get a calculation of diversity in each window (including monomorphic sites). We sum up diversity in each window and called sites in each window and then simply divide our value of diversity by the number of called sites to get a value for diversity in every window across the genome.
 
-**NOTE: The current window_analysis.py script is more efficient as long as the provided window file is not sliding windows.** 
+**NOTE: The current window_analysis.py script is more efficient as long as the provided window file is not sliding windows.**
+
+### Rule: Plot Windowed Diversity
+
+This rule integrates an R script that will take as input the windowed diversity and output a graph of diversity across the chromosome. It takes the following required options:
+- Input (-i, --input)
+- Output (-o, --output)
+- Chromosome (-c, --chrom)
+
+It also takes the following, optional formatting options:
+- Units (--units; default is inches)
+- Height (--height; default is 7.0)
+- Width (--width; default is 12.0)

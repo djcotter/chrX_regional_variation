@@ -6,13 +6,13 @@ option_list = list(
               help="path to input file"),
   make_option(c('-o', '--output'), type='character', default=NULL,
               help="path to output file"),
-  make_option(c('-c', '--chromosome'), type='character', default=NULL,
+  make_option(c('-c', '--chrom'), type='character', default=NULL,
               help='identifier of the chromosome to be plotted'),
   make_option(c('--width'), type='double', default=12.0,
               help='width for figure'),
   make_option(c('--height'), type='double', default=7.0,
               help='height for figure'),
-  make_option(c('-u', '--units'), type='character', default='in',
+  make_option(c('--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']")
 
 )
@@ -45,14 +45,14 @@ df <- read.delim(opt$input, header=FALSE)
 df$position <- sapply(df$V2, function(x){((x+(x+100000))/2)/win_size})
 df$pi <- ifelse(df$V5 == 'NA', NA, df$V4)
 
-if(opt$chromosome == 'chrX') {
+if(opt$chrom == 'chrX') {
   df$colors <- sapply(df$position, function(x){
     if(x<=2.699520){'red'}
     else if(x<= 93.193855 && x>= 88.193855){'blue'}
     else if(x >= 154.931044){'red'}
     else{'black'}
   })
-}else if(opt$chromosome == 'chrY') {
+}else if(opt$chrom == 'chrY') {
   df$colors <- sapply(df$position, function(x){'black'})
 } else {
   df$colors <- sapply(df$position, function(x){'black'})
