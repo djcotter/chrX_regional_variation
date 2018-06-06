@@ -29,7 +29,7 @@ FILTER = ['filter1']
 WINDOW = ['100kb']
 
 # sets the populations to be a list of all pops and subpops
-POPS = POPULATIONS  # + SUBPOPULATIONS
+POPS = POPULATIONS + SUBPOPULATIONS
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -58,6 +58,11 @@ rule all:
                pops=POPS,
                group_chr=GROUP_CHR,
                filter_iter=FILTER, window=WINDOW),
+        expand('04_window_analysis/results/' +
+               '{pops}_{group_chr}_{filter_iter}_byRegion_diversity.bed',
+               pops=POPS,
+               group_chr=SEX + '_chrX',
+               filter_iter=FILTER),
         expand('06_figures/results/' +
                '{pops}_{group_chr}_{filter_iter}_{window}_diversity.png',
                pops=POPS,
@@ -213,6 +218,9 @@ rule filter_diversity_by_site:
         "bedtools intersect -a {input.diversity_by_site} "
         "-b {input.filtered_callable} > {output}"
 
+# Building DAG of jobs...
+# MissingInputException in line [224] of /Users/djcotter/Projects/PAB_variation/Snakefile:
+ # Missing input files for rule window_analysis:
 rule window_analysis:
     input:
         filtered_diversity = path.join('04_window_analysis', 'inputs',
@@ -221,19 +229,40 @@ rule window_analysis:
         filtered_callable = path.join('04_window_analysis', 'inputs',
                                       'callable_sites_{chr}' +
                                       '_{filter_iter}.bed'),
-        windows = '04_window_analysis/inputs/{chr}_{window}_window.bed'
+        windows = lambda wildcards: '' if wildcards.window == 'byRegion' \
+            else '04_window_analysis/inputs/{chr}_{window}_window.bed'
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py',
-        slide = lambda wildcards: "" if \
+        slide = lambda wildcards: '' if \
             config["windows"][wildcards.window]["overlap"] is False else \
-            "--sliding "
+            '--sliding ',
+        byRegion = lambda wildcards: '' if wildcards.window != 'byRegion' \
+            else '--chrX_windows '
     output:
         path.join('04_window_analysis/results/',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
-        "{params.slide}--output {output}"
+        "{params.slide}{params.byRegion}--output {output}"
+
+# rule calculate_diversity_chrX_regions:
+#     input:
+#         filtered_diversity = path.join('04_window_analysis', 'inputs',
+#                                        '{pop}_{group}_chrX_{filter_iter}' +
+#                                        '_pi_by_site.bed'),
+#         filtered_callable = path.join('04_window_analysis', 'inputs',
+#                                       'callable_sites_chrX' +
+#                                       '_{filter_iter}.bed')
+#     params:
+#         window_calcs = '04_window_analysis/scripts/window_calculations.py'
+#     output:
+#         path.join('04_window_analysis/results/',
+#                   '{pop}_{group}_chrX_{filter_iter}_byRegion_diversity.bed')
+#     shell:
+#         "python {params.window_calcs} --diversity {input.filtered_diversity} "
+#         "--callable {input.filtered_callable} --chrX_windows "
+#         "--output {output}"
 
 rule plot_windowed_diversity:
     input:

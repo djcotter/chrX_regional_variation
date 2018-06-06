@@ -41,3 +41,7 @@ windows:
     win_size: 100000
     overlap: True
     slide_size: 50000
+  byRegion:
+    win_size: null
+    overlap: False
+    slide_size: null
