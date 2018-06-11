@@ -35,7 +35,7 @@ parser.add_argument("--sliding", action='store_true', help="This indicates" +
                     " slightly alters the algorithm that is used. This" +
                     " method is more inefficient than one involving" +
                     " nonoverlapping windows")
-parser.add_argument("--chrX-windows", action='store_true', help="This flag" +
+parser.add_argument("--chrX_windows", action='store_true', help="This flag" +
                     " indicates that the analysis should be performed on the" +
                     " X chromosome using windows that correspond to PAR1," +
                     " nonPAR, XTR, and PAR2. No windows need to be provided" +
@@ -51,7 +51,7 @@ args = parser.parse_args()
 
 # Script ----------------------------------------------------------------------
 # Open Window Coordinates File and read to a list
-if parser.chrX_windows is not True:
+if args.chrX_windows is not True:
     with open(args.windows, 'rU') as f:
         window_coordinates = list(csv.reader(f, delimiter='\t'))
 else:
@@ -144,7 +144,7 @@ if args.chrX_windows is True:
     data.append([wc[4][0], wc[4][1], wc[4][2], float(wc[4][3] / wc[4][4]),
                  wc[4][4], wc[4][5]])
 
-else if args.sliding is not True:
+elif args.sliding is not True:
 
     # the first row of each file is initialized
     c = next(callable)

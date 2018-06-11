@@ -24,6 +24,9 @@ filters:
     - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
     - "simple_repeats_GRCh37"
     - "segmental_dups_GRCh37"
+  filter3:
+    - "centromere_telomere_coordinates_GRCh37"
+    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
   filter_all:
     - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
     - "simple_repeats_GRCh37"
