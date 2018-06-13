@@ -61,10 +61,6 @@ df_Y$chr <- 'chrY'
 df_Y$position <- sapply(df_Y$V2, function(x){((x+(x+100000))/2)/win_size})
 df_Y$pi <- ifelse(df_Y$V5 == 'NA', NA, df_Y$V4)
 
-print(colnames(df_Xmales))
-print(colnames(df_Xfemales))
-print(colnames(df_Y))
-
 df <- rbind(df_Xfemales, df_Xmales)
 df <- rbind(df, df_Y)
 df <- subset(df, position < 2.699520 + 2.50000)
