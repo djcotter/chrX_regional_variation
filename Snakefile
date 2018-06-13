@@ -27,7 +27,7 @@ POPULATIONS = sorted(json.load(open(config['POP_CODES']))['Populations'])
 SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 
 # select the filter from the configfile that should be used
-FILTER = ['filter3']
+FILTER = ['filter1']
 WINDOW = ['100kb']
 
 # sets the populations to be a list of all pops and subpops
@@ -309,7 +309,7 @@ rule plot_PAB_diversity:
                                '_diversity.bed'),
         chrX_females = path.join('04_window_analysis', 'results',
                                  '{pop}_females_chrX_{filter_iter}_{window}' +
-                                 '_diversity.bed')
+                                 '_diversity.bed'),
         chrY = path.join('04_window_analysis', 'results',
                          '{pop}_males_chrY_{filter_iter}_{window}' +
                          '_diversity.bed')
