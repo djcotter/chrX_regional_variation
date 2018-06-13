@@ -81,4 +81,6 @@ p1 <- p1 + labs(list(x=paste('Position (', win_type, ')'),
 
 p1 <- p1 + geom_vline(aes(xintercept = 2.699520), linetype="dashed")
 
+p1 <- p1 + ylim(0,0.0045) # keep scales standard for all plots
+
 ggsave(file=opt$output, height=opt$height, width=opt$width, units=opt$units)

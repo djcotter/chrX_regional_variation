@@ -51,15 +51,18 @@ if(opt$chrom == 'chrX') {
     else if(x<= 93.193855 && x>= 88.193855){'blue'}
     else if(x >= 154.931044){'red'}
     else{'black'}
-  })
+    })
+  max_height <- 0.0045
 }else if(opt$chrom == 'chrY') {
   df$colors <- sapply(df$position, function(x){'black'})
+  max_height <- 0.0003
 } else {
   df$colors <- sapply(df$position, function(x){'black'})
+  max_height <- 0.0071
 }
 
 # create the ggplot
-p1 <- ggplot(df, aes(x=position, y=pi))
+p1 <- ggplot(df, aes(x=position, y=pi)) + ylim(0,max_height)
 
 p1 <- p1 + geom_point(col=df$colors) +
   labs(list(x=paste('Position (', win_type, ')'),
