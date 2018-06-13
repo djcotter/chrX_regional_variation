@@ -205,7 +205,7 @@ elif args.sliding is not True:
             data.append([w[0], w[1], w[2], float(pi_sum / sum_called),
                         sum_called, count])
         else:
-            data.append([w[0], w[1], w[2], pi_sum, "NA"])
+            data.append([w[0], w[1], w[2], pi_sum, "NA", "NA"])
 
 # if --sliding is provided in command, use old algorithm
 else:

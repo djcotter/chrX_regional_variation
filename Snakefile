@@ -58,18 +58,20 @@ rule all:
         # chrX analyzed by region for all pops
         expand('04_window_analysis/results/' +
                '{pops}_{group_chr}_{filter_iter}_byRegion_diversity.bed',
-               pops=POPS,
-               group_chr=SEX + '_chrX',
-               filter_iter=FILTER),
-        windoweded graphs of diversity results
+               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER),
+        # windoweded graphs of diversity results
         expand('06_figures/results/' +
                '{pops}_{group_chr}_{filter_iter}_{window}_diversity.png',
-               pops=POPS,
-               group_chr=GROUP_CHR,
+               pops=POPS, group_chr=GROUP_CHR,
                filter_iter=FILTER, window=WINDOW),
+        # windowed graphs of males and females across chrX
         expand('06_figures/results/' +
-               '{pop}_chrX_malesAndFemales_{filter_iter}_{window}_' +
-               'diversity.png', pop=POPS, filter_iter=FILTER, window=WINDOW)
+               '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
+               'diversity.png', pops=POPS, filter_iter=FILTER, window=WINDOW),
+        # windowed graphs of diversity across the PAB
+        expand('06_figures/results/' +
+               '{pops}_PAB_{filter_iter}_{window}_diversity.png',
+               pops=POPS, filter_iter=FILTER, window=WINDOW)
 
 rule parse_populations:
     input:
@@ -231,6 +233,9 @@ rule window_analysis:
         windows = path.join('04_window_analysis/inputs/',
                             '{chr}_{window}_window.bed')
     wildcard_constraints:
+        # this regular expression matches things like '100kb' or '1Mb'
+        # it is used as a way to allow all other window wildcards other than
+        # 'byRegion' to default to this rule
         window = '[0-9]+[A-Za-z]+'
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py',
@@ -258,7 +263,7 @@ rule window_analysis_byRegion:
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py'
     output:
-        path.join('04_window_analysis/results/',
+        path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
@@ -266,7 +271,7 @@ rule window_analysis_byRegion:
 
 rule plot_windowed_diversity:
     input:
-        path.join('04_window_analysis/results/',
+        path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
@@ -280,10 +285,10 @@ rule plot_windowed_diversity:
 
 rule plot_sex_specific_chrX_windows:
     input:
-        chrX_males = path.join('04_window_analysis/results/',
+        chrX_males = path.join('04_window_analysis', 'results',
                                '{pop}_males_chrX_{filter_iter}_{window}' +
                                '_diversity.bed'),
-        chrX_females = path.join('04_window_analysis/results/',
+        chrX_females = path.join('04_window_analysis', 'results',
                                  '{pop}_females_chrX_{filter_iter}_{window}' +
                                  '_diversity.bed')
     params:
@@ -296,3 +301,25 @@ rule plot_sex_specific_chrX_windows:
     shell:
         "Rscript {params.R_script} --males {input.chrX_males} --females "
         "{input.chrX_females} -o {output}"
+
+rule plot_PAB_diversity:
+    input:
+        chrX_males = path.join('04_window_analysis', 'results',
+                               '{pop}_males_chrX_{filter_iter}_{window}' +
+                               '_diversity.bed'),
+        chrX_females = path.join('04_window_analysis', 'results',
+                                 '{pop}_females_chrX_{filter_iter}_{window}' +
+                                 '_diversity.bed')
+        chrY = path.join('04_window_analysis', 'results',
+                         '{pop}_males_chrY_{filter_iter}_{window}' +
+                         '_diversity.bed')
+    params:
+        R_script = path.join('06_figures', 'scripts',
+                             'plot_PAB_diversity.R')
+    output:
+        path.join('06_figures', 'results',
+                  '{pop}_PAB_{filter_iter}_{window}_diversity.png')
+    shell:
+        "Rscript {params.R_script} --chrX_females {input.chrX_females} "
+        "--chrX_males {input.chrX_males} --chrY {input.chrY} "
+        "--output {output}"

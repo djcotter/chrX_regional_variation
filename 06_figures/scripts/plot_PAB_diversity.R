@@ -43,19 +43,19 @@ win_size <- 1000000 # 1 Mb
 win_type <- 'Mb' # 1 Mb
 
 # data frame should consist of cols: chr, start, end, value, called_sites, snp_count
-df_Xmales <- read.delim(opt$chrX_males, header=FALSE)
+df_Xmales <- read.delim(opt$chrX_males, header=FALSE, colClasses = c(NA,NA,NA,NA,NA,NA))
 df_Xmales$sex <- 'Males'
 df_Xmales$chr <- 'chrX'
 df_Xmales$position <- sapply(df_Xmales$V2, function(x){((x+(x+100000))/2)/win_size})
 df_Xmales$pi <- ifelse(df_Xmales$V5 == 'NA', NA, df_Xmales$V4)
 
-df_Xfemales <- read.delim(opt$chrX_females, header=FALSE)
+df_Xfemales <- read.delim(opt$chrX_females, header=FALSE, colClasses = c(NA,NA,NA,NA,NA,NA))
 df_Xfemales$sex <- 'Females'
 df_Xfemales$chr <- 'chrX'
 df_Xfemales$position <- sapply(df_Xfemales$V2, function(x){((x+(x+100000))/2)/win_size})
 df_Xfemales$pi <- ifelse(df_Xfemales$V5 == 'NA', NA, df_Xfemales$V4)
 
-df_Y <- read.delim(opt$chrY, header=FALSE)
+df_Y <- read.delim(opt$chrY, header=FALSE, colClasses = c(NA,NA,NA,NA,NA,NA))
 df_Y$sex <- 'Males'
 df_Y$chr <- 'chrY'
 df_Y$position <- sapply(df_Y$V2, function(x){((x+(x+100000))/2)/win_size})
