@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser(description="Calculate windowed diversity" +
                                  " across a chromosome.")
 
 # Parse the command line
-parser.add_argument("--windows", required=True,
+parser.add_argument("--windows", required=False,
                     help="Windowed Interval file defining how the analysis" +
                     " should be split up across the current chromosome.")
 parser.add_argument("--callable", required=True,
