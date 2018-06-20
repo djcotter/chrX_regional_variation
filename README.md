@@ -208,3 +208,12 @@ It also takes the following, optional formatting options:
 - Units (--units; default is inches)
 - Height (--height; default is 7.0)
 - Width (--width; default is 12.0)
+
+
+
+## TO DO
+- permutation tests for chrX regions
+- correct for substitution rate for windowed/byRegion files
+- filter for windows that have < 10% called
+- automate the LD analysis
+- 
