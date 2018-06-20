@@ -263,12 +263,15 @@ rule window_analysis_byRegion:
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py'
     output:
-        path.join('04_window_analysis', 'results',
-                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
+        temp(path.join('04_window_analysis', 'results',
+                       '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                       '_diversity.bed'))
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
-        "--callable {input.filtered_callable} --chrX_windows "
-        "--permute_chrX 10000 --output {output}"
+        "--callable {input.filtered_callable} --chrX_windows --output {output}"
+
+rule permute_chrX_regions:
+    
 
 rule plot_windowed_diversity:
     input:
