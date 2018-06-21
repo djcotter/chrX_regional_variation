@@ -32,6 +32,7 @@ WINDOW = ['100kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
+POPS = 'ALL'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -88,23 +89,23 @@ rule parse_populations:
 
 rule subset_VCF:
     input:
-        pop_file = '01_populations/results/{pops}_{group}',
+        pop_file = '01_populations/results/{pop}_{group}',
         vcf_file = lambda wildcards: config['chromosomes'][wildcards.chr]
     output:
-        temp(path.join('data', 'subset_{chr}_{pops}_{group}.vcf'))
+        temp(path.join('data', 'subset_{chr}_{pop}_{group}.vcf'))
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
 rule calculate_pi_chr8:
     input:
-        group = '01_populations/results/{pops}_{group}',
-        vcf = path.join('data', 'subset_chr8_{pops}_{group}.vcf')
+        group = '01_populations/results/{pop}_{group}',
+        vcf = path.join('data', 'subset_chr8_{pop}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
         path.join('02_diversity_by_site/results',
-                  '{pops}_{group}_chr8_pi_output_by_site.txt')
+                  '{pop}_{group}_chr8_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.vcf} "
         "--population_lists {input.group} --chrom_inc 8 "
@@ -112,14 +113,14 @@ rule calculate_pi_chr8:
 
 rule calculate_pi_chrX:
     input:
-        group = '01_populations/results/{pops}_{group}',
-        vcf = path.join('data', 'subset_chrX_{pops}_{group}.vcf')
+        group = '01_populations/results/{pop}_{group}',
+        vcf = path.join('data', 'subset_chrX_{pop}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
         path.join('02_diversity_by_site/results',
-                  '{pops}_{group}_chrX_pi_output_by_site.txt')
+                  '{pop}_{group}_chrX_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.vcf} "
         "--population_lists {input.group} --chrom_inc X "
@@ -127,14 +128,14 @@ rule calculate_pi_chrX:
 
 rule calculate_pi_chrY:
     input:
-        group = '01_populations/results/{pops}_{group}',
-        vcf = path.join('data', 'subset_chrY_{pops}_{group}.vcf')
+        group = '01_populations/results/{pop}_{group}',
+        vcf = path.join('data', 'subset_chrY_{pop}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
     output:
         path.join('02_diversity_by_site/results',
-                  '{pops}_{group}_chrY_pi_output_by_site.txt')
+                  '{pop}_{group}_chrY_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.vcf} "
         "--population_lists {input.group} --chrom_inc Y "
@@ -183,15 +184,15 @@ rule create_windows:
 
 rule convert_diverstiy_to_bed:
     input:
-        path.join('02_diversity_by_site/results',
-                  '{pops}_{group}_{chr}' +
+        path.join('02_diversity_by_site', 'results',
+                  '{pop}_{group}_{chr}' +
                   '_pi_output_by_site.txt')
     params:
         bedConvert = path.join('02_diversity_by_site', 'scripts',
                                'bedConvert.py')
     output:
-        temp(path.join('02_diversity_by_site,' 'results',
-                       '{pops}_{group}_{chr}' +
+        temp(path.join('02_diversity_by_site', 'results',
+                       '{pop}_{group}_{chr}' +
                        '_pi_output_by_site.bed'))
     shell:
         "python {params.bedConvert} {input} {output}"
@@ -210,13 +211,13 @@ rule filter_callable_sites:
 rule filter_diversity_by_site:
     input:
         diversity_by_site = path.join('02_diversity_by_site', 'results',
-                                      '{pops}_{group}_{chr}' +
+                                      '{pop}_{group}_{chr}' +
                                       '_pi_output_by_site.bed'),
         filtered_callable = path.join('04_window_analysis', 'inputs',
                                       'callable_sites_{chr}_{filter_iter}.bed')
     output:
         path.join('04_window_analysis', 'inputs',
-                  '{pops}_{group}_{chr}_{filter_iter}' +
+                  '{pop}_{group}_{chr}_{filter_iter}' +
                   '_pi_by_site.bed')
     shell:
         "bedtools intersect -a {input.diversity_by_site} "
@@ -230,7 +231,7 @@ rule window_analysis:
         filtered_callable = path.join('04_window_analysis', 'inputs',
                                       'callable_sites_{chr}_' +
                                       '{filter_iter}.bed'),
-        windows = path.join('04_window_analysis/inputs/',
+        windows = path.join('04_window_analysis', 'inputs',
                             '{chr}_{window}_window.bed')
     wildcard_constraints:
         # this regular expression matches things like '100kb' or '1Mb'
@@ -245,7 +246,7 @@ rule window_analysis:
     output:
         path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}' +
-                  '_diversity_unfiltered.bed')
+                  '_diversity.unfiltered.bed')
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
@@ -275,12 +276,17 @@ rule filter_windows_by_callable_sites:
     input:
         path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}' +
-                  '_diversity_unfiltered.bed')
+                  '_diversity.unfiltered.bed')
     params:
         script = path.join('04_window_analysis', 'scripts',
                            'filter_windows_byCallableSites.py'),
         winSize = lambda wildcards:
             config["windows"][wildcards.window]["win_size"],
+    wildcard_constraints:
+        # this regular expression matches things like '100kb' or '1Mb'
+        # it is used as a way to allow all other window wildcards other than
+        # 'byRegion' to default to this rule
+        window = '[0-9]+[A-Za-z]+'
     output:
         path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}' +
