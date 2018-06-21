@@ -214,6 +214,6 @@ It also takes the following, optional formatting options:
 ## TO DO
 - [x] permutation tests for chrX regions
 - [ ] correct for substitution rate for windowed/byRegion files
-- [x]filter for windows that have < 10% called
+- [x] filter for windows that have < 10% called
 - [ ] automate the LD analysis
 - [ ] ----
