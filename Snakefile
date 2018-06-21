@@ -190,7 +190,7 @@ rule convert_diverstiy_to_bed:
         bedConvert = path.join('02_diversity_by_site', 'scripts',
                                'bedConvert.py')
     output:
-        temp(path.join('02_diversity_by_site/results',
+        temp(path.join('02_diversity_by_site,' 'results',
                        '{pops}_{group}_{chr}' +
                        '_pi_output_by_site.bed'))
     shell:
@@ -209,7 +209,7 @@ rule filter_callable_sites:
 
 rule filter_diversity_by_site:
     input:
-        diversity_by_site = path.join('02_diversity_by_site/results',
+        diversity_by_site = path.join('02_diversity_by_site', 'results',
                                       '{pops}_{group}_{chr}' +
                                       '_pi_output_by_site.bed'),
         filtered_callable = path.join('04_window_analysis', 'inputs',
@@ -243,8 +243,9 @@ rule window_analysis:
             config["windows"][wildcards.window]["overlap"] is False else \
             '--sliding '
     output:
-        path.join('04_window_analysis/results/',
-                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                  '_diversity_unfiltered.bed')
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
@@ -263,15 +264,50 @@ rule window_analysis_byRegion:
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py'
     output:
-        temp(path.join('04_window_analysis', 'results',
+        temp(path.join('04_window_analysis',
                        '{pop}_{group}_{chr}_{filter_iter}_{window}' +
                        '_diversity.bed'))
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --chrX_windows --output {output}"
 
+rule filter_windows_by_callable_sites:
+    input:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                  '_diversity_unfiltered.bed')
+    params:
+        script = path.join('04_window_analysis', 'scripts',
+                           'filter_windows_byCallableSites.py'),
+        winSize = lambda wildcards:
+            config["windows"][wildcards.window]["win_size"],
+    output:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                  '_diversity.bed')
+    shell:
+        "python {params.script} --input {input} --windowSize {params.winSize} "
+        "--filter 0.1 --output {output}"
+
 rule permute_chrX_regions:
-    
+    input:
+        byWindow_100kb = path.join('04_window_analysis', 'results',
+                                   '{pop}_{group}_{chr}_{filter_iter}' +
+                                   '_100kb_diversity.bed'),
+        byRegion = path.join('04_window_analysis',
+                             '{pop}_{group}_{chr}_{filter_iter}' +
+                             '_byRegion_diversity.bed')
+    params:
+        permutation_script = path.join('04_window_analysis', 'scripts',
+                                       'permute_chrX_windows.py'),
+        replicates = 10000
+    output:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_byRegion_diversity.bed')
+    shell:
+        "python {params.permutation_script} --byRegion {input.byRegion} "
+        "--byWindow {input.byWindow_100kb} --replicates {params.replicates} "
+        "--output {output}"
 
 rule plot_windowed_diversity:
     input:

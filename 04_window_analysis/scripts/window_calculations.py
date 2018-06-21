@@ -247,7 +247,7 @@ else:
             data.append(['chrX', w[1], w[2], float(pi_sum / sum_called),
                          sum_called, count])
         else:
-            data.append(['chrX', w[1], w[2], pi_sum, "NA"])
+            data.append(['chrX', w[1], w[2], pi_sum, "NA", "NA"])
 
 # write the results to output_file or standard out depending on args
 if args.output is True:

@@ -212,8 +212,8 @@ It also takes the following, optional formatting options:
 
 
 ## TO DO
-- permutation tests for chrX regions
-- correct for substitution rate for windowed/byRegion files
-- filter for windows that have < 10% called
-- automate the LD analysis
-- 
+- [x] permutation tests for chrX regions
+- [ ] correct for substitution rate for windowed/byRegion files
+- [x]filter for windows that have < 10% called
+- [ ] automate the LD analysis
+- [ ] ----
