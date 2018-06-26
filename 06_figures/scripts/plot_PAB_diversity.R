@@ -16,7 +16,6 @@ option_list = list(
               help='height for figure'),
   make_option(c('--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']")
-
 )
 
 opt_parser = OptionParser(option_list=option_list)

@@ -76,9 +76,9 @@ rule all:
                '{pops}_PAB_{filter_iter}_{window}_diversity.png',
                pops=POPS, filter_iter=FILTER, window=WINDOW),
         # output for ld_window_analysis
-        expand('05_ld_windows/results/' +
+        expand('06_figures/results/' +
                '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI.txt',
+               '95bootstrapCI.png',
                pops=POPS, group_chr="chrX_females",
                window=WINDOW, ld_bin=LD_BIN)
 
@@ -289,7 +289,7 @@ rule filter_windows_by_callable_sites:
         script = path.join('04_window_analysis', 'scripts',
                            'filter_windows_byCallableSites.py'),
         winSize = lambda wildcards:
-            config["windows"][wildcards.window]["win_size"],
+            config["windows"][wildcards.window]["win_size"]
     wildcard_constraints:
         # this regular expression matches things like '100kb' or '1Mb'
         # it is used as a way to allow all other window wildcards other than
@@ -425,3 +425,20 @@ rule ld_window_analysis:
         "python average_ld_by_window.py --plink_ld {input.LD} "
         "--windows {input.windows} --binSize {params.LD_bin} "
         "--output {output}"
+
+rule plot_ld_windows:
+    input:
+        path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
+                  '{window}_windows_{ld_bin}_LDbins_95bootstrapCI.txt')
+    output:
+        path.join('06_figures', 'results',
+                  '{pop}_{chr}_{group}_{window}_windows_{ld_bin}' +
+                  '_LDbins_95bootstrapCI.png')
+    params:
+        R_script = path.join('06_figures', 'scripts',
+                             'plot_LD_bins.R'),
+        winSize = lambda wildcards:
+            config["windows"][wildcards.window]["win_size"],
+    shell:
+        "Rscript {params.R_script} -i {input} --winSize {params.winSize} "
+        "--zoom 15 -o {output}"

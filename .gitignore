@@ -9,3 +9,6 @@ cluster.json
 
 # Snakemake hidden directory #
 .snakemake/
+
+# R files
+.Rhistory
