@@ -29,6 +29,7 @@ SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 # select the filter from the configfile that should be used
 FILTER = ['filter1']
 WINDOW = ['100kb']
+LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
@@ -53,6 +54,8 @@ GROUP = [SEX, SEX, 'males']
 GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
 
 # Rules -----------------------------------------------------------------------
+
+# Global Rules ----------------------------------------------------------------
 rule all:
     input:
         # chrX analyzed by region for all pops
@@ -71,7 +74,13 @@ rule all:
         # windowed graphs of diversity across the PAB
         expand('06_figures/results/' +
                '{pops}_PAB_{filter_iter}_{window}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW)
+               pops=POPS, filter_iter=FILTER, window=WINDOW),
+        # output for ld_window_analysis
+        expand('05_ld_windows/results/' +
+               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+               '95bootstrapCI.txt',
+               pops=POPS, group_chr="chrX_females",
+               window=WINDOW, ld_bin=LD_BIN)
 
 rule parse_populations:
     input:
@@ -367,4 +376,52 @@ rule plot_PAB_diversity:
     shell:
         "Rscript {params.R_script} --chrX_females {input.chrX_females} "
         "--chrX_males {input.chrX_males} --chrY {input.chrY} "
+        "--output {output}"
+
+# LD analysis -----------------------------------------------------------------
+rule cythonize_ld_script:
+    input:
+        ld_analysis = '05_ld_windows/scripts/ld_analysis.pyx',
+        setup = '05_ld_windows/scripts/setup.py'
+    output:
+        '05_ld_windows/scripts/ld_analysis.c'
+    shell:
+        "python {input.setup} build_ext --inplace"
+
+rule filter_vcf:
+    input:
+        path.join('data', 'subset_{chr}_{pop}_{group}.vcf')
+    output:
+        temp(path.join('data', 'subset_{chr}_{pop}_{group}' +
+                       '_snpsONLY_mac_filtered.vcf'))
+    shadow: "shallow"
+    shell:
+        "bcftools view -m2 -M2 -v snps {input} > vcftools --vcf - "
+        "--mac 1 --recode --out {output}"
+
+rule calculate_ld:
+    input:
+        path.join('data', 'subset_{chr}_{pop}_{group}' +
+                  '_snpsONLY_mac_filtered.vcf')
+    output:
+        temp(path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2.ld'))
+    shadow: "shallow"
+    shell:
+        "plink2 --vcf {input} --memory 4000 --r2 with-freqs "
+        "--ld-window 700000 --ld-window-kb 1100 --out {output}"
+
+rule ld_window_analysis:
+    input:
+        LD = path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2.ld'),
+        windows = path.join('04_window_analysis', 'inputs',
+                            '{chr}_{window}_window.bed'),
+        script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
+    params:
+        LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size']
+    output:
+        path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
+                  '{window}_windows_{ld_bin}_LDbins_95bootstrapCI.txt')
+    shell:
+        "python average_ld_by_window.py --plink_ld {input.LD} "
+        "--windows {input.windows} --binSize {params.LD_bin} "
         "--output {output}"

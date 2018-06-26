@@ -14,6 +14,8 @@ dependencies:
   - bcftools
   - sympy
   - numpy
+  - cython
+  - plink2
   # R packages:
   - r-base
   - r-optparse

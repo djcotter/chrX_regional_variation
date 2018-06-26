@@ -1,38 +1,38 @@
 # path to JSON file with population codes
-POP_CODES: "populations.json"
+POP_CODES: populations.json
 
 # paths to relevant data files
 chromosomes:
-  chrX: "data/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz"
-  chrY: "data/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz"
-  chr8: "data/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz"
+  chrX: data/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz
+  chrY: data/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz
+  chr8: data/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
 
 panel:
-  - "data/integrated_call_samples_v3.20130502.ALL.panel"
+  - data/integrated_call_samples_v3.20130502.ALL.panel
 
 callable_sites:
-  - "data/20141020.strict_mask.whole_genome.bed"
+  - data/20141020.strict_mask.whole_genome.bed
 
 #chromosome filters
 filters:
   filter1:
-    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
-    - "simple_repeats_GRCh37"
-    - "centromere_telomere_coordinates_GRCh37"
-    - "CpG_islands_GRCh37"
+    - UCSC_refseq_gencode_gene_transcripts_GRCh37
+    - simple_repeats_GRCh37
+    - centromere_telomere_coordinates_GRCh37
+    - CpG_islands_GRCh37
   filter2:
-    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
-    - "simple_repeats_GRCh37"
-    - "segmental_dups_GRCh37"
+    - UCSC_refseq_gencode_gene_transcripts_GRCh37
+    - simple_repeats_GRCh37
+    - segmental_dups_GRCh37
   filter3:
-    - "centromere_telomere_coordinates_GRCh37"
-    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
+    - centromere_telomere_coordinates_GRCh37
+    - UCSC_refseq_gencode_gene_transcripts_GRCh37
   filter_all:
-    - "UCSC_refseq_gencode_gene_transcripts_GRCh37"
-    - "simple_repeats_GRCh37"
-    - "centromere_telomere_coordinates_GRCh37"
-    - "CpG_islands_GRCh37"
-    - "segmental_dups_GRCh37"
+    - UCSC_refseq_gencode_gene_transcripts_GRCh37
+    - simple_repeats_GRCh37
+    - centromere_telomere_coordinates_GRCh37
+    - CpG_islands_GRCh37
+    - segmental_dups_GRCh37
 
 # windows for Analysis
 windows:
@@ -48,3 +48,7 @@ windows:
     win_size: null
     overlap: False
     slide_size: null
+
+ld_bins:
+  300kb:
+    size: 300
