@@ -51,8 +51,8 @@ for i in range(len(diversity)):
         newVal = 0
     else:
         newVal = float(a) / float(b)
-    merged.append([diversity[0], diversity[1], diversity[2],
-                   newVal, diversity[4:]])
+    merged.append([diversity[i][0], diversity[i][1], diversity[i][2],
+                   newVal, diversity[i][4], diversity[i][5]])
 
 # write the results to output_file or standard out depending on args
 if args.output is True:
