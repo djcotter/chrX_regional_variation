@@ -68,7 +68,7 @@ nonPAR_mean = 0
 
 for window in windowed_diversity:
     # skip lines that do not have info or were filtered out
-    if window[4] == 'NA':
+    if window[4] == 'NA' or window[3] == 'NA':
         continue
 
     # track PAR1 window
