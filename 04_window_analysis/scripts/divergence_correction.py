@@ -49,7 +49,7 @@ for i in range(len(diversity)):
         newVal = 'NA'
     else:
         newVal = float(a) / float(b)
-    merged.append([diversity[0], diversity[1], diversity[2]
+    merged.append([diversity[0], diversity[1], diversity[2],
                    newVal, diversity[4:]])
 
 # write the results to output_file or standard out depending on args

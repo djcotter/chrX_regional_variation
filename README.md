@@ -204,7 +204,11 @@ The output of the window analysis script is a file with the following columns:
 <tr><th>Chr</th><th>Start Position</th><th>End Position</th><th><i>Pi</i></th><th>Sites called in window</th><th>Number of variants used to calculate <i>pi</i> in window</th></tr>
 </table>
 
-This rule filters out all windows where the number of sites called in the window is less than 10% of the total sites in that window (e.g. when the window is 100kb, any window with less than 10,000 called sites will be masked out). This rule checks the condition and changes the last three columns to NA if the filter is not passed. 
+This rule filters out all windows where the number of sites called in the window is less than 10% of the total sites in that window (e.g. when the window is 100kb, any window with less than 10,000 called sites will be masked out). This rule checks the condition and changes the last three columns to NA if the filter is not passed.
+
+### Rule: Divergence Correction
+
+This step filters the output of the window analysis file and corrects the diversity measure in each window by divergence values calculated using Galaxy. These files are included in the data/ folder for the filters that are used with this project. If you create your on filters, new divergence values will need to be calculated using Galaxy and downloaded then named correctly in the data/substitution_rates/ subdirectory. In order to calculate divergence values on Galaxy use the tool "Ext"
 
 ### Rule: Plot Windowed Diversity
 
@@ -218,6 +222,7 @@ It also takes the following, optional formatting options:
 - Height (--height; default is 7.0)
 - Width (--width; default is 12.0)
 
+### Rule: Plot
 
 
 ## TO DO
