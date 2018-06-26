@@ -38,6 +38,8 @@ POPS = POPULATIONS + SUBPOPULATIONS
 # use "males", "females", or "individuals" (for both)
 SEX = 'individuals'
 
+# select the pairwise substitution rates to use for divergence correction
+CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected']
 
 # Global variables ------------------------------------------------------------
 
@@ -60,27 +62,34 @@ rule all:
     input:
         # chrX analyzed by region for all pops
         expand('04_window_analysis/results/' +
-               '{pops}_{group_chr}_{filter_iter}_byRegion_diversity.bed',
-               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER),
+               '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
+               '_diversity.bed',
+               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
+               correction=CORRECTION),
         # windoweded graphs of diversity results
         expand('06_figures/results/' +
-               '{pops}_{group_chr}_{filter_iter}_{window}_diversity.png',
+               '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
+               '_diversity.png',
                pops=POPS, group_chr=GROUP_CHR,
-               filter_iter=FILTER, window=WINDOW),
+               filter_iter=FILTER, window=WINDOW,
+               correction=CORRECTION),
         # windowed graphs of males and females across chrX
         expand('06_figures/results/' +
                '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
-               'diversity.png', pops=POPS, filter_iter=FILTER, window=WINDOW),
+               '{correction}_diversity.png',
+               pops=POPS, filter_iter=FILTER, window=WINDOW,
+               correction=CORRECTION),
         # windowed graphs of diversity across the PAB
         expand('06_figures/results/' +
-               '{pops}_PAB_{filter_iter}_{window}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW),
+               '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
+               pops=POPS, filter_iter=FILTER, window=WINDOW,
+               correction=CORRECTION),
         # output for ld_window_analysis
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI.png',
-               pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN)
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+        #        '95bootstrapCI.png',
+        #        pops=POPS, group_chr="chrX_females",
+        #        window=WINDOW, ld_bin=LD_BIN)
 
 rule parse_populations:
     input:
@@ -303,11 +312,42 @@ rule filter_windows_by_callable_sites:
         "python {params.script} --input {input} --windowSize {params.winSize} "
         "--filter 0.1 --output {output}"
 
+rule create_pseudo_uncorrected_divergence:
+    output:
+        temp(path.join('data', 'substitution_rates',
+                       '{chr}_uncorrected_{filter_iter}_{window}' +
+                       '_substitution_rates.txt'))
+    shell:
+        "touch {output}"
+
+rule windowed_divergence_correction:
+    input:
+        diversity = path.join('04_window_analysis', 'results',
+                              '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                              '_diversity.bed'),
+        divergence = path.join('data', 'substitution_rates',
+                               '{chr}_{correction}_{filter_iter}_{window}' +
+                               '_substitution_rates.txt')
+    params:
+        corrected = lambda wildcards: False if wildcards.correction == \
+            "uncorrected" else True,
+        script = '04_window_analysis/scripts/divergence_correction.py'
+    output:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}_' +
+                  '{correction}_diversity.bed')
+    run:
+        if params.corrected is True:
+            shell("python {params.script} --diversity {input.diversity} " +
+                  "--divergence {input.divergence} --output {output}")
+        else:
+            shell("cp {input.diversity} {output.corrected}")
+
 rule permute_chrX_regions:
     input:
         byWindow_100kb = path.join('04_window_analysis', 'results',
                                    '{pop}_{group}_{chr}_{filter_iter}' +
-                                   '_100kb_diversity.bed'),
+                                   '_100kb_{correction}_diversity.bed'),
         byRegion = path.join('04_window_analysis',
                              '{pop}_{group}_{chr}_{filter_iter}' +
                              '_byRegion_diversity.bed')
@@ -317,7 +357,8 @@ rule permute_chrX_regions:
         replicates = 10000
     output:
         path.join('04_window_analysis', 'results',
-                  '{pop}_{group}_{chr}_{filter_iter}_byRegion_diversity.bed')
+                  '{pop}_{group}_{chr}_{filter_iter}_byRegion_{correction}' +
+                  '_diversity.bed')
     shell:
         "python {params.permutation_script} --byRegion {input.byRegion} "
         "--byWindow {input.byWindow_100kb} --replicates {params.replicates} "
@@ -326,14 +367,16 @@ rule permute_chrX_regions:
 rule plot_windowed_diversity:
     input:
         path.join('04_window_analysis', 'results',
-                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.bed')
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}_{correction}' +
+                  '_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_windowed_diversity.R'),
         chrom = lambda wildcards: wildcards.chr
     output:
         path.join('06_figures', 'results',
-                  '{pop}_{group}_{chr}_{filter_iter}_{window}_diversity.png')
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}_{correction}' +
+                  '_diversity.png')
     shell:
         "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom}"
 
@@ -341,17 +384,17 @@ rule plot_sex_specific_chrX_windows:
     input:
         chrX_males = path.join('04_window_analysis', 'results',
                                '{pop}_males_chrX_{filter_iter}_{window}' +
-                               '_diversity.bed'),
+                               '_{correction}_diversity.bed'),
         chrX_females = path.join('04_window_analysis', 'results',
                                  '{pop}_females_chrX_{filter_iter}_{window}' +
-                                 '_diversity.bed')
+                                 '_{correction}_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_chrX_maleFemale_diversity.R')
     output:
         path.join('06_figures', 'results',
                   '{pop}_chrX_malesAndFemales_{filter_iter}_{window}' +
-                  '_diversity.png')
+                  '_{correction}_diversity.png')
     shell:
         "Rscript {params.R_script} --males {input.chrX_males} --females "
         "{input.chrX_females} -o {output}"
@@ -360,19 +403,20 @@ rule plot_PAB_diversity:
     input:
         chrX_males = path.join('04_window_analysis', 'results',
                                '{pop}_males_chrX_{filter_iter}_{window}' +
-                               '_diversity.bed'),
+                               '_{correction}_diversity.bed'),
         chrX_females = path.join('04_window_analysis', 'results',
                                  '{pop}_females_chrX_{filter_iter}_{window}' +
-                                 '_diversity.bed'),
+                                 '_{correction}_diversity.bed'),
         chrY = path.join('04_window_analysis', 'results',
                          '{pop}_males_chrY_{filter_iter}_{window}' +
-                         '_diversity.bed')
+                         '_{correction}_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_PAB_diversity.R')
     output:
         path.join('06_figures', 'results',
-                  '{pop}_PAB_{filter_iter}_{window}_diversity.png')
+                  '{pop}_PAB_{filter_iter}_{window}_{correction}' +
+                  '_diversity.png')
     shell:
         "Rscript {params.R_script} --chrX_females {input.chrX_females} "
         "--chrX_males {input.chrX_males} --chrY {input.chrY} "

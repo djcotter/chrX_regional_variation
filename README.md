@@ -197,6 +197,15 @@ These three files will be used to get a calculation of diversity in each window 
 
 **NOTE: The current window_analysis.py script is more efficient as long as the provided window file is not sliding windows.**
 
+### Rule: Filter Windows by Callable Sites
+
+The output of the window analysis script is a file with the following columns:
+<table>
+<tr><th>Chr</th><th>Start Position</th><th>End Position</th><th><i>Pi</i></th><th>Sites called in window</th><th>Number of variants used to calculate <i>pi</i> in window</th></tr>
+</table>
+
+This rule filters out all windows where the number of sites called in the window is less than 10% of the total sites in that window (e.g. when the window is 100kb, any window with less than 10,000 called sites will be masked out). This rule checks the condition and changes the last three columns to NA if the filter is not passed. 
+
 ### Rule: Plot Windowed Diversity
 
 This rule integrates an R script that will take as input the windowed diversity and output a graph of diversity across the chromosome. It takes the following required options:

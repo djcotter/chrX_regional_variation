@@ -46,11 +46,11 @@ window_file[14][4] == 'NA'
 # loop through input and mask windows that don't pass filter
 for line in window_file:
     if line[4] == 'NA':
-        line[3] = 0
+        line[3] = 'NA'
         line[4] = 'NA'
         line[5] = 'NA'
     elif int(line[4]) < filter:
-        line[3] = 0
+        line[3] = 'NA'
         line[4] = 'NA'
         line[5] = 'NA'
 
