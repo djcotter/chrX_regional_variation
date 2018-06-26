@@ -50,7 +50,6 @@ for i in range(len(diversity)):
     elif float(a) == 0 or float(b) == 0:
         newVal = 0
     else:
-        print(diversity[i][1], ", ", a, ", ", b)
         newVal = float(a) / float(b)
     merged.append([diversity[0], diversity[1], diversity[2],
                    newVal, diversity[4:]])
