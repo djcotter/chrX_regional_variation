@@ -341,7 +341,7 @@ rule windowed_divergence_correction:
             shell("python {params.script} --diversity {input.diversity} " +
                   "--divergence {input.divergence} --output {output}")
         else:
-            shell("cp {input.diversity} {output.corrected}")
+            shell("cp {input.diversity} {output}")
 
 rule permute_chrX_regions:
     input:
