@@ -85,11 +85,11 @@ rule all:
                pops=POPS, filter_iter=FILTER, window=WINDOW,
                correction=CORRECTION),
         # output for ld_window_analysis
-        # expand('06_figures/results/' +
-        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-        #        '95bootstrapCI.png',
-        #        pops=POPS, group_chr="chrX_females",
-        #        window=WINDOW, ld_bin=LD_BIN)
+        expand('06_figures/results/' +
+               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+               '95bootstrapCI.png',
+               pops=POPS, group_chr="chrX_females",
+               window=WINDOW, ld_bin=LD_BIN)
 
 rule parse_populations:
     input:
