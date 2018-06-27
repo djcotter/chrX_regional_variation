@@ -432,9 +432,19 @@ rule cythonize_ld_script:
     shell:
         "python {input.setup} build_ext --inplace"
 
+rule subset_VCF_for_LD:
+    input:
+        pop_file = '01_populations/results/{pop}_{group}',
+        vcf_file = lambda wildcards: config['chromosomes'][wildcards.chr]
+    output:
+        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'))
+    shell:
+        "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
+
+
 rule filter_vcf:
     input:
-        path.join('data', 'subset_{chr}_{pop}_{group}.vcf')
+        path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
     output:
         temp(path.join('data', 'subset_{chr}_{pop}_{group}' +
                        '_snpsONLY_mac_filtered.vcf'))
