@@ -230,3 +230,4 @@ It also takes the following, optional formatting options:
 - [x] correct for substitution rate for windowed/byRegion files
 - [x] filter for windows that have < 10% called
 - [x] automate the LD analysis
+- [ ] add flag to Rscripts to change **Ylim** for divergence-corrected results

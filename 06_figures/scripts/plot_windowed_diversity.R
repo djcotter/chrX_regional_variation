@@ -61,6 +61,8 @@ if(opt$chrom == 'chrX') {
   max_height <- 0.0071
 }
 
+#max_height = 0.06
+
 # create the ggplot
 p1 <- ggplot(df, aes(x=position, y=pi)) + ylim(0,max_height)
 
