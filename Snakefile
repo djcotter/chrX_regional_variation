@@ -33,6 +33,7 @@ LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
+POPS = 'ALL'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -450,7 +451,7 @@ rule filter_vcf:
                        '_snpsONLY_mac_filtered.vcf'))
     shadow: "shallow"
     shell:
-        "bcftools view -m2 -M2 -v snps {input} > vcftools --vcf - "
+        "bcftools view -m2 -M2 -v snps {input} | vcftools --vcf - "
         "--mac 1 --recode --out {output}"
 
 rule calculate_ld:
@@ -462,7 +463,7 @@ rule calculate_ld:
     shadow: "shallow"
     shell:
         "plink2 --vcf {input} --memory 4000 --r2 with-freqs "
-        "--ld-window 700000 --ld-window-kb 1100 --out {output}"
+        "--ld-window 700000 --ld-window-kb 800 --out {output}"
 
 rule ld_window_analysis:
     input:
