@@ -33,14 +33,14 @@ LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
-POPS = 'ALL'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
 SEX = 'individuals'
 
 # select the pairwise substitution rates to use for divergence correction
-CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected']
+CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected',
+              'canFam3-hg19-corrected', 'calJac3-hg19-corrected']
 
 # Global variables ------------------------------------------------------------
 
