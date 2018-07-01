@@ -268,7 +268,7 @@ This command returns a **X-delimited** file in the following format:
 <tr><th>x</th> <th>x</th> <th>x</th> <th>x</th> <th>x</th> <th>x</th></tr>
 </table>
 
-The **--memory** flag is used to restict `plink2` from overusing allocated memory on the cluster. We tell the program to only use 4GB at a time. The **--r2 with-freqs** flag is used to tell plink to calculate R<sup>2</sup> values for pairwise comparisons up to 800 kb or 700000 sites away from each site. *with-freqs* tells the program to output a column with minor allele frequencies to the table.
+The **--memory** flag is used to restrict `plink2` from overusing allocated memory on the cluster. We tell the program to only use 4GB at a time. The **--r2 with-freqs** flag is used to tell plink to calculate R<sup>2</sup> values for pairwise comparisons up to 800 kb or 700000 sites away from each site. *with-freqs* tells the program to output a column with minor allele frequencies to the table.
 
 
 ## TO DO
@@ -277,4 +277,4 @@ The **--memory** flag is used to restict `plink2` from overusing allocated memor
 - [x] filter for windows that have < 10% called
 - [x] automate the LD analysis
 - [ ] add flag to Rscripts to change **Ylim** for divergence-corrected results
-- [ ] update divergence correction portion of script for calJac3-hg19 and canFam3-hg19.
+- [x] update divergence correction portion of script for calJac3-hg19 and canFam3-hg19.
