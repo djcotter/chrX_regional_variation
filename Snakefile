@@ -449,11 +449,11 @@ rule filter_vcf:
         path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
     params:
         out_path = path.join('data', 'subset_{chr}_{pop}_{group}' +
-                             '_snpsONLY_mac_filtered')
+                             '_snpsONLY-mac-filtered')
     output:
         temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
                        '_snpsONLY-mac-filtered.recode.vcf'))
-    shadow: "shallow"
+    shadow: "full"
     shell:
         "bcftools view -m2 -M2 -v snps {input} | vcftools --vcf - "
         "--mac 1 --recode --out {params.out_path}"
@@ -466,7 +466,7 @@ rule calculate_ld:
         out_path = path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2')
     output:
         temp(path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2.ld'))
-    shadow: "shallow"
+    shadow: "full"
     shell:
         "plink2 --vcf {input} --memory 4000 --r2 with-freqs "
         "--threads 2 --ld-window-kb 800 --out {params.out_path}"
