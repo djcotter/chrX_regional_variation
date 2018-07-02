@@ -33,6 +33,7 @@ LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
+POPS = 'ALL'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -450,8 +451,8 @@ rule filter_vcf:
         out_path = path.join('data', 'subset_{chr}_{pop}_{group}' +
                              '_snpsONLY_mac_filtered')
     output:
-        temp(path.join('data', 'subset_{chr}_{pop}_{group}' +
-                       '_snpsONLY_mac_filtered.recode.vcf'))
+        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
+                       '_snpsONLY-mac-filtered.recode.vcf'))
     shadow: "shallow"
     shell:
         "bcftools view -m2 -M2 -v snps {input} | vcftools --vcf - "
@@ -459,8 +460,8 @@ rule filter_vcf:
 
 rule calculate_ld:
     input:
-        path.join('data', 'subset_{chr}_{pop}_{group}' +
-                  '_snpsONLY_mac_filtered.vcf')
+        path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
+                  '_snpsONLY-mac-filtered.recode.vcf')
     params:
         out_path = path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2')
     output:
