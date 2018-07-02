@@ -478,12 +478,13 @@ rule ld_window_analysis:
                             '{chr}_{window}_window.bed'),
         script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
     params:
-        LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size']
+        LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size'],
+        script = '05_ld_windows/scripts/average_ld_by_window.py'
     output:
         path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
                   '{window}_windows_{ld_bin}_LDbins_95bootstrapCI.txt')
     shell:
-        "python average_ld_by_window.py --plink_ld {input.LD} "
+        "python {params.script} --plink_ld {input.LD} "
         "--windows {input.windows} --binSize {params.LD_bin} "
         "--output {output}"
 
