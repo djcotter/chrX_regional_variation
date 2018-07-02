@@ -88,9 +88,9 @@ rule all:
         # output for ld_window_analysis
         expand('06_figures/results/' +
                '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI.png',
+               '95bootstrapCI_{plotSize}Mb.png',
                pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN)
+               window=WINDOW, ld_bin=LD_BIN, plotSize=['15', '156'])
 
 rule parse_populations:
     input:
@@ -488,12 +488,13 @@ rule plot_ld_windows:
     output:
         path.join('06_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{ld_bin}' +
-                  '_LDbins_95bootstrapCI.png')
+                  '_LDbins_95bootstrapCI_{LDplotSize}Mb.png')
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_LD_bins.R'),
         winSize = lambda wildcards:
             config["windows"][wildcards.window]["win_size"],
+        plot_size = lambda wildcards: wildcards.LDplotSize
     shell:
         "Rscript {params.R_script} -i {input} --winSize {params.winSize} "
-        "--zoom 15 -o {output}"
+        "--zoom {params.plot_size} -o {output}"
