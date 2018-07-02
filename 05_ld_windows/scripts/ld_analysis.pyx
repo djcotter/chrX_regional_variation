@@ -140,8 +140,9 @@ def LD_loop(input_file, window_coordinates, int ld_bin_size):
                     results.append([windows[1], windows[2],
                                     mean_LD(R2_values), bootstrap[0],
                                     bootstrap[1]])
-                    print("{} base pairs analyzed across {}".format(
-                        windows[1], windows[0]))
+                    if windows[1] % 1e6 == 0:
+                        print("{} base pairs analyzed across {}".format(
+                            windows[1], windows[0]))
                     R2_values = {}
                     win_num += 1
                     windows = window_coordinates[win_num]

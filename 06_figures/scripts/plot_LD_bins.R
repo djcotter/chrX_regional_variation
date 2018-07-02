@@ -22,7 +22,7 @@ opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 opt$units = tolower(opt$units)
 
-if(is.null(opt$input) || is.null(opt$output-root)) {
+if(is.null(opt$input) || is.null(opt$output)) {
   print_help(opt_parser)
   stop("Input and Output files must be specified.", call.=FALSE)
 }
