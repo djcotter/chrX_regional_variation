@@ -448,7 +448,7 @@ rule filter_vcf:
     input:
         path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
     params:
-        out_path = path.join('data', 'subset_{chr}_{pop}_{group}' +
+        out_path = path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
                              '_snpsONLY-mac-filtered')
     output:
         temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
