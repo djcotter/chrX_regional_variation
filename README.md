@@ -270,6 +270,9 @@ This command returns a **X-delimited** file in the following format:
 
 The **--memory** flag is used to restrict `plink2` from overusing allocated memory on the cluster. We tell the program to only use 4GB at a time. The **--r2 with-freqs** flag is used to tell plink to calculate R<sup>2</sup> values for pairwise comparisons up to 800 kb or 700000 sites away from each site. *with-freqs* tells the program to output a column with minor allele frequencies to the table.
 
+### Rule: LD by window
+
+Since the output of the `plink2` rule above is a series of pairwise comparisons between sites across the X chromosome, we need to create a score for each window across the chromosome. We do this by specifying the windows in which to calculate an average R^2 and then we calculate the average LD for every site within that window as it is compared to all sits within +/- the LD bin distance of this site. In this way we can calculate R^2 as it extends beyond each window, but still keep the score as it is calculated in each window. We start by specifying each site as a focal position and we calculate an average score of the LD between this site and any site within BIN kb of this site in either direction. Upon reaching the end of a window, we then get the average of these average scores to create a value specifically for each window. In this way, we can get trends of linkage across chrX.
 
 ## TO DO
 - [x] permutation tests for chrX regions
