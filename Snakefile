@@ -464,8 +464,10 @@ rule calculate_ld:
     output:
         temp(path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2.ld'))
     shadow: "full"
+    threads: 4
     shell:
-        "plink2 --vcf {input} --memory 4000 --r2 with-freqs --threads 2 "
+        "plink2 --vcf {input} --r2 with-freqs --memory 8000 "
+        "--threads {threads} "
         "--ld-window 700000 --ld-window-kb 1100 --out {params.out_path}"
 
 rule ld_window_analysis:

@@ -6,6 +6,7 @@ chromosomes:
   chrX: data/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz
   chrY: data/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz
   chr8: data/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+  chr9: data/ALL.chr9.
 
 panel:
   - data/integrated_call_samples_v3.20130502.ALL.panel
@@ -52,3 +53,21 @@ windows:
 ld_bins:
   300kb:
     size: 300
+
+# parameters for the max height of the diversity plots
+uncorrected:
+  chrX: 0.004
+  chrY: 0.0003
+  chr8: 0.004
+rhemac2-hg19-corrected:
+  chrX: 0.045
+  chrY:
+  chr8:
+canFam3-hg19-corrected:
+  chrX:
+  chrY:
+  chr8:
+calJac3-hg19-corrected:
+  chrX:
+  chrY:
+  chr8:
