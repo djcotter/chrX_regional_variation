@@ -447,21 +447,18 @@ rule subset_VCF_for_LD:
 rule filter_vcf:
     input:
         path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
-    params:
-        out_path = path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
-                             '_snpsONLY-mac-filtered')
     output:
         temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
-                       '_snpsONLY-mac-filtered.recode.vcf'))
+                       '_snpsONLY-mac-filtered.vcf'))
     shadow: "full"
     shell:
-        "bcftools view -m2 -M2 -v snps {input} | vcftools --vcf - "
-        "--mac 1 --recode --out {params.out_path}"
+        "bcftools view -Ob -m2 -M2 -v snps {input} | bcftools view -Ov "
+        "--min-ac 1:minor > {output}"
 
 rule calculate_ld:
     input:
         path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
-                  '_snpsONLY-mac-filtered.recode.vcf')
+                  '_snpsONLY-mac-filtered.vcf')
     params:
         out_path = path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2')
     output:
