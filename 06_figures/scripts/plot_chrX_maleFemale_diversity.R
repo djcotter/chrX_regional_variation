@@ -15,7 +15,9 @@ option_list = list(
   make_option(c('--height'), type='double', default=7.0,
               help='height for figure'),
   make_option(c('--units'), type='character', default='in',
-              help='units for the figure', metavar="['in', 'cm', 'mm']")
+              help='units for the figure', metavar="['in', 'cm', 'mm']"),
+  make_option(c('--maxHeight'), type='double', default=1,
+              help='max height for the plot (ylim).')
 
 )
 
