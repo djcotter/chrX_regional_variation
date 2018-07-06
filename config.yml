@@ -59,15 +59,15 @@ uncorrected:
   chrX: 0.004
   chrY: 0.0003
   chr8: 0.004
-rhemac2-hg19-corrected:
+rheMac2-hg19-corrected:
   chrX: 0.045
-  chrY:
-  chr8:
+  chrY: 0.04
+  chr8: 0.055
 canFam3-hg19-corrected:
-  chrX:
-  chrY:
-  chr8:
+  chrX: 0.02
+  chrY: 0.02
+  chr8: 0.02
 calJac3-hg19-corrected:
-  chrX:
-  chrY:
-  chr8:
+  chrX: 0.03
+  chrY: 0.03
+  chr8: 0.03

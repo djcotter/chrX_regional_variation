@@ -33,6 +33,7 @@ LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
+POPS = 'ALL'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -373,13 +374,15 @@ rule plot_windowed_diversity:
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_windowed_diversity.R'),
-        chrom = lambda wildcards: wildcards.chr
+        chrom = lambda wildcards: wildcards.chr,
+        height = lambda wildcards: config[wildcards.correction][wildcards.chr]
     output:
         path.join('06_figures', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_{correction}' +
                   '_diversity.png')
     shell:
-        "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom}"
+        "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom} "
+        "--maxHeight {params.height}"
 
 rule plot_sex_specific_chrX_windows:
     input:
@@ -391,14 +394,15 @@ rule plot_sex_specific_chrX_windows:
                                  '_{correction}_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
-                             'plot_chrX_maleFemale_diversity.R')
+                             'plot_chrX_maleFemale_diversity.R'),
+        height = lambda wildcards: config[wildcards.correction]['chrX']
     output:
         path.join('06_figures', 'results',
                   '{pop}_chrX_malesAndFemales_{filter_iter}_{window}' +
                   '_{correction}_diversity.png')
     shell:
         "Rscript {params.R_script} --males {input.chrX_males} --females "
-        "{input.chrX_females} -o {output}"
+        "{input.chrX_females} --maxHeight {params.height} -o {output}"
 
 rule plot_PAB_diversity:
     input:
@@ -413,7 +417,8 @@ rule plot_PAB_diversity:
                          '_{correction}_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
-                             'plot_PAB_diversity.R')
+                             'plot_PAB_diversity.R'),
+        height = lambda wildcards: config[wildcards.correction]['chrX']
     output:
         path.join('06_figures', 'results',
                   '{pop}_PAB_{filter_iter}_{window}_{correction}' +
@@ -421,7 +426,7 @@ rule plot_PAB_diversity:
     shell:
         "Rscript {params.R_script} --chrX_females {input.chrX_females} "
         "--chrX_males {input.chrX_males} --chrY {input.chrY} "
-        "--output {output}"
+        "--maxHeight {params.height} --output {output}"
 
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
@@ -502,4 +507,4 @@ rule plot_ld_windows:
         plot_size = lambda wildcards: wildcards.LDplotSize
     shell:
         "Rscript {params.R_script} -i {input} --winSize {params.winSize} "
-        "--zoom {params.plot_size} -o {output}"
+        "--zoom {params.plot_size} -o {output} --maxHeight 1"
