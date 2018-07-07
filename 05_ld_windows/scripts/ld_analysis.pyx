@@ -144,8 +144,9 @@ def LD_loop(input_file, window_coordinates, int ld_bin_size):
                         print("{} base pairs analyzed across {}".format(
                             windows[1], windows[0]))
                     R2_values = {}
-                    win_num += 1
-                    windows = window_coordinates[win_num]
+                    while not (fp < windows[2] and fp > windows[1]):
+                        win_num += 1
+                        windows = window_coordinates[win_num]
 
                 R2_values[fp] = []
 
