@@ -30,6 +30,8 @@ Variant data is from The 1000 Genomes Project phase3 VCF files for chrX, chrY, &
 
 - **chr8:** [ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz "chr8")
 
+- **chr9:** [ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz "chr9")
+
 #### Genome masks
 The strict mask as provided by The 1000 genomes Project is used for identifying monomorphic sites. It is provided as a whole genome bed file:
 
@@ -279,5 +281,5 @@ Since the output of the `plink2` rule above is a series of pairwise comparisons 
 - [x] correct for substitution rate for windowed/byRegion files
 - [x] filter for windows that have < 10% called
 - [x] automate the LD analysis
-- [ ] add flag to Rscripts to change **Ylim** for divergence-corrected results
+- [x] add flag to Rscripts to change **Ylim** for divergence-corrected results
 - [x] update divergence correction portion of script for calJac3-hg19 and canFam3-hg19.

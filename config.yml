@@ -6,7 +6,7 @@ chromosomes:
   chrX: data/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz
   chrY: data/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz
   chr8: data/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-  chr9: data/ALL.chr9.
+  chr9: data/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
 
 panel:
   - data/integrated_call_samples_v3.20130502.ALL.panel

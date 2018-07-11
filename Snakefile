@@ -45,7 +45,7 @@ CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected',
 # Global variables ------------------------------------------------------------
 
 # defines the chromosomes to be analyzed
-CHR = ['chrX', 'chr8', 'chrY']  # script not built for additional chromosomes
+CHR = ['chrX', 'chr8', 'chr9', 'chrY']  # script not built for more chromosomes
 
 # link to diversity script
 DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
@@ -53,7 +53,7 @@ DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
 
 # takes the provided SEX and combines it with chromosomes to generate group_chr
 # this is only in order to keep group and chr associated in rule all
-GROUP = [SEX, SEX, 'males']
+GROUP = [SEX, SEX, SEX, 'males']
 GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
 
 # Rules -----------------------------------------------------------------------
@@ -114,19 +114,22 @@ rule subset_VCF:
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
-rule calculate_pi_chr8:
+rule calculate_pi_autosomes:
     input:
         group = '01_populations/results/{pop}_{group}',
-        vcf = path.join('data', 'subset_chr8_{pop}_{group}.vcf')
+        vcf = path.join('data', 'subset_{chr}_{pop}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
-        out_dir = '02_diversity_by_site/results/'
+        out_dir = '02_diversity_by_site/results/',
+        chrom = lambda wildcards: wildcards.chr[3:]
+    wildcard_constraints:
+        chr = 'chr[0-9]+'
     output:
         path.join('02_diversity_by_site/results',
-                  '{pop}_{group}_chr8_pi_output_by_site.txt')
+                  '{pop}_{group}_{chr}_pi_output_by_site.txt')
     shell:
         "python {params.calc_pi} --vcf {input.vcf} "
-        "--population_lists {input.group} --chrom_inc 8 "
+        "--population_lists {input.group} --chrom_inc {params.chrom} "
         "--out_directory {params.out_dir}"
 
 rule calculate_pi_chrX:
@@ -279,7 +282,7 @@ rule window_analysis_byRegion:
                                       'callable_sites_{chr}_' +
                                       '{filter_iter}.bed')
     wildcard_constraints:
-        window = "byRegion"
+        window = 'byRegion'
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py'
     output:
