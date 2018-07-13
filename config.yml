@@ -55,19 +55,24 @@ ld_bins:
     size: 300
 
 # parameters for the max height of the diversity plots
+# chr9 heights need to be edited
 uncorrected:
   chrX: 0.004
   chrY: 0.0003
   chr8: 0.004
+  chr9: 0.03
 rheMac2-hg19-corrected:
   chrX: 0.045
   chrY: 0.04
   chr8: 0.055
+  chr9: 0.03
 canFam3-hg19-corrected:
   chrX: 0.02
   chrY: 0.02
   chr8: 0.02
+  chr9: 0.03
 calJac3-hg19-corrected:
   chrX: 0.03
   chrY: 0.03
   chr8: 0.03
+  chr9: 0.03
