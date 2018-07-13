@@ -44,7 +44,7 @@ with open(args.divergence, 'r') as f:
 merged = []
 for i in range(len(diversity)):
     a = diversity[i][3]
-    b = divergence[i][5]
+    b = divergence[i][6]
     if a == 'NA' or b == 'NA':
         newVal = 'NA'
     elif float(a) == 0 or float(b) == 0:

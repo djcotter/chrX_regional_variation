@@ -316,11 +316,28 @@ rule filter_windows_by_callable_sites:
         "python {params.script} --input {input} --windowSize {params.winSize} "
         "--filter 0.1 --output {output}"
 
+rule divergence_JukesCantor69_correction:
+    input:
+        path.join('data', 'substitution_rates',
+                  '{chr}_{correction}_{filter_iter}_{window}' +
+                  '_substitution_rates.txt')
+    wildcard_constraints:
+        correction = "!uncorrected"
+    params:
+        script = path.join('data', 'substitution_rates', 'scripts',
+                           'Calculate_JC69_from_Galaxy_output.py')
+    output:
+        path.join('data', 'substitution_rates',
+                  '{chr}_{correction}_{filter_iter}_{window}' +
+                  '_JC69_substitution_rates.txt')
+    shell:
+        "python {params.script} --input_file {input} --output_file {output}"
+
 rule create_pseudo_uncorrected_divergence:
     output:
         temp(path.join('data', 'substitution_rates',
                        '{chr}_uncorrected_{filter_iter}_{window}' +
-                       '_substitution_rates.txt'))
+                       '_JC69_substitution_rates.txt'))
     shell:
         "touch {output}"
 
@@ -331,7 +348,7 @@ rule windowed_divergence_correction:
                               '_diversity.bed'),
         divergence = path.join('data', 'substitution_rates',
                                '{chr}_{correction}_{filter_iter}_{window}' +
-                               '_substitution_rates.txt')
+                               '_JC69_substitution_rates.txt')
     params:
         corrected = lambda wildcards: False if wildcards.correction == \
             "uncorrected" else True,
