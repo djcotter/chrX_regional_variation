@@ -283,3 +283,4 @@ Since the output of the `plink2` rule above is a series of pairwise comparisons 
 - [x] automate the LD analysis
 - [x] add flag to Rscripts to change **Ylim** for divergence-corrected results
 - [x] update divergence correction portion of script for calJac3-hg19 and canFam3-hg19.
+- [x] add functionality for chr9
