@@ -33,7 +33,7 @@ LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
-POPS = 'YRI'
+POPS = 'ALL'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -56,6 +56,14 @@ DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
 # this is only in order to keep group and chr associated in rule all
 GROUP = [SEX, SEX, SEX, 'males']
 GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
+
+# Array containing the number of Mb for chrX ld 06_figures
+PLOT_LENGTH = ['15', '156']
+
+# Constrain wildcards globally
+
+wildcard_constraints:
+    pop = '[a-zA-Z]{3}'
 
 # Rules -----------------------------------------------------------------------
 
@@ -91,7 +99,12 @@ rule all:
                '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
                '95bootstrapCI_{plotSize}Mb.png',
                pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN, plotSize=['15', '156'])
+               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        # output for diversity split by chr/region
+        expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+               '{filter_iter}_{correction}_byChrRegion.png',
+               pop=POPS, filter_iter=FILTER, group=SEX, correction=CORRECTION)
+
 
 rule parse_populations:
     input:
@@ -245,6 +258,7 @@ rule filter_diversity_by_site:
         "bedtools intersect -a {input.diversity_by_site} "
         "-b {input.filtered_callable} > {output}"
 
+# Window Analysis -------------------------------------------------------------
 rule window_analysis:
     input:
         filtered_diversity = path.join('04_window_analysis', 'inputs',
@@ -451,6 +465,63 @@ rule plot_PAB_diversity:
         "Rscript {params.R_script} --chrX_females {input.chrX_females} "
         "--chrX_males {input.chrX_males} --chrY {input.chrY} "
         "--maxHeight {params.height} --output {output}"
+
+# Analysis by Region ----------------------------------------------------------
+
+rule get_wholeChr_bed:
+    input:
+        path.join('data', 'GRCh37_chromosome_coordinates.bed')
+    params:
+        chrom = lambda wildcards: wildcards.chr
+    output:
+        temp(path.join('data', '{chr}_wholeChr.bed'))
+    shell:
+        'grep {params.chrom} {input} > {output}'
+
+rule window_analysis_wholeChr:
+    input:
+        filtered_diversity = path.join('04_window_analysis', 'inputs',
+                                       '{pop}_{group}_{chr}_{filter_iter}' +
+                                       '_pi_by_site.bed'),
+        filtered_callable = path.join('04_window_analysis', 'inputs',
+                                      'callable_sites_{chr}_' +
+                                      '{filter_iter}.bed'),
+        windows = path.join('data', '{chr}_{window}.bed')
+    wildcard_constraints:
+        window = 'wholeChr'
+    params:
+        window_calcs = '04_window_analysis/scripts/window_calculations.py'
+    output:
+        temp(path.join('04_window_analysis', 'results',
+                       '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                       '_diversity.bed'))
+    shell:
+        "python {params.window_calcs} --diversity {input.filtered_diversity} "
+        "--callable {input.filtered_callable} --windows {input.windows} "
+        "--output {output}"
+
+rule plot_diversity_byRegion_byWholeChr:
+    input:
+        chrX = path.join('04_window_analysis', 'results',
+                         '{pop}_{group}_chrX_{filter_iter}_byRegion' +
+                         '_{correction}_diversity.bed'),
+        chrY = path.join('04_window_analysis', 'results',
+                         '{pop}_males_chrY_{filter_iter}_wholeChr' +
+                         '_{correction}_diversity.bed'),
+        chr8 = path.join('04_window_analysis', 'results',
+                         '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
+                         '_{correction}_diversity.bed'),
+        chr9 = path.join('04_window_analysis', 'results',
+                         '{pop}_{group}_chr9_{filter_iter}_wholeChr' +
+                         '_{correction}_diversity.bed')
+    params:
+        R_script = ''
+    output:
+        path.join('06_figures', 'results',
+                  '{pop}_{group}_totalDiversity_{filter_iter}_{correction}' +
+                  '_byChrRegion.png')
+    shell:
+        ""
 
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
