@@ -127,7 +127,6 @@ if args.chrX_windows is True:
             try:
                 d = next(diversity)
             except StopIteration:
-                diversity.close()
                 break
 
         # adds the information directly to the wc list
@@ -260,6 +259,3 @@ else:
         writer = csv.writer(csvfile, delimiter='\t')
         for row in data:
             writer.writerow(row)
-
-# close the files that were opened
-callable.close()
