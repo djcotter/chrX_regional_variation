@@ -45,8 +45,8 @@ CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected',
 
 # Global variables ------------------------------------------------------------
 
-# defines the chromosomes to be analyzed
-CHR = ['chrX', 'chr8', 'chr9', 'chrY']  # script not built for more chromosomes
+# defines the chromosomes to be analyzed # chr9 not analyzed
+CHR = ['chrX', 'chr8', 'chrY']  # script not built for more chromosomes
 
 # link to diversity script
 DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
@@ -73,7 +73,7 @@ rule all:
         # chrX analyzed by region for all pops
         expand('04_window_analysis/results/' +
                '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
-               '_diversity.bed',
+               '_diversity_wPvals.bed',
                pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
                correction=CORRECTION),
         # windoweded graphs of diversity results
@@ -301,7 +301,7 @@ rule window_analysis_byRegion:
     params:
         window_calcs = '04_window_analysis/scripts/window_calculations.py'
     output:
-        temp(path.join('04_window_analysis',
+        temp(path.join('04_window_analysis', 'results',
                        '{pop}_{group}_{chr}_{filter_iter}_{window}' +
                        '_diversity.bed'))
     shell:
@@ -377,7 +377,7 @@ rule windowed_divergence_correction:
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_' +
                   '{correction}_diversity.bed')
     run:
-        if params.corrected is True:
+        if params.corrected:
             shell("python {params.script} --diversity {input.diversity} " +
                   "--divergence {input.divergence} --output {output}")
         else:
@@ -388,7 +388,7 @@ rule permute_chrX_regions:
         byWindow_100kb = path.join('04_window_analysis', 'results',
                                    '{pop}_{group}_{chr}_{filter_iter}' +
                                    '_100kb_{correction}_diversity.bed'),
-        byRegion = path.join('04_window_analysis',
+        byRegion = path.join('04_window_analysis', 'results',
                              '{pop}_{group}_{chr}_{filter_iter}' +
                              '_byRegion_diversity.bed')
     params:
@@ -398,7 +398,7 @@ rule permute_chrX_regions:
     output:
         path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_byRegion_{correction}' +
-                  '_diversity.bed')
+                  '_diversity_wPvals.bed')
     shell:
         "python {params.permutation_script} --byRegion {input.byRegion} "
         "--byWindow {input.byWindow_100kb} --replicates {params.replicates} "
