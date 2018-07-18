@@ -79,7 +79,7 @@ if args.chrX_windows is True:
     c = next(callable)
     d = next(diversity)
 
-    # use a variable to save sites that stradle a window Boundary
+    # use a variable to save sites that straddle a window Boundary
     last_window_calls = 0
 
     for w in wc:
@@ -127,6 +127,7 @@ if args.chrX_windows is True:
             try:
                 d = next(diversity)
             except StopIteration:
+                diversity.close()
                 break
 
         # adds the information directly to the wc list
@@ -259,3 +260,6 @@ else:
         writer = csv.writer(csvfile, delimiter='\t')
         for row in data:
             writer.writerow(row)
+
+# close the files that were opened
+callable.close()
