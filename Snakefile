@@ -521,7 +521,7 @@ rule plot_diversity_byRegion_byWholeChr:
                   '{pop}_{group}_totalDiversity_{filter_iter}_{correction}' +
                   '_byChrRegion.png')
     shell:
-        ""
+        "touch {output}"
 
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
