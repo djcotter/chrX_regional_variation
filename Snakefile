@@ -390,7 +390,7 @@ rule permute_chrX_regions:
                                    '_100kb_{correction}_diversity.bed'),
         byRegion = path.join('04_window_analysis', 'results',
                              '{pop}_{group}_{chr}_{filter_iter}' +
-                             '_byRegion_diversity.bed')
+                             '_byRegion_{correction}_diversity.bed')
     params:
         permutation_script = path.join('04_window_analysis', 'scripts',
                                        'permute_chrX_windows.py'),
