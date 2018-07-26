@@ -509,10 +509,10 @@ rule plot_diversity_byRegion_byWholeChr:
                          '_{correction}_diversity.bed'),
         chr8 = path.join('04_window_analysis', 'results',
                          '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
-                         '_{correction}_diversity.bed'),
-        chr9 = path.join('04_window_analysis', 'results',
-                         '{pop}_{group}_chr9_{filter_iter}_wholeChr' +
                          '_{correction}_diversity.bed')
+        # chr9 = path.join('04_window_analysis', 'results',
+        #                  '{pop}_{group}_chr9_{filter_iter}_wholeChr' +
+        #                  '_{correction}_diversity.bed')
     params:
         R_script = ''
     output:
