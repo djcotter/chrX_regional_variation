@@ -100,10 +100,17 @@ rule all:
                '95bootstrapCI_{plotSize}Mb.png',
                pops=POPS, group_chr="chrX_females",
                window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+
         # output for diversity split by chr/region
-        expand('06_figures/results/{pop}_{group}_totalDiversity_' +
-               '{filter_iter}_{correction}_byChrRegion.png',
-               pop=POPS, filter_iter=FILTER, group=SEX, correction=CORRECTION)
+        # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+        #        '{filter_iter}_{correction}_byChrRegion.png',
+        #        pop=POPS, filter_iter=FILTER, group=SEX,
+        #        correction=CORRECTION),
+
+        # output for ratios tables
+        expand('06_figures/results/' +
+               '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
+               pop=POPS, group=SEX, filter_iter=FILTER, correction=CORRECTION)
 
 
 rule parse_populations:
@@ -511,9 +518,6 @@ rule plot_diversity_byRegion_byWholeChr:
         chr8 = path.join('04_window_analysis', 'results',
                          '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
                          '_{correction}_diversity.bed')
-        # chr9 = path.join('04_window_analysis', 'results',
-        #                  '{pop}_{group}_chr9_{filter_iter}_wholeChr' +
-        #                  '_{correction}_diversity.bed')
     params:
         R_script = ''
     output:
@@ -522,6 +526,26 @@ rule plot_diversity_byRegion_byWholeChr:
                   '_byChrRegion.png')
     shell:
         "touch {output}"
+
+rule calculate_A_ratios:
+    input:
+        chrX = path.join('04_window_analysis', 'results',
+                         '{pop}_{group}_chrX_{filter_iter}_byRegion' +
+                         '_{correction}_diversity.bed'),
+        chrY = path.join('04_window_analysis', 'results',
+                         '{pop}_males_chrY_{filter_iter}_wholeChr' +
+                         '_{correction}_diversity.bed'),
+        chr8 = path.join('04_window_analysis', 'results',
+                         '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
+                         '_{correction}_diversity.bed')
+    params:
+        script = '06_figures/scripts/ratios_table.py'
+    output:
+        path.join('06_figures', 'results',
+                  '{pop}_{group}_{filter_iter}_{correction}_ratios.txt')
+    shell:
+        "python {params.script} --chrX {input.chrX} --chrY {input.chrY} "
+        "--chr8 {input.chr8} --output {output}"
 
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
