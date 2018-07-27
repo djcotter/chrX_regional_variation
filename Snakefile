@@ -475,7 +475,7 @@ rule plot_PAB_diversity:
 
 rule get_wholeChr_bed:
     input:
-        path.join('data', 'GRCh37_chromosome_coordinates.bed')
+        path.join('data', 'hg19_chromosome_coordinates.bed')
     params:
         chrom = lambda wildcards: wildcards.chr
     output:
