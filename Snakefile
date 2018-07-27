@@ -27,7 +27,7 @@ POPULATIONS = sorted(json.load(open(config['POP_CODES']))['Populations'])
 SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 
 # select the filter from the configfile that should be used
-FILTER = ['filter1', 'filter2', 'filter3', 'filter4', 'filter5']
+FILTER = ['filter4']
 WINDOW = ['100kb']
 LD_BIN = ['300kb']
 
@@ -42,7 +42,6 @@ SEX = 'individuals'
 # select the pairwise substitution rates to use for divergence correction
 CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected',
               'canFam3-hg19-corrected', 'calJac3-hg19-corrected']
-CORRECTION = ['uncorrected']
 
 # Global variables ------------------------------------------------------------
 
@@ -72,40 +71,40 @@ wildcard_constraints:
 rule all:
     input:
         # chrX analyzed by region for all pops
-        # expand('04_window_analysis/results/' +
-        #        '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
-        #        '_diversity_wPvals.bed',
-        #        pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
-        #        correction=CORRECTION),
+        expand('04_window_analysis/results/' +
+               '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
+               '_diversity_wPvals.bed',
+               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
+               correction=CORRECTION),
         # windoweded graphs of diversity results
-        # expand('06_figures/results/' +
-        #        '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
-        #        '_diversity.png',
-        #        pops=POPS, group_chr=GROUP_CHR,
-        #        filter_iter=FILTER, window=WINDOW,
-        #        correction=CORRECTION),
+        expand('06_figures/results/' +
+               '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
+               '_diversity.png',
+               pops=POPS, group_chr=GROUP_CHR,
+               filter_iter=FILTER, window=WINDOW,
+               correction=CORRECTION),
         # windowed graphs of males and females across chrX
-        # expand('06_figures/results/' +
-        #        '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
-        #        '{correction}_diversity.png',
-        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
-        #        correction=CORRECTION),
+        expand('06_figures/results/' +
+               '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
+               '{correction}_diversity.png',
+               pops=POPS, filter_iter=FILTER, window=WINDOW,
+               correction=CORRECTION),
         # windowed graphs of diversity across the PAB
-        # expand('06_figures/results/' +
-        #        '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
-        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
-        #        correction=CORRECTION),
+        expand('06_figures/results/' +
+               '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
+               pops=POPS, filter_iter=FILTER, window=WINDOW,
+               correction=CORRECTION),
         # output for ld_window_analysis
-        # expand('06_figures/results/' +
-        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-        #        '95bootstrapCI_{plotSize}Mb.png',
-        #        pops=POPS, group_chr="chrX_females",
-        #        window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        expand('06_figures/results/' +
+               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+               '95bootstrapCI_{plotSize}Mb.png',
+               pops=POPS, group_chr="chrX_females",
+               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
         # output for diversity split by chr/region
-        # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
-        #        '{filter_iter}_{correction}_byChrRegion.png',
-        #        pop=POPS, filter_iter=FILTER, group=SEX,
-        #        correction=CORRECTION),
+        expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+               '{filter_iter}_{correction}_byChrRegion.png',
+               pop=POPS, filter_iter=FILTER, group=SEX,
+               correction=CORRECTION),
         # output for ratios tables
         expand('06_figures/results/' +
                '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
