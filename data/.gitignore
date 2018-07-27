@@ -1,7 +1,7 @@
 *
 */
 !.gitignore
-!GRCh37_chromosome_coordinates.bed
+!hg19_chromosome_coordinates.bed
 
 !substitution_rates/
 !substituition_rates/*

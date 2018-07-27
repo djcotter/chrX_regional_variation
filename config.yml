@@ -17,23 +17,36 @@ callable_sites:
 #chromosome filters
 filters:
   filter1:
-    - UCSC_refseq_gencode_gene_transcripts_GRCh37
-    - simple_repeats_GRCh37
-    - centromere_telomere_coordinates_GRCh37
-    - CpG_islands_GRCh37
+    - UCSC_refseq_gencode_gene_transcripts_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
   filter2:
-    - UCSC_refseq_gencode_gene_transcripts_GRCh37
-    - simple_repeats_GRCh37
-    - segmental_dups_GRCh37
+    - UCSC_refseq_gencode_gene_transcripts_1kb_buffer_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
   filter3:
-    - centromere_telomere_coordinates_GRCh37
-    - UCSC_refseq_gencode_gene_transcripts_GRCh37
+    - UCSC_refseq_gencode_gene_transcripts_5kb_buffer_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
+  filter4:
+    - UCSC_refseq_gencode_gene_transcripts_10kb_buffer_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
+  filter5:
+    - UCSC_refseq_gencode_gene_transcripts_20kb_buffer_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
   filter_all:
-    - UCSC_refseq_gencode_gene_transcripts_GRCh37
-    - simple_repeats_GRCh37
-    - centromere_telomere_coordinates_GRCh37
-    - CpG_islands_GRCh37
-    - segmental_dups_GRCh37
+    - UCSC_refseq_gencode_gene_transcripts_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
+    - segmental_duplications_hg19.bed
 
 # windows for Analysis
 windows:
@@ -50,6 +63,7 @@ windows:
     overlap: False
     slide_size: null
 
+# ld bin size
 ld_bins:
   300kb:
     size: 300

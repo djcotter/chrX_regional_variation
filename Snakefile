@@ -27,7 +27,7 @@ POPULATIONS = sorted(json.load(open(config['POP_CODES']))['Populations'])
 SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 
 # select the filter from the configfile that should be used
-FILTER = ['filter1']
+FILTER = ['filter1', 'filter2', 'filter3', 'filter4', 'filter5']
 WINDOW = ['100kb']
 LD_BIN = ['300kb']
 
@@ -71,35 +71,39 @@ wildcard_constraints:
 rule all:
     input:
         # chrX analyzed by region for all pops
-        expand('04_window_analysis/results/' +
-               '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
-               '_diversity_wPvals.bed',
-               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
-               correction=CORRECTION),
+        # expand('04_window_analysis/results/' +
+        #        '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
+        #        '_diversity_wPvals.bed',
+        #        pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
+        #        correction=CORRECTION),
+
         # windoweded graphs of diversity results
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
-               '_diversity.png',
-               pops=POPS, group_chr=GROUP_CHR,
-               filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
+        #        '_diversity.png',
+        #        pops=POPS, group_chr=GROUP_CHR,
+        #        filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+
         # windowed graphs of males and females across chrX
-        expand('06_figures/results/' +
-               '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
-               '{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
+        # expand('06_figures/results/' +
+        #        '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
+        #        '{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+
         # windowed graphs of diversity across the PAB
-        expand('06_figures/results/' +
-               '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
+        # expand('06_figures/results/' +
+        #        '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+
         # output for ld_window_analysis
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI_{plotSize}Mb.png',
-               pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+        #        '95bootstrapCI_{plotSize}Mb.png',
+        #        pops=POPS, group_chr="chrX_females",
+        #        window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
 
         # output for diversity split by chr/region
         # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
@@ -186,15 +190,15 @@ rule calculate_pi_chrY:
 rule create_filter:
     input:
         lambda wildcards: expand(
-            '03_filters/raw_filters/{filter_type}_{chrom}_filter.bed',
-            filter_type=config["filters"][wildcards.filter_iter],
-            chrom=[wildcards.chr])
+            '03_filters/raw_filters/{filter_type}',
+            filter_type=config["filters"][wildcards.filter_iter])
+    params:
+        chrom = lambda wildcards: wildcards.chr
     output:
         '03_filters/results/complete_{chr}_{filter_iter}.bed'
     shell:
-        "cat {input} | sort -k1,1 -k2,2n | "
-        "awk \'BEGIN{{OFS=\"\t\"}}{{print $1,$2,$3}}\' | "
-        "bedtools merge -i stdin > {output}"
+        "cat {input} | grep {params.chrom} | sort -k1,1 -k2,2n | "
+        "cut -f1,2,3 | bedtools merge -i stdin > {output}"
 
 rule split_callable_sites:
     input:
@@ -202,14 +206,13 @@ rule split_callable_sites:
     params:
         chrom = lambda wildcards: "\"" + wildcards.chr + "\""
     output:
-        'data/callable_sites_{chr}.bed'
+        temp('data/callable_sites_{chr}.bed')
     shell:
-        "cat {input} | awk \'$1 == {params.chrom} {{ print }}\' "
-        "> {output}"
+        "grep {params.chrom} {input} > {output}"
 
 rule create_windows:
     input:
-        'data/GRCh37_chromosome_coordinates.bed'
+        'data/hg19_chromosome_coordinates.bed'
     params:
         win = lambda wildcards:
             config["windows"][wildcards.window]["win_size"],
@@ -220,7 +223,7 @@ rule create_windows:
     output:
         '04_window_analysis/inputs/{chr}_{window}_window.bed'
     shell:
-        "cat {input} | awk \'$1 == {params.chrom} {{ print }}\' | "
+        "grep {params.chrom} {input} | "
         "bedtools makewindows -b stdin -w {params.win}{params.slide} "
         "> {output}"
 
