@@ -131,11 +131,12 @@ Diversity is calculated as **π**, or the average number of pairwise nucleotide 
 
 ### Rule: Create filter
 
-The filter is created by merging a collection of bed files (for each chromosome) that are taken from the UCSC genome browser. Some filters and how we obtain them are as follows:
+The filter is created by merging a collection of bed files that are taken from the UCSC genome browser. Some filters and how we obtain them are as follows:
 - **Coding sequence:** We filter for coding sequence by merging known genes from UCSC, RefSeq, and GENCODE (v28lift37). We use the following commands to accomplish this:
  ```shell
  cat file1 file2 file3 | sort -k1,1 -k2,2n | awk 'BEGIN{OFS="\t"} {print $1,$2,$3,$4}' | bedtools merge -i stdin > merged_genes_filter.bed
  ```
+  - To buffer +/- **x** basepairs on each gene we use `bedtools slop` on the result of the above command.
 - **Repetitive elements:** We get repetitive elements from the simple-repeats track.
 - **Segmental duplications:** We get segmental duplications from the Segmental Dups track.
 - **Telomeres & Centromere:** We use the Gap table and define the gap types that we want in the filter (*"centromere telomere"*).
