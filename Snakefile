@@ -583,12 +583,14 @@ rule filter_vcf:
                        '_snpsONLY-mac-filtered.recode.vcf'))
     params:
         prefix = path.join('data', 'subset_LD_{chr}_{pop}_{group}_' +
-                           '{filter_iter}_snpsONLY-mac-filtered')
+                           '{filter_iter}_snpsONLY-mac-filtered'),
+        filter = lambda wildcards: wildcards.filter_iter
     shadow: "full"
     shell:
+        "cat {input.targets} | sed 's/^chr//' > temp_{params.filter}.bed && "
         "bcftools view -Ou -m2 -M2 -v snps {input.vcf} | bcftools view -Ov "
-        "--min-ac 1:minor | vcftools --vcf - --exclude-bed {input.targets} "
-        "--recode --out {output}"
+        "--min-ac 1:minor | vcftools --vcf - "
+        "--exclude-bed temp_{params.filter}.bed --recode --out {params.prefix}"
 
 rule calculate_ld:
     input:
