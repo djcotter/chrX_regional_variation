@@ -576,21 +576,24 @@ rule subset_VCF_for_LD:
 rule filter_vcf:
     input:
         vcf = path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'),
-        targets = path.join('04_window_analysis', 'inputs',
-                            'callable_sites_{chr}_' +
-                            '{filter_iter}.bed')
+        targets = path.join('03_filters', 'results',
+                            'complete_{chr}_{filter_iter}.bed')
     output:
         temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
-                       '_snpsONLY-mac-filtered.vcf'))
+                       '_snpsONLY-mac-filtered.recode.vcf'))
+    params:
+        prefix = path.join('data', 'subset_LD_{chr}_{pop}_{group}_' +
+                           '{filter_iter}_snpsONLY-mac-filtered')
     shadow: "full"
     shell:
-        "bcftools view -Ou -m2 -M2 -v snps {input.vcf} | bcftools view -Ou "
-        "--min-ac 1:minor | bcftools view -Ov -T {input.targets} > {output}"
+        "bcftools view -Ou -m2 -M2 -v snps {input.vcf} | bcftools view -Ov "
+        "--min-ac 1:minor | vcftools --vcf - --exclude-bed {input.targets} "
+        "--recode --out {output}"
 
 rule calculate_ld:
     input:
         path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
-                  '_snpsONLY-mac-filtered.vcf')
+                  '_snpsONLY-mac-filtered.recode.vcf')
     params:
         out_path = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
                              '_filtered_ld_R2')
