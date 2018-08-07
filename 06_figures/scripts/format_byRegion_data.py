@@ -12,6 +12,7 @@ populations and their associated diversity in each region
 import sys
 import csv
 import argparse
+from os.path import basename
 
 # parse arguments -------------------------------------------------------------
 parser = argparse.ArgumentParser(description="Combine all byRegion and "
@@ -69,17 +70,17 @@ temp_data = {}
 for item in args.chrX_byRegion:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
-    temp_data[item[0:3]] = [float(line[3]) for line in temp]
+    temp_data[basename(item)[0:3]] = [float(line[3]) for line in temp]
 
 for item in args.chrY_wholeChr:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
-    temp_data[item[0:3]].append(float(temp[0][3]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][3]))
 
 for item in args.chr8_wholeChr:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
-    temp_data[item[0:3]].append(float(temp[0][3]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][3]))
 
 data = [['SUPERPOP', 'POP', 'PAR1', 'nonPAR', 'XTR', 'PAR2', 'chrY', 'chr8']]
 for key in temp_data:
