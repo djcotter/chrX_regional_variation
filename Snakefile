@@ -33,7 +33,6 @@ LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
-POPS = 'YRI'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
@@ -95,11 +94,11 @@ rule all:
                pops=POPS, filter_iter=FILTER, window=WINDOW,
                correction=CORRECTION),
         # output for ld_window_analysis
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI_{plotSize}Mb.png',
-               pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+        #        '95bootstrapCI_{plotSize}Mb.png',
+        #        pops=POPS, group_chr="chrX_females",
+        #        window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
         # output for diversity split by chr/region
         expand('06_figures/results/{pop}_{group}_totalDiversity_' +
                '{filter_iter}_{correction}_byChrRegion.png',
