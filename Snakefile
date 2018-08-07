@@ -27,20 +27,24 @@ POPULATIONS = sorted(json.load(open(config['POP_CODES']))['Populations'])
 SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 
 # select the filter from the configfile that should be used
-FILTER = ['filter4']
+FILTER = ['filter1', 'filter4']
 WINDOW = ['100kb']
 LD_BIN = ['300kb']
 
 # sets the populations to be a list of all pops and subpops
 POPS = POPULATIONS + SUBPOPULATIONS
+POPS = 'YRI'
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
 SEX = 'individuals'
 
 # select the pairwise substitution rates to use for divergence correction
-CORRECTION = ['uncorrected', 'rheMac2-hg19-corrected',
-              'canFam3-hg19-corrected', 'calJac3-hg19-corrected']
+CORRECTION = ['uncorrected',
+              # 'rheMac2-hg19-corrected',
+              # 'calJac3-hg19-corrected',
+              'canFam3-hg19-corrected']
+
 
 # Global variables ------------------------------------------------------------
 
@@ -94,11 +98,11 @@ rule all:
                pops=POPS, filter_iter=FILTER, window=WINDOW,
                correction=CORRECTION),
         # output for ld_window_analysis
-        # expand('06_figures/results/' +
-        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-        #        '95bootstrapCI_{plotSize}Mb.png',
-        #        pops=POPS, group_chr="chrX_females",
-        #        window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        expand('06_figures/results/' +
+               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+               '95bootstrapCI_{plotSize}Mb.png',
+               pops=POPS, group_chr="chrX_females",
+               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
         # output for diversity split by chr/region
         expand('06_figures/results/{pop}_{group}_totalDiversity_' +
                '{filter_iter}_{correction}_byChrRegion.png',
@@ -107,7 +111,13 @@ rule all:
         # output for ratios tables
         expand('06_figures/results/' +
                '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
-               pop=POPS, group=SEX, filter_iter=FILTER, correction=CORRECTION)
+               pop=POPS, group=SEX, filter_iter=FILTER, correction=CORRECTION),
+        # ld vs pi correlation plots
+        expand('06_figures/results/' +
+               '{pops}_{group_chr}_{window}_windows_{correction}' +
+               '_{filter_iter}_{ld_bin}_LDbin.png',
+               pops=POPS, group_chr="chrX_females", correction=CORRECTION,
+               window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER)
 
 
 rule parse_populations:
@@ -565,23 +575,28 @@ rule subset_VCF_for_LD:
 
 rule filter_vcf:
     input:
-        path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
+        vcf = path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'),
+        targets = path.join('04_window_analysis', 'inputs',
+                            'callable_sites_{chr}_' +
+                            '{filter_iter}.bed')
     output:
-        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
+        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
                        '_snpsONLY-mac-filtered.vcf'))
     shadow: "full"
     shell:
-        "bcftools view -Ob -m2 -M2 -v snps {input} | bcftools view -Ov "
-        "--min-ac 1:minor > {output}"
+        "bcftools view -Ou -m2 -M2 -v snps {input.vcf} | bcftools view -Ou "
+        "--min-ac 1:minor | bcftools view -Ov -T {input.targets} > {output}"
 
 rule calculate_ld:
     input:
-        path.join('data', 'subset_LD_{chr}_{pop}_{group}' +
+        path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
                   '_snpsONLY-mac-filtered.vcf')
     params:
-        out_path = path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2')
+        out_path = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
+                             '_filtered_ld_R2')
     output:
-        temp(path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2.ld'))
+        temp(path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
+                       '_filtered_ld_R2.ld'))
     shadow: "full"
     threads: 4
     shell:
@@ -591,7 +606,8 @@ rule calculate_ld:
 
 rule ld_window_analysis:
     input:
-        LD = path.join('data', '{pop}_{chr}_{group}_filtered_ld_R2.ld'),
+        LD = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
+                       '_filtered_ld_R2.ld'),
         windows = path.join('04_window_analysis', 'inputs',
                             '{chr}_{window}_window.bed'),
         script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
@@ -600,7 +616,8 @@ rule ld_window_analysis:
         script = '05_ld_windows/scripts/average_ld_by_window.py'
     output:
         path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
-                  '{window}_windows_{ld_bin}_LDbins_95bootstrapCI.txt')
+                  '{window}_windows_{filter_iter}' +
+                  '_{ld_bin}_LDbins_95bootstrapCI.txt')
     shell:
         "python {params.script} --plink_ld {input.LD} "
         "--windows {input.windows} --binSize {params.LD_bin} "
@@ -609,11 +626,12 @@ rule ld_window_analysis:
 rule plot_ld_windows:
     input:
         path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
-                  '{window}_windows_{ld_bin}_LDbins_95bootstrapCI.txt')
+                  '{window}_windows_{filter_iter}' +
+                  '_{ld_bin}_LDbins_95bootstrapCI.txt')
     output:
         path.join('06_figures', 'results',
-                  '{pop}_{chr}_{group}_{window}_windows_{ld_bin}' +
-                  '_LDbins_95bootstrapCI_{LDplotSize}Mb.png')
+                  '{pop}_{chr}_{group}_{window}_windows_{filter_iter}' +
+                  '_{ld_bin}_LDbins_95bootstrapCI_{LDplotSize}Mb.png')
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_LD_bins.R'),
@@ -623,3 +641,22 @@ rule plot_ld_windows:
     shell:
         "Rscript {params.R_script} -i {input} --winSize {params.winSize} "
         "--zoom {params.plot_size} -o {output} --maxHeight 1"
+
+rule plot_ld_pi_correlation:
+    input:
+        ld = path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
+                       '{window}_windows_{filter_iter}' +
+                       '_{ld_bin}_LDbins_95bootstrapCI.txt'),
+        pi = path.join('04_window_analysis', 'results',
+                       '{pop}_{group}_{chr}_{filter_iter}_{window}_' +
+                       '{correction}_diversity.bed')
+    params:
+        R_script = path.join('06_figures', 'scripts',
+                             'ld_pi_correlation.R')
+    output:
+        path.join('06_figures', 'results',
+                  '{pop}_{chr}_{group}_{window}_windows_{correction}' +
+                  '_{filter_iter}_{ld_bin}_LDbin.png')
+    shell:
+        "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
+        "--output {output}"
