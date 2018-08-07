@@ -128,7 +128,7 @@ rule parse_populations:
         pop_parse = '01_populations/scripts/population_parser.py'
     output:
         out_pops = expand('01_populations/results/{pops}_{group}',
-                          pops=POPS,
+                          pops=POPULATIONS + SUBPOPULATIONS,
                           group=['males', 'females', 'individuals'])
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
@@ -561,7 +561,7 @@ rule prepare_subpop_ratio_plotting_data:
                                                   '{filter}_byRegion' +
                                                   '_{correction_div}_' +
                                                   'diversity.bed'),
-                                        pops=SUBPOPS, Group=SEX,
+                                        pops=SUBPOPULATIONS, Group=SEX,
                                         filter=wildcards.filter_iter,
                                         correction_div=wildcards.correction),
         chrY = lambda wildcards: expand(path.join('04_window_analysis',
@@ -570,7 +570,7 @@ rule prepare_subpop_ratio_plotting_data:
                                                   '{filter}_wholeChr' +
                                                   '_{correction_div}_' +
                                                   'diversity.bed'),
-                                        pops=SUBPOPS,
+                                        pops=SUBPOPULATIONS,
                                         filter=wildcards.filter_iter,
                                         correction_div=wildcards.correction),
         chr8 = lambda wildcards: expand(path.join('04_window_analysis',
@@ -579,7 +579,7 @@ rule prepare_subpop_ratio_plotting_data:
                                                   '{filter}_wholeChr' +
                                                   '_{correction_div}_' +
                                                   'diversity.bed'),
-                                        pops=SUBPOPS, Group=SEX,
+                                        pops=SUBPOPULATIONS, Group=SEX,
                                         filter=wildcards.filter_iter,
                                         correction_div=wildcards.correction)
     output:
