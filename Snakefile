@@ -553,6 +553,46 @@ rule calculate_A_ratios:
         "python {params.script} --chrX {input.chrX} --chrY {input.chrY} "
         "--chr8 {input.chr8} --output {output}"
 
+rule prepare_subpop_ratio_plotting_data:
+    input:
+        chrX = lambda wildcards: expand(path.join('04_window_analysis',
+                                                  'results',
+                                                  '{pops}_{Group}_chrX_' +
+                                                  '{filter}_byRegion' +
+                                                  '_{correction_div}_' +
+                                                  'diversity.bed'),
+                                        pops=SUBPOPS, Group=SEX,
+                                        filter=wildcards.filter_iter,
+                                        correction_div=wildcards.correction),
+        chrY = lambda wildcards: expand(path.join('04_window_analysis',
+                                                  'results',
+                                                  '{pops}_males_chrY_' +
+                                                  '{filter}_wholeChr' +
+                                                  '_{correction_div}_' +
+                                                  'diversity.bed'),
+                                        pops=SUBPOPS,
+                                        filter=wildcards.filter_iter,
+                                        correction_div=wildcards.correction),
+        chr8 = lambda wildcards: expand(path.join('04_window_analysis',
+                                                  'results',
+                                                  '{pops}_{Group}_chr8_' +
+                                                  '{filter}_wholeChr' +
+                                                  '_{correction_div}_' +
+                                                  'diversity.bed'),
+                                        pops=SUBPOPS, Group=SEX,
+                                        filter=wildcards.filter_iter,
+                                        correction_div=wildcards.correction)
+    output:
+        path.join('06_figures', 'results',
+                  'subpops_{filter_iter}_{correction}_ratios_table.txt')
+    params:
+        script = path.join('06_figures', 'scripts',
+                           'format_byRegion_data.py')
+    shell:
+        "python {params.script} --chrX_byRegion {input.chrX} "
+        "--chr8_wholeChr {input.chr8} --chrY_wholeChr {input.chrY} "
+        "--output {output}"
+
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
     input:

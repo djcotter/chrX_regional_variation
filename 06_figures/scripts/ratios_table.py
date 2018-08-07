@@ -1,9 +1,8 @@
 """
-window_calculations.py
+ratio_table.py
 Daniel Cotter
 
-use filtered diversity file, callable sites file, and window file to calculate
-diversity in windows across a given chromosome
+calculate relevant X/A, PAR/A, Y/A etc ratios for a given population
 -------------------------------------------------------------------------------
 
 """
