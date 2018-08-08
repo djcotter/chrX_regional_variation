@@ -20,3 +20,4 @@ dependencies:
   - r-base
   - r-optparse
   - r-ggplot2
+  - r-ggpubr
