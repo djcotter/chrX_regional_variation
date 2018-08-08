@@ -53,6 +53,9 @@ data$chr8 <- data$chr8 / denom$chr8
 
 # prepare new diversity ratio columns
 data$X_PAR1 <- data$nonPAR / data$PAR1
+data$X_A <- data$nonPAR / data$chr8
+data$XTR_A <- data$XTR / data$chr8
+data$PAR1_A <- data$PAR1 / data$chr8
 
 # plot data on a line
 data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_PAR1)])
@@ -61,3 +64,21 @@ p1 = p1 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(an
 p1 = p1 + labs(color='Super\nPopulation', x='Population', y=expression("Relative X"[pi] / "PAR"[pi]))
 
 ggsave(plot = p1, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
+
+
+# plot data on a line
+data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_A)])
+p2 = ggplot(data, aes(x=POP, y=X_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
+p2 = p2 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+p2 = p2 + labs(color='Super\nPopulation', x='Population', y=expression("Relative X"[pi] / "A"[pi]))
+
+data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
+p3 = ggplot(data, aes(x=POP, y=XTR_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
+p3 = p3 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+p3 = p3 + labs(color='Super\nPopulation', x='Population', y=expression("Relative XTR"[pi] / "A"[pi]))
+
+
+data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$PAR1_A)])
+p4 = ggplot(data, aes(x=POP, y=PAR1_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
+p4 = p4 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+p4 = p4 + labs(color='Super\nPopulation', x='Population', y=expression("Relative PAR1"[pi] / "A"[pi]))
