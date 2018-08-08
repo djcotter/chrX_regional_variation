@@ -115,7 +115,7 @@ rule all:
         # ld vs pi correlation plots
         expand('06_figures/results/' +
                '{pops}_{group_chr}_{window}_windows_{correction}' +
-               '_{filter_iter}_{ld_bin}_LDbin.png',
+               '_{filter_iter}_{ld_bin}_LDbin_correlation.png',
                pops=POPS, group_chr="chrX_females", correction=CORRECTION,
                window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER)
 
@@ -701,7 +701,7 @@ rule plot_ld_pi_correlation:
     output:
         path.join('06_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{correction}' +
-                  '_{filter_iter}_{ld_bin}_LDbin.png')
+                  '_{filter_iter}_{ld_bin}_LDbin_correlation.png')
     shell:
         "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
         "--output {output}"
