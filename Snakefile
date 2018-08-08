@@ -613,7 +613,7 @@ rule plot_A_Ratios_across_subpops:
         Rscript = path.join('06_figures', 'scripts',
                             'plot_subpop_diversity_ratios.R')
     shell:
-        "rscript {params.Rscript} --subpops_data {input} -o {output}"
+        "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
 rule plot_relative_PARvX_ratios:
     input:
@@ -627,7 +627,7 @@ rule plot_relative_PARvX_ratios:
         Rscript = path.join('06_figures', 'scripts',
                             'relative_XA_ratios_bySubpop.R')
     shell:
-        "rscript {params.Rscript} --subpops_data {input} -o {output}"
+        "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
