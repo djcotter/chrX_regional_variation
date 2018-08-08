@@ -117,8 +117,16 @@ rule all:
                '{pops}_{group_chr}_{window}_windows_{correction}' +
                '_{filter_iter}_{ld_bin}_LDbin_correlation.png',
                pops=POPS, group_chr="chrX_females", correction=CORRECTION,
-               window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER)
-
+               window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER),
+        # diversity ratios figure
+        expand('06_figures/results/' +
+               'subpops_X-A_PAR-A_XTR-A_ratios_{correction}_{filter_iter}.png',
+               correction=CORRECTION, filter_iter=FILTER),
+        # demography corrected PARvX figure
+        expand('06_figures/results/' +
+               'subpops_X-PAR_demography_corrected_ratios_{correction}' +
+               '_{filter_iter}.png', correction=CORRECTION,
+               filter_iter=FILTER)
 
 rule parse_populations:
     input:
@@ -592,6 +600,34 @@ rule prepare_subpop_ratio_plotting_data:
         "python {params.script} --chrX_byRegion {input.chrX} "
         "--chr8_wholeChr {input.chr8} --chrY_wholeChr {input.chrY} "
         "--output {output}"
+
+rule plot_A_Ratios_across_subpops:
+    input:
+        path.join('06_figures', 'results',
+                  'subpops_{filter_iter}_{correction}_ratios_table.txt')
+    output:
+        path.join('06_figures', 'results',
+                  'subpops_X-A_PAR-A_XTR-A_ratios_{correction}' +
+                  '_{filter_iter}.png')
+    params:
+        Rscript = path.join('06_figures', 'scripts',
+                            'plot_subpop_diversity_ratios.R')
+    shell:
+        "rscript {params.Rscript} --subpops_data {input} -o {output}"
+
+rule plot_relative_PARvX_ratios:
+    input:
+        path.join('06_figures', 'results',
+                  'subpops_{filter_iter}_{correction}_ratios_table.txt')
+    output:
+        path.join('06_figures', 'results',
+                  'subpops_X-PAR_demography_corrected_ratios_{correction}' +
+                  '_{filter_iter}.png')
+    params:
+        Rscript = path.join('06_figures', 'scripts',
+                            'relative_XA_ratios_bySubpop.R')
+    shell:
+        "rscript {params.Rscript} --subpops_data {input} -o {output}"
 
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
