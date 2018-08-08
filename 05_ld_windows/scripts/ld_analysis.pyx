@@ -70,8 +70,11 @@ def rand_samples(data_array):
     the length of the given data array
     """
     array_len = len(data_array)
-    indices = np.random.random_integers(0, array_len - 1, array_len)
-    return np.take(data_array, indices)
+    if array_len > 0:
+        indices = np.random.random_integers(0, array_len - 1, array_len)
+        return np.take(data_array, indices)
+    else:
+        return np.asarray([0])
 
 
 def bootstrap_CI_mean(data_array, replicates):
