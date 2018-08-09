@@ -80,11 +80,15 @@ for item in args.chrY_wholeChr:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
     temp_data[basename(item)[0:3]].append(float(temp[0][3]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][6]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][7]))
 
 for item in args.chr8_wholeChr:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
     temp_data[basename(item)[0:3]].append(float(temp[0][3]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][6]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][7]))
 
 data = [['SUPERPOP', 'POP',
          'PAR1', 'PAR1_l', 'PAR1_h',
