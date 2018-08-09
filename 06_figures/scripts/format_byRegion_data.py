@@ -70,7 +70,11 @@ temp_data = {}
 for item in args.chrX_byRegion:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
-    temp_data[basename(item)[0:3]] = [float(line[3]), float(line[6]), float(line[7]) for line in temp]
+    temp_data[basename(item)[0:3]] = []
+    for line in temp:
+        temp_data[basename(item)[0:3]].append(line[3])
+        temp_data[basename(item)[0:3]].append(line[6])
+        temp_data[basename(item)[0:3]].append(line[7])
 
 for item in args.chrY_wholeChr:
     with open(item, 'rU') as f:
