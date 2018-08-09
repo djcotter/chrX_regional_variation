@@ -45,7 +45,7 @@ pi <- read.delim(opt$diversity, header=FALSE)
 pi$adj_position <- sapply(pi$V2, function(x){(((x+(x+opt$winSize))/2)/1000000)})
 pi$region <- sapply(pi$adj_position, function(x){if(x<=2.699){"PAR1"}else if(x >= 88.1 & x <= 93.1){"XTR"}else if(x>=154.9){"PAR2"}else{"nonPAR"}})
 
-data <- data.frame (chr="chrX", adj_position=pi$adj_position, region=pi$region, R_squared=LD$V4, pi=pi$V4)
+data <- data.frame (chr="chrX", adj_position=pi$adj_position, region=pi$region, R_squared=LD$V3, pi=pi$V4)
 data <- na.omit(data)
 
 model <- lm(R_squared ~ pi, data=data)
@@ -54,7 +54,7 @@ group.colors = c(PAR1="red", nonPAR="black", XTR="blue", PAR2="red")
 
 p1 = ggplot(data, aes(x=R_squared, y=pi))  
 p1 = p1 + geom_point(aes(color=data$region)) + scale_colour_manual(name="Region", breaks=c("PAR1", "nonPAR", "XTR", "PAR2"), values=group.colors) 
-p1 = p1 + xlab(bquote('Linkage Disequilibrium (Average '* R^2*')')) + ylab(bquote('Diversity ('*pi*')')) + annotate("text", x=0.65, y=0.006, label=label1, parse=TRUE, fontface=2, size=5)
+p1 = p1 + xlab(bquote('Linkage Disequilibrium (Average '* R^2*')')) + ylab(bquote('Diversity ('*pi*')')) + annotate("text", x=0.65, y=max(data$pi)-mean(data$pi)/2, label=label1, parse=TRUE, fontface=2, size=5)
 p1 = p1 + geom_smooth(aes(x=data$R_squared, y=data$pi), method=lm, color="green")
 
 ggsave(plot = p1, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
