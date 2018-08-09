@@ -45,14 +45,23 @@ merged = []
 for i in range(len(diversity)):
     a = diversity[i][3]
     b = divergence[i][6]
+    a2 = diversity[i][6]
+    a3 = diversity[i][7]
     if a == 'NA' or b == 'NA':
-        newVal = 'NA'
+        newVal1 = 'NA'
+        newVal2 = 'NA'
+        newVal3 = 'NA'
     elif float(a) == 0 or float(b) == 0:
-        newVal = 0
+        newVal1 = 0
+        newVal2 = 0
+        newVal3 = 0
     else:
-        newVal = float(a) / float(b)
+        newVal1 = float(a) / float(b)
+        newVal2 = float(a2) / float(b)
+        newVal3 = float(a3) / float(b)
     merged.append([diversity[i][0], diversity[i][1], diversity[i][2],
-                   newVal, diversity[i][4], diversity[i][5]])
+                   newVal1, diversity[i][4], diversity[i][5],
+                   newVal2, newVal3])
 
 # write the results to output_file or standard out depending on args
 if args.output is True:

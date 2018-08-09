@@ -66,7 +66,7 @@ if(opt$chrom == 'chrX') {
 
 # create the ggplot
 p1 <- ggplot(df, aes(x=position, y=pi)) + ylim(0,opt$maxHeight)
-
+#p1 <- p1 + geom_errorbar(aes(ymin=V7, ymax=V8))
 p1 <- p1 + geom_point(col=df$colors) +
   labs(list(x=paste('Position (', win_type, ')'),
             y=expression(paste('Diversity (', pi, ')')))) +

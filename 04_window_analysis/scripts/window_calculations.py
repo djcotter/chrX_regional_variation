@@ -12,6 +12,7 @@ diversity in windows across a given chromosome
 import sys
 import csv
 import argparse
+import numpy as np
 
 # parse arguments -------------------------------------------------------------
 parser = argparse.ArgumentParser(description="Calculate windowed diversity" +
@@ -40,6 +41,10 @@ parser.add_argument("--chrX_windows", action='store_true', help="This flag" +
                     " X chromosome using windows that correspond to PAR1," +
                     " nonPAR, XTR, and PAR2. No windows need to be provided" +
                     " for this analysis.")
+parser.add_argument("--replicates", nargs='?', type=int, default=100,
+                    help="number of times the bootstrap " +
+                    "should be run. Default is 100.")
+
 
 # check that commands are there
 if len(sys.argv) == 1:
@@ -48,6 +53,33 @@ if len(sys.argv) == 1:
 
 # add arguments to args variable
 args = parser.parse_args()
+
+
+# Bootstrap functions ---------------------------------------------------------
+def rand_samples(data_array):
+    """
+    Create a randomly dsitributed set of data based on a given array and
+    the length of the given data array
+    """
+    array_len = len(data_array)
+    if array_len > 0:
+        indices = np.random.random_integers(0, array_len - 1, array_len)
+        return np.take(data_array, indices)
+    else:
+        return np.asarray([0])
+
+
+def bootstrap_CI_mean(data_array, replicates, called_sites):
+    """
+    Bootstraps the data to get a 95% confidence interval for the
+    """
+    resamples = []
+    for i in range(replicates):
+        resamples.append(np.sum(rand_samples(data_array)) / called_sites)
+
+    return [np.nanpercentile(resamples, 2.5),
+            np.nanpercentile(resamples, 97.5)]
+
 
 # Script ----------------------------------------------------------------------
 # Open Window Coordinates File and read to a list
@@ -70,6 +102,7 @@ callable = csv.reader(open(args.callable, 'rU'), delimiter='\t')
 
 # initialize an empty data array
 data = []
+bootstraps = []
 
 # -----------------------------------------------------------------------------
 # loop through the predefined regions for the X chromosome
@@ -78,6 +111,7 @@ if args.chrX_windows is True:
     # the first row of each file is initialized
     c = next(callable)
     d = next(diversity)
+    vals = {}
 
     # use a variable to save sites that straddle a window Boundary
     last_window_calls = 0
@@ -130,20 +164,36 @@ if args.chrX_windows is True:
                 break
 
         # adds the information directly to the wc list
-        w.append(sum(pi_vals))  # index 3
-        w.append(sum_called)  # index 4
-        w.append(count)  # index 5
+        if w[0] == "nonPAR1":
+            nonPAR_vals = pi_vals
+            nonPAR_called = sum_called
+            nonPAR_count = count
+        elif w[0] == "nonPAR2":
+            nonPAR_vals = nonPAR_vals + pi_vals
+            nonPAR_called += sum_called
+            nonPAR_count += count
+            bootstraps = bootstrap_CI_mean(np.asarray(nonPAR_vals),
+                                           args.replicates, nonPAR_called)
+            data.append(['nonPAR', wc[1][1], wc[3][2],
+                         float(sum(nonPAR_vals) / nonPAR_called),
+                         nonPAR_called, nonPAR_count, bootstraps[0],
+                         bootstraps[1]])
 
-    # format is region, start, end, pi, called_sites, num variants
-    data.append([wc[0][0], wc[0][1], wc[0][2], float(wc[0][3] / wc[0][4]),
-                 wc[0][4], wc[0][5]])
-    data.append(['nonPAR', wc[1][1], wc[3][2],
-                 float((wc[1][3] + wc[3][3]) / (wc[1][4] + wc[3][4])),
-                 wc[1][4] + wc[3][4], wc[1][5] + wc[3][5]])
-    data.append([wc[2][0], wc[2][1], wc[2][2], float(wc[2][3] / wc[2][4]),
-                 wc[2][4], wc[2][5]])
-    data.append([wc[4][0], wc[4][1], wc[4][2], float(wc[4][3] / wc[4][4]),
-                 wc[4][4], wc[4][5]])
+        else:
+            w.append(sum(pi_vals))  # index 3
+            w.append(sum_called)  # index 4
+            w.append(count)  # index 5
+            bootstraps = bootstrap_CI_mean(np.asarray(pi_vals),
+                                           args.replicates, sum_called)
+            data.append([w[0], w[1], w[2], float(w[3] / w[4]), w[4], w[5],
+                         bootstraps[0], bootstraps[1]])
+
+    # format of data is region, start, end, pi, called_sites, num variants
+    # then the bounds of the bootstrapped confidence interval
+    # the following will reorder the data to PAR nonPAR XTR PAR2
+    data_order = [0, 2, 1, 3]
+    data = [data[i] for i in data_order]
+
 
 # -----------------------------------------------------------------------------
 # the standard window analysis for windows provided in a non-sliding format
@@ -161,7 +211,7 @@ elif args.sliding is not True:
         sum_called = last_window_calls    # if there is overlap over window
         last_window_calls = 0
         count = 0
-        pi_sum = 0
+        pi_vals = []
 
         # analyze the callable sites intervals
         while int(c[1]) < int(w[2]):
@@ -196,7 +246,7 @@ elif args.sliding is not True:
 
         # analyze the diversity by site file
         while int(d[2]) > int(w[1]) and int(d[2]) <= int(w[2]):
-            pi_sum += float(d[3])
+            pi_vals.append(float(d[3]))
             count += 1
             try:
                 d = next(diversity)
@@ -204,11 +254,15 @@ elif args.sliding is not True:
                 break
 
         # use information to get windowed diversity
-        if sum_called > 0:
-            data.append([w[0], w[1], w[2], float(pi_sum / sum_called),
-                        sum_called, count])
+        if sum_called > 0 and len(pi_vals) > 0:
+            bootstraps = bootstrap_CI_mean(np.asarray(pi_vals),
+                                           args.replicates, sum_called)
+            data.append([w[0], w[1], w[2], float(sum(pi_vals) / sum_called),
+                        sum_called, count, bootstraps[0],
+                        bootstraps[1]])
         else:
-            data.append([w[0], w[1], w[2], pi_sum, "NA", "NA"])
+            data.append([w[0], w[1], w[2], sum(pi_vals),
+                         "NA", "NA", "NA", "NA"])
 
 # -----------------------------------------------------------------------------
 # if --sliding is provided in command, use old algorithm

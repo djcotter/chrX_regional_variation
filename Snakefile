@@ -93,10 +93,10 @@ rule all:
                pops=POPS, filter_iter=FILTER, window=WINDOW,
                correction=CORRECTION),
         # windowed graphs of diversity across the PAB
-        expand('06_figures/results/' +
-               '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
+        # expand('06_figures/results/' +
+        #        '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
         # output for ld_window_analysis
         expand('06_figures/results/' +
                '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
@@ -104,10 +104,10 @@ rule all:
                pops=POPS, group_chr="chrX_females",
                window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
         # output for diversity split by chr/region
-        expand('06_figures/results/{pop}_{group}_totalDiversity_' +
-               '{filter_iter}_{correction}_byChrRegion.png',
-               pop=POPS, filter_iter=FILTER, group=SEX,
-               correction=CORRECTION),
+        # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+        #        '{filter_iter}_{correction}_byChrRegion.png',
+        #        pop=POPS, filter_iter=FILTER, group=SEX,
+        #        correction=CORRECTION),
         # output for ratios tables
         expand('06_figures/results/' +
                '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
@@ -299,7 +299,8 @@ rule window_analysis:
         window_calcs = '04_window_analysis/scripts/window_calculations.py',
         slide = lambda wildcards: '' if \
             config["windows"][wildcards.window]["overlap"] is False else \
-            '--sliding '
+            '--sliding ',
+        replicates = 1000
     output:
         path.join('04_window_analysis', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}' +
@@ -307,7 +308,7 @@ rule window_analysis:
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
-        "{params.slide}--output {output}"
+        "{params.slide}--replicates {params.replicates} --output {output}"
 
 rule window_analysis_byRegion:
     input:
@@ -320,14 +321,16 @@ rule window_analysis_byRegion:
     wildcard_constraints:
         window = 'byRegion'
     params:
-        window_calcs = '04_window_analysis/scripts/window_calculations.py'
+        window_calcs = '04_window_analysis/scripts/window_calculations.py',
+        replicates = 1000
     output:
-        temp(path.join('04_window_analysis', 'results',
-                       '{pop}_{group}_{chr}_{filter_iter}_{window}' +
-                       '_diversity.bed'))
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_{window}' +
+                  '_diversity.bed')
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
-        "--callable {input.filtered_callable} --chrX_windows --output {output}"
+        "--callable {input.filtered_callable} --chrX_windows "
+        "--replicates {params.replicates} --output {output}"
 
 rule filter_windows_by_callable_sites:
     input:
@@ -521,25 +524,25 @@ rule window_analysis_wholeChr:
         "--callable {input.filtered_callable} --windows {input.windows} "
         "--output {output}"
 
-rule plot_diversity_byRegion_byWholeChr:
-    input:
-        chrX = path.join('04_window_analysis', 'results',
-                         '{pop}_{group}_chrX_{filter_iter}_byRegion' +
-                         '_{correction}_diversity.bed'),
-        chrY = path.join('04_window_analysis', 'results',
-                         '{pop}_males_chrY_{filter_iter}_wholeChr' +
-                         '_{correction}_diversity.bed'),
-        chr8 = path.join('04_window_analysis', 'results',
-                         '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
-                         '_{correction}_diversity.bed')
-    params:
-        R_script = ''
-    output:
-        path.join('06_figures', 'results',
-                  '{pop}_{group}_totalDiversity_{filter_iter}_{correction}' +
-                  '_byChrRegion.png')
-    shell:
-        "touch {output}"
+# rule plot_diversity_byRegion_byWholeChr:
+#     input:
+#         chrX = path.join('04_window_analysis', 'results',
+#                          '{pop}_{group}_chrX_{filter_iter}_byRegion' +
+#                          '_{correction}_diversity.bed'),
+#         chrY = path.join('04_window_analysis', 'results',
+#                          '{pop}_males_chrY_{filter_iter}_wholeChr' +
+#                          '_{correction}_diversity.bed'),
+#         chr8 = path.join('04_window_analysis', 'results',
+#                          '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
+#                          '_{correction}_diversity.bed')
+#     params:
+#         R_script = ''
+#     output:
+#         path.join('06_figures', 'results',
+#                   '{pop}_{group}_totalDiversity_{filter_iter}_{correction}' +
+#                   '_byChrRegion.png')
+#     shell:
+#         "touch {output}"
 
 rule calculate_A_ratios:
     input:
