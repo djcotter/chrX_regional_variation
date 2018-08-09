@@ -86,7 +86,13 @@ for item in args.chr8_wholeChr:
         temp = list(csv.reader(f, delimiter='\t'))
     temp_data[basename(item)[0:3]].append(float(temp[0][3]))
 
-data = [['SUPERPOP', 'POP', 'PAR1', 'nonPAR', 'XTR', 'PAR2', 'chrY', 'chr8']]
+data = [['SUPERPOP', 'POP',
+         'PAR1', 'PAR1_l', 'PAR1_h',
+         'nonPAR', 'nonPAR_l', 'nonPAR_h',
+         'XTR', 'XTR_l', 'XTR_h',
+         'PAR2', 'PAR2_l', 'PAR2_h',
+         'chrY', 'chrY_l', 'chrY_h',
+         'chr8', 'chr8_l', 'chr8_h']]
 for key in temp_data:
     newline = [pop_keys[key], key]
     for num in temp_data[key]:
