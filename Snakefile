@@ -183,11 +183,19 @@ rule calculate_pi_autosomes:
 #         "--population_lists {input.group} --chrom_inc X "
 #         "--haploid --out_directory {params.out_dir}"
 
-rule calculate_pi_chrX_TEST:
+rule subset_AND_filter_TEST:
+    input:
+        path.join('data', 'subset_{chr}_{pop}_{group}.vcf')
+    output:
+        path.join('data', 'filtered_vcf_{chr}_{pop}_{group}.vcf')
+    shell:
+        "bcftools view -Ou -m2 -M2 -v snps {input} | bcftools view -Ov "
+        "--min-ac 1:minor > {output}"
+
+rule calculate_pi_chrX_TEST1:
     input:
         group = '01_populations/results/{pop}_{group}',
-        vcf = path.join('data', 'subset_LD_chrX_{pop}_{group}_filter4' +
-                        '_snpsONLY-mac-filtered.recode.vcf')
+        vcf = path.join('data', 'filtered_vcf_chrX_{pop}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
