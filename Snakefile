@@ -695,12 +695,11 @@ rule ld_window_analysis:
         windows = path.join('04_window_analysis', 'inputs',
                             '{chr}_{window}_window.bed'),
         script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
+    wildcard_constraints:
+        window = '[0-9]+[A-Za-z]+'
     params:
         LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size'],
-        script = '05_ld_windows/scripts/average_ld_by_window.py',
-        byRegion = lambda wildcards: '' if wildcards.window != 'byRegion' \
-            else ' --byRegion'
-
+        script = '05_ld_windows/scripts/average_ld_by_window.py'
     output:
         path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
                   '{window}_windows_{filter_iter}' +
@@ -708,7 +707,26 @@ rule ld_window_analysis:
     shell:
         "python {params.script} --plink_ld {input.LD} "
         "--windows {input.windows} --binSize {params.LD_bin} "
-        "--output {output}{params.byRegion}"
+        "--output {output}{"
+
+ule ld_window_analysis_byRegion:
+    input:
+        LD = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
+                       '_filtered_ld_R2.ld'),
+        script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
+    wildcard_constraints:
+        window = 'byRegion'
+    params:
+        LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size'],
+        script = '05_ld_windows/scripts/average_ld_by_window.py'
+    output:
+        path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
+                  '{window}_windows_{filter_iter}' +
+                  '_{ld_bin}_LDbins_95bootstrapCI.txt')
+    shell:
+        "python {params.script} --plink_ld {input.LD} "
+        "--byRegion --binSize {params.LD_bin} "
+        "--output {output}"
 
 rule plot_ld_windows:
     input:
