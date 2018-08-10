@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser(description="Filter window anlysis output.")
 parser.add_argument("--plink_ld", required=True,
                     help="Path to the input plink LD file. This file should" +
                     "be generated using ")
-parser.add_argument("--windows", required=False,
+parser.add_argument("--windows", required=False, default=False,
                     help="Path to the input window file.")
 parser.add_argument("--output", nargs="?", default=True,
                     help="Path to output file. If no output file is" +
@@ -55,11 +55,12 @@ args = parser.parse_args()
 # Open the window file as bed coordinates so that every
 # window_coordinates[i][1] corresponds to the start position
 # and [2] to the end position.
-with open(args.windows, 'rU') as f:
-    window_file = list(csv.reader(f, delimiter='\t'))
-    for window in window_file:
-        window[1] = float(window[1])
-        window[2] = float(window[2])
+if args.windows is not False:
+    with open(args.windows, 'rU') as f:
+        window_file = list(csv.reader(f, delimiter='\t'))
+        for window in window_file:
+            window[1] = float(window[1])
+            window[2] = float(window[2])
 
 # Open the LD file and perform the analysis line by line
 if args.byRegion is True:
