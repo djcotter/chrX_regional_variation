@@ -195,7 +195,7 @@ rule subset_AND_filter_TEST:
 rule calculate_pi_chrX_TEST1:
     input:
         group = '01_populations/results/{pop}_{group}',
-        vcf = path.join('data', 'filtered_vcf_chrX_{pop}_{group}.vcf')
+        vcf = lambda wildcards: config['chromosomes']['chrX']
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
