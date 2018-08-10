@@ -168,10 +168,26 @@ rule calculate_pi_autosomes:
         "--population_lists {input.group} --chrom_inc {params.chrom} "
         "--out_directory {params.out_dir}"
 
-rule calculate_pi_chrX:
+# rule calculate_pi_chrX:
+#     input:
+#         group = '01_populations/results/{pop}_{group}',
+#         vcf = path.join('data', 'subset_chrX_{pop}_{group}.vcf')
+#     params:
+#         calc_pi = DIVERSITY_SCRIPT,
+#         out_dir = '02_diversity_by_site/results/'
+#     output:
+#         path.join('02_diversity_by_site/results',
+#                   '{pop}_{group}_chrX_pi_output_by_site.txt')
+#     shell:
+#         "python {params.calc_pi} --vcf {input.vcf} "
+#         "--population_lists {input.group} --chrom_inc X "
+#         "--haploid --out_directory {params.out_dir}"
+
+rule calculate_pi_chrX_TEST:
     input:
         group = '01_populations/results/{pop}_{group}',
-        vcf = path.join('data', 'subset_chrX_{pop}_{group}.vcf')
+        vcf = path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
+                        '_snpsONLY-mac-filtered.recode.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
