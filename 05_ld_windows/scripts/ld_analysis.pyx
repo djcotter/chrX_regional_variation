@@ -95,9 +95,9 @@ def decay_value(window_LD_dictionary):
 
 # Loop for passing through the LD summary file --------------------------------
 def LD_loop(input_file, window_coordinates, int ld_bin_size):
-  """
-  Loops through LD file and returns output
-  """
+    """
+    Loops through LD file and returns output
+    """
     cdef int win_num, fp, ld_bin, row_1, row_5
     cdef float row_8
 
@@ -193,11 +193,12 @@ def LD_loop(input_file, window_coordinates, int ld_bin_size):
     # finally, return the results file
     return results
 
+
 # Loop for passing through the LD summary file --------------------------------
 def LD_loop_byRegion(input_file, int ld_bin_size):
-  """
-  Loops through LD file and returns byRegion output
-  """
+    """
+    Loops through LD file and returns byRegion output
+    """
 
     cdef int win_num, fp, ld_bin, row_1, row_5
     cdef float row_8
@@ -222,77 +223,77 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
         for line in f:
             row = line.split()
 
-            # skip the header line of the file
-            if row[0] == 'CHR_A':
-                continue
+        # skip the header line of the file
+        if row[0] == 'CHR_A':
+            continue
 
-            # Declare all relevant values
-            a1 = int(row[1])  # BP_A
-            a5 = int(row[5])  # BP_B
-            a8 = float(row[8])  # R2
-            row_1 = a1
-            row_5 = a5
-            row_8 = a8
+        # Declare all relevant values
+        a1 = int(row[1])  # BP_A
+        a5 = int(row[5])  # BP_B
+        a8 = float(row[8])  # R2
+        row_1 = a1
+        row_5 = a5
+        row_8 = a8
 
-            # initializes the focal position for the first line of the file
-            if fp == 0:
-                fp = row_1
-                R2_values[fp] = []
+        # initializes the focal position for the first line of the file
+        if fp == 0:
+            fp = row_1
+            R2_values[fp] = []
 
-            # change script paramaters and initialize a new list when reaching
-            # a new focal position
-            if row_1 != fp:
-                fp = row_1
+        # change script paramaters and initialize a new list when reaching
+        # a new focal position
+        if row_1 != fp:
+            fp = row_1
 
-                # if the focal position lies outside of the current window,
-                # change the window index, calculate a summary statistic,
-                # and clear R2_values from memory
-                if (fp > windows[2]):
-                    if windows[0] == "nonPAR1":
-                      nonPAR_R2_values = R2_values
-                      R2_values = {}
-                      win_num += 1
-                      windows = window_coordinates[win_num]
-                    elif windows[0] == "nonPAR2":
-                      nonPAR_R2_values.update(R2_values)
-                      bootstrap = bootstrap_CI_mean(
-                          R2_values_to_array(nonPAR_R2_values), 1000)
-                      results.append([windows[1], windows[2],
-                                      mean_LD(R2_values), bootstrap[0],
-                                      bootstrap[1]])
-                    else:
-                      bootstrap = bootstrap_CI_mean(
-                          R2_values_to_array(R2_values), 1000)
-                      results.append([windows[1], windows[2],
-                                      mean_LD(R2_values), bootstrap[0],
-                                      bootstrap[1]])
-
-                      R2_values = {}
-                      win_num += 1
-                      windows = window_coordinates[win_num]
-
-                R2_values[fp] = []
-
-            # if the site being compared is within ld_bin of the focal
-            # position, store the distance and R2 value in the dictionary
-            # as a list
-            if (abs(row_5 - row_1) < ld_bin):
-                R2_values[fp].append([row_5 - row_1, row_8])
-
-            # if the site in position 2 lies outside the current window,
-            # but (BP_B - BP_A) lies within ld_bin, we need to save the
-            # information for analyses of future windows
-            if (row_5 > windows[2]) and (abs(row_5 - row_1) < ld_bin):
-                if row_5 in reverse_R2:
-                    reverse_R2[row_5].append([row_5 - row_1, row_8])
+            # if the focal position lies outside of the current window,
+            # change the window index, calculate a summary statistic,
+            # and clear R2_values from memory
+            if (fp > windows[2]):
+                if windows[0] == "nonPAR1":
+                    nonPAR_R2_values = R2_values
+                    R2_values = {}
+                    win_num += 1
+                    windows = window_coordinates[win_num]
+                elif windows[0] == "nonPAR2":
+                    nonPAR_R2_values.update(R2_values)
+                    bootstrap = bootstrap_CI_mean(
+                        R2_values_to_array(nonPAR_R2_values), 1000)
+                    results.append([windows[1], windows[2],
+                                    mean_LD(R2_values), bootstrap[0],
+                                    bootstrap[1]])
                 else:
-                    reverse_R2[row_5] = [[row_5 - row_1, row_8]]
+                    bootstrap = bootstrap_CI_mean(
+                        R2_values_to_array(R2_values), 1000)
+                    results.append([windows[1], windows[2],
+                                    mean_LD(R2_values), bootstrap[0],
+                                    bootstrap[1]])
 
-            # check the reverse list to see if there are any saved data for
-            # the current focal position, then combine the two lists
-            if fp in reverse_R2:
-                R2_values[fp] = R2_values[fp] + reverse_R2[fp]
-                del reverse_R2[fp]
+                R2_values = {}
+                win_num += 1
+                windows = window_coordinates[win_num]
+
+            R2_values[fp] = []
+
+        # if the site being compared is within ld_bin of the focal
+        # position, store the distance and R2 value in the dictionary
+        # as a list
+        if (abs(row_5 - row_1) < ld_bin):
+            R2_values[fp].append([row_5 - row_1, row_8])
+
+        # if the site in position 2 lies outside the current window,
+        # but (BP_B - BP_A) lies within ld_bin, we need to save the
+        # information for analyses of future windows
+        if (row_5 > windows[2]) and (abs(row_5 - row_1) < ld_bin):
+            if row_5 in reverse_R2:
+                reverse_R2[row_5].append([row_5 - row_1, row_8])
+            else:
+                reverse_R2[row_5] = [[row_5 - row_1, row_8]]
+
+        # check the reverse list to see if there are any saved data for
+        # the current focal position, then combine the two lists
+        if fp in reverse_R2:
+            R2_values[fp] = R2_values[fp] + reverse_R2[fp]
+            del reverse_R2[fp]
 
     # once the last line has been reached, R2_values will have all the
     # information correspoding to the last window
@@ -300,7 +301,7 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
     bootstrap = bootstrap_CI_mean(R2_values_to_array(R2_values), 1000)
     results.append([windows[1], windows[2], mean_LD(R2_values),
                     bootstrap[0], bootstrap[1]])
-    results_order = [0,2,1,3]
+    results_order = [0, 2, 1, 3]
     results = [results[i] for i in results_order]
 
     # finally, return the results file
