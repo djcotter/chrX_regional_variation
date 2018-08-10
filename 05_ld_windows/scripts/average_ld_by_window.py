@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser(description="Filter window anlysis output.")
 parser.add_argument("--plink_ld", required=True,
                     help="Path to the input plink LD file. This file should" +
                     "be generated using ")
-parser.add_argument("--windows", required=True,
+parser.add_argument("--windows", required=False,
                     help="Path to the input window file.")
 parser.add_argument("--output", nargs="?", default=True,
                     help="Path to output file. If no output file is" +
@@ -38,6 +38,8 @@ parser.add_argument("--binSize", nargs='?', type=int, required=True,
                     help="Size of the bin that LD is calculated in. This " +
                     "extends from the current site being analyzed in each " +
                     "direction. This is in kilobases.")
+parser.add_argument("--byRegion", action='store_true', help="The script " +
+                    "will analyze the established chrX regions.")
 
 # check that commands are there
 if len(sys.argv) == 1:
@@ -60,8 +62,12 @@ with open(args.windows, 'rU') as f:
         window[2] = float(window[2])
 
 # Open the LD file and perform the analysis line by line
-ld_calculations = ld_analysis.LD_loop(
-    args.plink_ld, window_file, args.binSize)
+if args.byRegion is True:
+    ld_calculations = ld_analysis.LD_loop_byRegion(
+        args.plink_ld, args.binSize)
+else:
+    ld_calculations = ld_analysis.LD_loop(
+        args.plink_ld, window_file, args.binSize)
 
 # write the results to output_file or standard out depending on args
 if args.output is True:
