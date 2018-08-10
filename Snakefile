@@ -168,34 +168,10 @@ rule calculate_pi_autosomes:
         "--population_lists {input.group} --chrom_inc {params.chrom} "
         "--out_directory {params.out_dir}"
 
-# rule calculate_pi_chrX:
-#     input:
-#         group = '01_populations/results/{pop}_{group}',
-#         vcf = path.join('data', 'subset_chrX_{pop}_{group}.vcf')
-#     params:
-#         calc_pi = DIVERSITY_SCRIPT,
-#         out_dir = '02_diversity_by_site/results/'
-#     output:
-#         path.join('02_diversity_by_site/results',
-#                   '{pop}_{group}_chrX_pi_output_by_site.txt')
-#     shell:
-#         "python {params.calc_pi} --vcf {input.vcf} "
-#         "--population_lists {input.group} --chrom_inc X "
-#         "--haploid --out_directory {params.out_dir}"
-
-rule subset_AND_filter_TEST:
-    input:
-        path.join('data', 'subset_{chr}_{pop}_{group}.vcf')
-    output:
-        path.join('data', 'filtered_vcf_{chr}_{pop}_{group}.vcf')
-    shell:
-        "bcftools view -Ou -m2 -M2 -v snps {input} | bcftools view -Ov "
-        "--min-ac 1:minor > {output}"
-
-rule calculate_pi_chrX_TEST1:
+rule calculate_pi_chrX:
     input:
         group = '01_populations/results/{pop}_{group}',
-        vcf = lambda wildcards: config['chromosomes']['chrX']
+        vcf = path.join('data', 'subset_chrX_{pop}_{group}.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
         out_dir = '02_diversity_by_site/results/'
@@ -721,7 +697,10 @@ rule ld_window_analysis:
         script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
     params:
         LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size'],
-        script = '05_ld_windows/scripts/average_ld_by_window.py'
+        script = '05_ld_windows/scripts/average_ld_by_window.py',
+        byRegion = lambda wildcards: '' if wildcards.window != 'byRegion' \
+            else ' --byRegion'
+
     output:
         path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
                   '{window}_windows_{filter_iter}' +
@@ -729,7 +708,7 @@ rule ld_window_analysis:
     shell:
         "python {params.script} --plink_ld {input.LD} "
         "--windows {input.windows} --binSize {params.LD_bin} "
-        "--output {output}"
+        "--output {output}{params.byRegion}"
 
 rule plot_ld_windows:
     input:
