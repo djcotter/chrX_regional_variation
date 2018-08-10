@@ -212,6 +212,7 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
     win_num = 0
     windows = wc[win_num]
     R2_values = {}
+    nonPAR_R2_values = {}
     # The information that is stored as pairwise is not duplicated.
     # We have to create a matrix that contains values for BP_B > window[i][2]
     # but BP_B - BP_A < ld_bin
@@ -251,9 +252,6 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
             if (fp > windows[2]):
                 if windows[0] == "nonPAR1":
                     nonPAR_R2_values = R2_values
-                    R2_values = {}
-                    win_num += 1
-                    windows = window_coordinates[win_num]
                 elif windows[0] == "nonPAR2":
                     nonPAR_R2_values.update(R2_values)
                     bootstrap = bootstrap_CI_mean(
@@ -270,7 +268,7 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
 
                 R2_values = {}
                 win_num += 1
-                windows = window_coordinates[win_num]
+                windows = wc[win_num]
 
             R2_values[fp] = []
 
