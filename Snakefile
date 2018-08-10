@@ -186,7 +186,7 @@ rule calculate_pi_autosomes:
 rule calculate_pi_chrX_TEST:
     input:
         group = '01_populations/results/{pop}_{group}',
-        vcf = path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
+        vcf = path.join('data', 'subset_LD_chrX_{pop}_{group}_{filter_iter}' +
                         '_snpsONLY-mac-filtered.recode.vcf')
     params:
         calc_pi = DIVERSITY_SCRIPT,
