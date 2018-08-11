@@ -257,8 +257,8 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
                         bootstrap = bootstrap_CI_mean(
                             R2_values_to_array(nonPAR_R2_values), 1000)
                         results.append([2699520, 154931044,
-                                        mean_LD(R2_values), bootstrap[0],
-                                        bootstrap[1]])
+                                        mean_LD(nonPAR_R2_values),
+                                        bootstrap[0], bootstrap[1]])
                     else:
                         bootstrap = bootstrap_CI_mean(
                             R2_values_to_array(R2_values), 1000)
