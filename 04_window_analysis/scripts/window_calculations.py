@@ -185,8 +185,16 @@ if args.chrX_windows is True:
             w.append(count)  # index 5
             bootstraps = bootstrap_CI_mean(np.asarray(pi_vals),
                                            args.replicates, sum_called)
-            data.append([w[0], w[1], w[2], float(w[3] / w[4]), w[4], w[5],
-                         bootstraps[0], bootstraps[1]])
+            if sum_called > 0 and len(pi_vals) > 0:
+                bootstraps = bootstrap_CI_mean(np.asarray(pi_vals),
+                                               args.replicates, sum_called)
+                data.append([w[0], w[1], w[2],
+                            float(sum(pi_vals) / sum_called),
+                            sum_called, count, bootstraps[0],
+                            bootstraps[1]])
+            else:
+                data.append([w[0], w[1], w[2], "NA",
+                             w[4], w[5], "NA", "NA"])
 
     # format of data is region, start, end, pi, called_sites, num variants
     # then the bounds of the bootstrapped confidence interval
