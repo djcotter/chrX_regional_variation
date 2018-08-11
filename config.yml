@@ -41,6 +41,16 @@ filters:
     - simple_repeats_hg19.bed
     - centromere_telomere_hg19.bed
     - CpG_islands_hg19.bed
+  filter6:
+    - UCSC_refseq_gencode_gene_transcripts_50kb_buffer_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
+  filter7:
+    - UCSC_refseq_gencode_gene_transcripts_100kb_buffer_hg19.bed
+    - simple_repeats_hg19.bed
+    - centromere_telomere_hg19.bed
+    - CpG_islands_hg19.bed
   filter_all:
     - UCSC_refseq_gencode_gene_transcripts_hg19.bed
     - simple_repeats_hg19.bed
