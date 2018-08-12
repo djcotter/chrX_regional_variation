@@ -658,8 +658,8 @@ rule filter_vcf:
         targets = path.join('03_filters', 'results',
                             'complete_{chr}_{filter_iter}.bed')
     output:
-        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
-                       '_snpsONLY-mac-filtered.recode.vcf'))
+        path.join('data', 'subset_LD_{chr}_{pop}_{group}_{filter_iter}' +
+                  '_snpsONLY-mac-filtered.recode.vcf')
     params:
         prefix = path.join('data', 'subset_LD_{chr}_{pop}_{group}_' +
                            '{filter_iter}_snpsONLY-mac-filtered'),
