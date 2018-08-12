@@ -104,10 +104,10 @@ rule all:
                pops=POPS, group_chr="chrX_females",
                window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
         # output for diversity split by chr/region
-        expand('06_figures/results/{pop}_{group}_totalDiversity_' +
-               '{filter_iter}_{correction}_byChrRegion.png',
-               pop=POPS, filter_iter=FILTER, group=SEX,
-               correction=CORRECTION),
+        # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+        #        '{filter_iter}_{correction}_byChrRegion.png',
+        #        pop=POPS, filter_iter=FILTER, group=SEX,
+        #        correction=CORRECTION),
         # output for ratios tables
         expand('06_figures/results/' +
                '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
@@ -707,7 +707,7 @@ rule ld_window_analysis:
     shell:
         "python {params.script} --plink_ld {input.LD} "
         "--windows {input.windows} --binSize {params.LD_bin} "
-        "--output {output}{"
+        "--output {output}"
 
 rule ld_window_analysis_byRegion:
     input:
