@@ -68,19 +68,19 @@ p1 = p1 + scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"),
                              values=c(4,1)) + theme(legend.text.align = 0)
 
 ggsave(plot = p1, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
-# plot data on a line
 
-p2 = ggplot(data, aes(x=POP, y=X_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
-p2 = p2 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
-p2 = p2 + labs(color='Super\nPopulation', x='Population', y=expression("Relative X"[pi] / "A"[pi]))
-
-data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
-p3 = ggplot(data, aes(x=POP, y=XTR_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
-p3 = p3 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
-p3 = p3 + labs(color='Super\nPopulation', x='Population', y=expression("Relative XTR"[pi] / "A"[pi]))
-
-
-data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$PAR1_A)])
-p4 = ggplot(data, aes(x=POP, y=PAR1_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
-p4 = p4 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
-p4 = p4 + labs(color='Super\nPopulation', x='Population', y=expression("Relative PAR1"[pi] / "A"[pi]))
+# -----------------------------------------------------------------
+# p2 = ggplot(data, aes(x=POP, y=X_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
+# p2 = p2 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+# p2 = p2 + labs(color='Super\nPopulation', x='Population', y=expression("Relative X"[pi] / "A"[pi]))
+# 
+# data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
+# p3 = ggplot(data, aes(x=POP, y=XTR_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
+# p3 = p3 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+# p3 = p3 + labs(color='Super\nPopulation', x='Population', y=expression("Relative XTR"[pi] / "A"[pi]))
+# 
+# 
+# data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$PAR1_A)])
+# p4 = ggplot(data, aes(x=POP, y=PAR1_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
+# p4 = p4 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+# p4 = p4 + labs(color='Super\nPopulation', x='Population', y=expression("Relative PAR1"[pi] / "A"[pi]))
