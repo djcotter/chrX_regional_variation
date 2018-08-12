@@ -73,60 +73,65 @@ wildcard_constraints:
 # Global Rules ----------------------------------------------------------------
 rule all:
     input:
-        # chrX analyzed by region for all pops
-        expand('04_window_analysis/results/' +
-               '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
-               '_diversity_wPvals.bed',
-               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
-               correction=CORRECTION),
-        # windoweded graphs of diversity results
         expand('06_figures/results/' +
-               '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
-               '_diversity.png',
-               pops=POPS, group_chr=GROUP_CHR,
-               filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
-        # windowed graphs of males and females across chrX
-        expand('06_figures/results/' +
-               '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
-               '{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
-        # windowed graphs of diversity across the PAB
-        expand('06_figures/results/' +
-               '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
-        # output for ld_window_analysis
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI_{plotSize}Mb.png',
-               pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
-        # output for diversity split by chr/region
-        # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
-        #        '{filter_iter}_{correction}_byChrRegion.png',
-        #        pop=POPS, filter_iter=FILTER, group=SEX,
+               'subpops_{filter_iter}_{correction}_ratios_table.txt',
+               filter_iter=['filter' + str(i) for i in range(1, 8)],
+               correction='canFam3-hg19-corrected')
+        # # chrX analyzed by region for all pops
+        # expand('04_window_analysis/results/' +
+        #        '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
+        #        '_diversity_wPvals.bed',
+        #        pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
         #        correction=CORRECTION),
-        # output for ratios tables
-        expand('06_figures/results/' +
-               '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
-               pop=POPS, group=SEX, filter_iter=FILTER, correction=CORRECTION),
-        # ld vs pi correlation plots
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{correction}' +
-               '_{filter_iter}_{ld_bin}_LDbin_correlation.png',
-               pops=POPS, group_chr="chrX_females", correction=CORRECTION,
-               window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER),
-        # diversity ratios figure
-        expand('06_figures/results/' +
-               'subpops_X-A_PAR-A_XTR-A_ratios_{correction}_{filter_iter}.png',
-               correction=CORRECTION, filter_iter=FILTER),
-        # demography corrected PARvX figure
-        expand('06_figures/results/' +
-               'subpops_X-PAR_demography_corrected_ratios_{correction}' +
-               '_{filter_iter}.png', correction=CORRECTION,
-               filter_iter=FILTER)
+        # # windoweded graphs of diversity results
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
+        #        '_diversity.png',
+        #        pops=POPS, group_chr=GROUP_CHR,
+        #        filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+        # # windowed graphs of males and females across chrX
+        # expand('06_figures/results/' +
+        #        '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
+        #        '{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+        # # windowed graphs of diversity across the PAB
+        # expand('06_figures/results/' +
+        #        '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+        # # output for ld_window_analysis
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+        #        '95bootstrapCI_{plotSize}Mb.png',
+        #        pops=POPS, group_chr="chrX_females",
+        #        window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        # # output for diversity split by chr/region
+        # # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+        # #        '{filter_iter}_{correction}_byChrRegion.png',
+        # #        pop=POPS, filter_iter=FILTER, group=SEX,
+        # #        correction=CORRECTION),
+        # # output for ratios tables
+        # expand('06_figures/results/' +
+        #        '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
+        #        pop=POPS, group=SEX, filter_iter=FILTER,
+        #        correction=CORRECTION),
+        # # ld vs pi correlation plots
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{window}_windows_{correction}' +
+        #        '_{filter_iter}_{ld_bin}_LDbin_correlation.png',
+        #        pops=POPS, group_chr="chrX_females", correction=CORRECTION,
+        #        window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER),
+        # # diversity ratios figure
+        # expand('06_figures/results/' +
+        #        'subpops_X-A_PAR-A_XTR-A_ratios_{correction}_{filter_iter}.png',
+        #        correction=CORRECTION, filter_iter=FILTER),
+        # # demography corrected PARvX figure
+        # expand('06_figures/results/' +
+        #        'subpops_X-PAR_demography_corrected_ratios_{correction}' +
+        #        '_{filter_iter}.png', correction=CORRECTION,
+        #        filter_iter=FILTER)
 
 rule parse_populations:
     input:
@@ -618,7 +623,7 @@ rule plot_A_Ratios_across_subpops:
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
-rule plot_relative_PARvX_ratios:
+rule plot_relative_XvPAR_XvA_ratios:
     input:
         path.join('06_figures', 'results',
                   'subpops_{filter_iter}_{correction}_ratios_table.txt')
