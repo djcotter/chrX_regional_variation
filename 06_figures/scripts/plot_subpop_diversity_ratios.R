@@ -53,26 +53,27 @@ data$XTR_A_l <- data$XTR_l / data$chr8_l
 data$XTR_A_h <- data$XTR_h / data$chr8_h
 
 
+
 data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$PAR1_A)])
 p_PAR1 = ggplot(data, aes(x=POP, y=PAR1_A, fill=SUPERPOP)) + geom_col()
 p_PAR1 = p_PAR1 + theme(axis.text.x = element_text(angle=45,hjust=1))
 p_PAR1 = p_PAR1 + labs(fill='Super\nPopulation', x='Population', y=expression("PAR1"[pi] / "A"[pi]))
 p_PAR1 = p_PAR1 + geom_errorbar(aes(ymin=PAR1_A_l, ymax=PAR1_A_h))
-p_PAR1 = p_PAR1 + coord_cartesian(ylim=c(0,1.3))
+p_PAR1 = p_PAR1 + coord_cartesian(ylim=c(0,1.35))
 
-data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_A)])
+#data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_A)])
 p_X = ggplot(data, aes(x=POP, y=X_A, fill=SUPERPOP)) + geom_col()
 p_X = p_X + theme(axis.text.x = element_text(angle=45,hjust=1))
 p_X = p_X + labs(fill='Super\nPopulation', x='Population', y=expression("X"[pi] / "A"[pi]))
 p_X = p_X + geom_errorbar(aes(ymin=X_A_l, ymax=X_A_h))
-p_X = p_X + coord_cartesian(ylim=c(0,1.3))
+p_X = p_X + coord_cartesian(ylim=c(0,1.35))
 
-data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
+#data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
 p_XTR = ggplot(data, aes(x=POP, y=XTR_A, fill=SUPERPOP)) + geom_col()
 p_XTR = p_XTR + theme(axis.text.x = element_text(angle=45,hjust=1))
 p_XTR = p_XTR + labs(fill='Super\nPopulation', x='Population', y=expression("XTR"[pi] / "A"[pi]))
 p_XTR = p_XTR + geom_errorbar(aes(ymin=XTR_A_l, ymax=XTR_A_h))
-p_XTR = p_XTR + coord_cartesian(ylim=c(0,1.3))
+p_XTR = p_XTR + coord_cartesian(ylim=c(0,1.35))
 
 p1 = ggarrange(p_PAR1, p_XTR, p_X, ncol=1, nrow=3, align='v', common.legend = TRUE, legend='right')
 
