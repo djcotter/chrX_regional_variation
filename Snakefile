@@ -520,7 +520,8 @@ rule window_analysis_wholeChr:
     wildcard_constraints:
         window = 'wholeChr'
     params:
-        window_calcs = '04_window_analysis/scripts/window_calculations.py'
+        window_calcs = '04_window_analysis/scripts/window_calculations.py',
+        replicates = 1000
     output:
         temp(path.join('04_window_analysis', 'results',
                        '{pop}_{group}_{chr}_{filter_iter}_{window}' +
@@ -528,7 +529,7 @@ rule window_analysis_wholeChr:
     shell:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
-        "--output {output}"
+        "--replicates {params.replicates} --output {output}"
 
 # rule plot_diversity_byRegion_byWholeChr:
 #     input:
