@@ -129,7 +129,7 @@ rule all:
                correction=CORRECTION, filter_iter=FILTER),
         # demography corrected PARvX figure
         expand('06_figures/results/' +
-               'subpops_X-PAR_demography_corrected_ratios_{correction}' +
+               'subpops_X-PAR_X-A_demography_corrected_ratios_{correction}' +
                '_{filter_iter}.png', correction=CORRECTION,
                filter_iter=FILTER)
 
@@ -629,8 +629,8 @@ rule plot_relative_XvPAR_XvA_ratios:
                   'subpops_{filter_iter}_{correction}_ratios_table.txt')
     output:
         path.join('06_figures', 'results',
-                  'subpops_X-PAR_demography_corrected_ratios_{correction}' +
-                  '_{filter_iter}.png')
+                  'subpops_X-PAR_X-A_demography_corrected_ratios' +
+                  '_{correction}_{filter_iter}.png')
     params:
         Rscript = path.join('06_figures', 'scripts',
                             'relative_XA_ratios_bySubpop.R')
