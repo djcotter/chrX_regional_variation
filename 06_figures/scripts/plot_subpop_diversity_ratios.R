@@ -7,9 +7,9 @@ option_list = list(
               help="path to preprepared subpops data file"),
   make_option(c('-o', '--output'), type='character', default=NULL,
               help="path to output file"),
-  make_option(c('--width'), type='double', default=12.0,
+  make_option(c('--width'), type='double', default=7.0,
               help='width for figure'),
-  make_option(c('--height'), type='double', default=12.0,
+  make_option(c('--height'), type='double', default=7.0,
               help='height for figure'),
   make_option(c('--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']"),
@@ -58,22 +58,22 @@ data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$PAR1_A)])
 p_PAR1 = ggplot(data, aes(x=POP, y=PAR1_A, fill=SUPERPOP)) + geom_col()
 p_PAR1 = p_PAR1 + theme(axis.text.x = element_text(angle=45,hjust=1))
 p_PAR1 = p_PAR1 + labs(fill='Super\nPopulation', x='Population', y=expression("PAR1"[pi] / "A"[pi]))
-p_PAR1 = p_PAR1 + geom_errorbar(aes(ymin=PAR1_A_l, ymax=PAR1_A_h))
-p_PAR1 = p_PAR1 + coord_cartesian(ylim=c(0,1.35))
+p_PAR1 = p_PAR1 + geom_errorbar(aes(ymin=PAR1_A_l, ymax=PAR1_A_h), width=0.5)
+p_PAR1 = p_PAR1 + coord_cartesian(ylim=c(0,1.35)) + geom_hline(yintercept=1.0, linetype='dashed')
 
 #data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_A)])
 p_X = ggplot(data, aes(x=POP, y=X_A, fill=SUPERPOP)) + geom_col()
 p_X = p_X + theme(axis.text.x = element_text(angle=45,hjust=1))
 p_X = p_X + labs(fill='Super\nPopulation', x='Population', y=expression("X"[pi] / "A"[pi]))
-p_X = p_X + geom_errorbar(aes(ymin=X_A_l, ymax=X_A_h))
-p_X = p_X + coord_cartesian(ylim=c(0,1.35))
+p_X = p_X + geom_errorbar(aes(ymin=X_A_l, ymax=X_A_h), width=0.5)
+p_X = p_X + coord_cartesian(ylim=c(0,1.35)) + geom_hline(yintercept=0.75, linetype='dashed')
 
 #data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
 p_XTR = ggplot(data, aes(x=POP, y=XTR_A, fill=SUPERPOP)) + geom_col()
 p_XTR = p_XTR + theme(axis.text.x = element_text(angle=45,hjust=1))
 p_XTR = p_XTR + labs(fill='Super\nPopulation', x='Population', y=expression("XTR"[pi] / "A"[pi]))
-p_XTR = p_XTR + geom_errorbar(aes(ymin=XTR_A_l, ymax=XTR_A_h))
-p_XTR = p_XTR + coord_cartesian(ylim=c(0,1.35))
+p_XTR = p_XTR + geom_errorbar(aes(ymin=XTR_A_l, ymax=XTR_A_h), width=0.5)
+p_XTR = p_XTR + coord_cartesian(ylim=c(0,1.35)) + geom_hline(yintercept=0.75, linetype='dashed')
 
 p1 = ggarrange(p_PAR1, p_XTR, p_X, ncol=1, nrow=3, align='v', common.legend = TRUE, legend='right')
 
