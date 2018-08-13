@@ -738,7 +738,7 @@ rule ld_window_analysis_wholeChr_Y_autosomes:
     input:
         LD = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
                        '_filtered_ld_R2.ld'),
-        windows = windows = path.join('data', '{chr}_{window}.bed'),
+        windows = path.join('data', '{chr}_{window}.bed'),
         script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
     wildcard_constraints:
         window = 'wholeChr'
