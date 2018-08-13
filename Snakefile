@@ -738,6 +738,8 @@ rule ld_window_analysis_wholeChr_Y_autosomes:
     input:
         LD = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
                        '_filtered_ld_R2.ld'),
+        windows = path.join('04_window_analysis', 'inputs',
+                            '{chr}_{window}_window.bed'),
         script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
     wildcard_constraints:
         window = 'wholeChr'
@@ -749,8 +751,8 @@ rule ld_window_analysis_wholeChr_Y_autosomes:
                   '{window}_windows_{filter_iter}' +
                   '_{ld_bin}_LDbins_95bootstrapCI.txt')
     shell:
-        "python {params.script} --plink_ld {input.LD} "
-        "--binSize {params.LD_bin} --output {output}"
+        "python {params.script} --plink_ld {input.LD} --windows "
+        "{input.windows} --binSize {params.LD_bin} --output {output}"
 
 rule plot_ld_windows:
     input:
