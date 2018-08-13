@@ -73,10 +73,6 @@ wildcard_constraints:
 # Global Rules ----------------------------------------------------------------
 rule all:
     input:
-        expand('06_figures/results/' +
-               'subpops_{filter_iter}_{correction}_ratios_table.txt',
-               filter_iter=['filter' + str(i) for i in range(1, 8)],
-               correction='canFam3-hg19-corrected')
         # chrX analyzed by region for all pops
         expand('04_window_analysis/results/' +
                '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
