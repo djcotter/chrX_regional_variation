@@ -183,8 +183,6 @@ if args.chrX_windows is True:
             w.append(sum(pi_vals))  # index 3
             w.append(sum_called)  # index 4
             w.append(count)  # index 5
-            bootstraps = bootstrap_CI_mean(np.asarray(pi_vals),
-                                           args.replicates, sum_called)
             if sum_called > 0 and len(pi_vals) > 0:
                 bootstraps = bootstrap_CI_mean(np.asarray(pi_vals),
                                                args.replicates, sum_called)
@@ -270,7 +268,7 @@ elif args.sliding is not True:
                         bootstraps[1]])
         else:
             data.append([w[0], w[1], w[2], sum(pi_vals),
-                         "NA", "NA", "NA", "NA"])
+                        sum_called, count, "NA", "NA"])
 
 # -----------------------------------------------------------------------------
 # if --sliding is provided in command, use old algorithm
@@ -310,6 +308,7 @@ else:
                          sum_called, count])
         else:
             data.append(['chrX', w[1], w[2], pi_sum, "NA", "NA"])
+
 
 # write the results to output_file or standard out depending on args
 if args.output is True:
