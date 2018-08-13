@@ -127,7 +127,12 @@ rule all:
         expand('06_figures/results/' +
                'subpops_X-PAR_X-A_demography_corrected_ratios_{correction}' +
                '_{filter_iter}.png', correction=CORRECTION,
-               filter_iter=FILTER)
+               filter_iter=FILTER),
+        # ld results for chr8 and chrY wholeChr
+        expand('05_ld_windows/results/{pop}_{group_chr}_{window}' +
+               '_windows_{filter_iter}_{ld_bin}_LDbins_95bootstrapCI.txt',
+               pop=POPS, group_chr=['chr8_individuals', 'chrY_males'],
+               window=['wholeChr'], filter_iter=FILTER, ld_bin=LD_BIN)
 
 rule parse_populations:
     input:
@@ -728,6 +733,24 @@ rule ld_window_analysis_byRegion:
         "python {params.script} --plink_ld {input.LD} "
         "--byRegion --binSize {params.LD_bin} "
         "--output {output}"
+
+rule ld_window_analysis_wholeChr_Y_autosomes:
+    input:
+        LD = path.join('data', '{pop}_{chr}_{group}_{filter_iter}' +
+                       '_filtered_ld_R2.ld'),
+        script = path.join('05_ld_windows', 'scripts', 'ld_analysis.c')
+    wildcard_constraints:
+        window = 'wholeChr'
+    params:
+        LD_bin = lambda wildcards: config['ld_bins'][wildcards.ld_bin]['size'],
+        script = '05_ld_windows/scripts/average_ld_by_window.py'
+    output:
+        path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
+                  '{window}_windows_{filter_iter}' +
+                  '_{ld_bin}_LDbins_95bootstrapCI.txt')
+    shell:
+        "python {params.script} --plink_ld {input.LD} "
+        "--binSize {params.LD_bin} --output {output}"
 
 rule plot_ld_windows:
     input:
