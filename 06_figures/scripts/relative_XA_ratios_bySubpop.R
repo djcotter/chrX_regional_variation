@@ -60,12 +60,12 @@ data$PAR1_A <- data$PAR1 / data$chr8
 # plot data on a line
 data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_PAR1)])
 p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) + geom_point(aes(y=X_PAR1, shape="X_PAR1"), size=2)
-p1 = p1 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
+p1 = p1 + coord_cartesian(ylim=c(0.6,1.2)) 
 p1 = p1 + labs(color='Super\nPopulation', x='Population', y='Relative Ratios')
 p1 = p1 + geom_point(aes(y=X_A, shape="X_A"), size=2) + geom_hline(yintercept = 1)
 p1 = p1 + scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"), 
                              labels=c(expression("X"[pi] / "A"[pi]), expression("X"[pi] / "PAR"[pi])),
-                             values=c(4,1)) + theme(legend.text.align = 0)
+                             values=c(4,1)) + theme(legend.text.align = 0) + theme_bw() + theme(axis.text.x = element_text(angle=45,hjust=1))
 
 ggsave(plot = p1, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
 
