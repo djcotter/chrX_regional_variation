@@ -44,6 +44,11 @@ parser.add_argument("--chrX_windows", action='store_true', help="This flag" +
 parser.add_argument("--replicates", nargs='?', type=int, default=100,
                     help="number of times the bootstrap " +
                     "should be run. Default is 100.")
+parser.add_argument("--test", nargs="?", default=False, help="If specified," +
+                    " the script will output results of a filter test to" +
+                    " the provided path. Test1 calculates pi for the region" +
+                    " defined as nonPAR + PARs + XTR. Test2 calculates" +
+                    " pi for the region defined as nonPAR + XTR.")
 
 
 # check that commands are there
@@ -111,7 +116,11 @@ if args.chrX_windows is True:
     # the first row of each file is initialized
     c = next(callable)
     d = next(diversity)
-    vals = {}
+    # test 1 is nonPAR, PAR1, PAR2, XTR
+    # test 2 is nonPAR, XTR
+    # nonPAR from main results is test3 (with both filtered)
+    test1 = {'pi_vals': [], 'called': 0, 'count': 0}
+    test2 = {'pi_vals': [], 'called': 0, 'count': 0}
 
     # use a variable to save sites that straddle a window Boundary
     last_window_calls = 0
@@ -168,10 +177,28 @@ if args.chrX_windows is True:
             nonPAR_vals = pi_vals
             nonPAR_called = sum_called
             nonPAR_count = count
+
+            test1['pi_vals'] += pi_vals
+            test1['called'] += sum_called
+            test1['count'] += count
+
+            test2['pi_vals'] += pi_vals
+            test2['called'] += sum_called
+            test2['count'] += count
+
         elif w[0] == "nonPAR2":
             nonPAR_vals = nonPAR_vals + pi_vals
             nonPAR_called += sum_called
             nonPAR_count += count
+
+            test1['pi_vals'] += pi_vals
+            test1['called'] += sum_called
+            test1['count'] += count
+
+            test2['pi_vals'] += pi_vals
+            test2['called'] += sum_called
+            test2['count'] += count
+
             bootstraps = bootstrap_CI_mean(np.asarray(nonPAR_vals),
                                            args.replicates, nonPAR_called)
             data.append(['nonPAR', wc[1][1], wc[3][2],
@@ -193,6 +220,18 @@ if args.chrX_windows is True:
             else:
                 data.append([w[0], w[1], w[2], "NA",
                              w[4], w[5], "NA", "NA"])
+            # keep track of tests
+            if w[0] == 'PAR1' or w[0] == 'PAR2':
+                test1['pi_vals'] += pi_vals
+                test1['called'] += sum_called
+                test1['count'] += count
+            elif w[0] == 'XTR':
+                test1['pi_vals'] += pi_vals
+                test1['called'] += sum_called
+                test1['count'] += count
+                test2['pi_vals'] += pi_vals
+                test2['called'] += sum_called
+                test2['count'] += count
 
     # format of data is region, start, end, pi, called_sites, num variants
     # then the bounds of the bootstrapped confidence interval
@@ -319,4 +358,23 @@ else:
     with open(args.output, 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
         for row in data:
+            writer.writerow(row)
+
+if args.test is not False:
+    bootstrap_test1 = bootstrap_CI_mean(np.asarray(test1['pi_vals']),
+                                        args.replicates, test1['called'])
+    bootstrap_test2 = bootstrap_CI_mean(np.asarray(test2['pi_vals']),
+                                        args.replicates, test2['called'])
+    data1 = []
+    data1.append(['test1', wc[0][1], wc[4][2],
+                  float(sum(test1['pi_vals']) / test1['called']),
+                  test1['called'], test1['count'],
+                  bootstrap_test1[0], bootstrap_test1[1]])
+    data1.append(['test2', wc[1][1], wc[3][2],
+                  float(sum(test2['pi_vals']) / test2['called']),
+                  test2['called'], test2['count'],
+                  bootstrap_test2[0], bootstrap_test2[1]])
+    with open(args.test, 'w') as csvfile:
+        writer = csv.writer(csvfile, delimiter='\t')
+        for row in data1:
             writer.writerow(row)
