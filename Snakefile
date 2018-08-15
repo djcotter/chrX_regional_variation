@@ -131,7 +131,7 @@ rule all:
         # ld results for chr8 and chrY wholeChr
         expand('05_ld_windows/results/{pop}_{group_chr}_{window}' +
                '_windows_{filter_iter}_{ld_bin}_LDbins_95bootstrapCI.txt',
-               pop=POPS, group_chr=['chr8_individuals', 'chrY_males'],
+               pop=POPS, group_chr=['chr8_individuals'],
                window=['wholeChr'], filter_iter=FILTER, ld_bin=LD_BIN)
 
 rule parse_populations:
