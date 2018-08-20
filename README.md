@@ -285,3 +285,5 @@ Since the output of the `plink2` rule above is a series of pairwise comparisons 
 - [x] add flag to Rscripts to change **Ylim** for divergence-corrected results
 - [x] update divergence correction portion of script for calJac3-hg19 and canFam3-hg19.
 - [x] add functionality for chr9
+- [ ] rewrite R files in format that they can be abstractly scripted and make new rules for Snakefile
+- [ ] make **rule all** only output figures and supplemental figures that are used in final paper
