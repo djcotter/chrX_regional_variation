@@ -1,5 +1,6 @@
 suppressPackageStartupMessages(require(ggplot2))
 suppressPackageStartupMessages(require(optparse))
+suppressPackageStartupMessages(require(ggpubr))
 
 option_list = list(
   make_option(c('-i', '--input'), type='character', default=NULL,
@@ -8,9 +9,9 @@ option_list = list(
               help="path to output file"),
   make_option(c('-c', '--chrom'), type='character', default=NULL,
               help='identifier of the chromosome to be plotted'),
-  make_option(c('--width'), type='double', default=12.0,
+  make_option(c('--width'), type='double', default=8.0,
               help='width for figure'),
-  make_option(c('--height'), type='double', default=7.0,
+  make_option(c('--height'), type='double', default=4.5,
               help='height for figure'),
   make_option(c('--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']"),
@@ -65,10 +66,20 @@ if(opt$chrom == 'chrX') {
 #max_height = 0.06
 
 # create the ggplot
-p1 <- ggplot(df, aes(x=position, y=pi)) + ylim(0,opt$maxHeight)
-#p1 <- p1 + geom_errorbar(aes(ymin=V7, ymax=V8))
-p1 <- p1 + geom_point(col=df$colors) +
-  labs(list(x=paste('Position (', win_type, ')'),
-            y=expression(paste('Diversity (', pi, ')')))) +
-  theme(axis.title=element_text(size=14))
+p1 <- ggplot(df, aes(x=position, y=pi)) + theme_pubr()
+
+if(opt$chrom == 'chrX') {
+  p1 <- p1 +  geom_rect(xmin=0, xmax=2.899520, ymin=0, ymax=opt$maxHeight, fill='grey', alpha=0.3) + 
+    geom_rect(xmin=88.193855, xmax=93.993855, ymin=0, ymax=opt$maxHeight, fill='grey', alpha=0.3) + 
+    geom_rect(xmin=154.131044, xmax=156.341, ymin=0, ymax=opt$maxHeight, fill='grey', alpha=0.3) +
+    labs(x=paste('X Chromosome Position (',win_type,')', sep=""))
+} else {
+  p1 <- p1 + labs(x=paste(opt$chrom,' Position (',win_type,')', sep=""))
+}
+
+p1 <- p1 + ylim(0,opt$maxHeight) + 
+  geom_point(col=df$colors) +
+  labs(y=expression(bold(paste('Diversity (', pi, ')')))) +
+  theme(axis.title=element_text(size=16, face="bold"))
+
 ggsave(file=opt$output, height=opt$height, width=opt$width, units=opt$units)

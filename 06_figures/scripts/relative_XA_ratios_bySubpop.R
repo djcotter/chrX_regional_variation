@@ -1,5 +1,15 @@
 suppressPackageStartupMessages(require(ggplot2))
 suppressPackageStartupMessages(require(optparse))
+suppressPackageStartupMessages(require(ggpubr))
+suppressPackageStartupMessages(require(gtable))
+
+# discrete colorblind pallete to use
+cbbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+pop_levels <- c("LWK", "GWD", "ACB", "ASW", "YRI", 
+                "ESN", "CEU", "IBS", "TSI", "FIN",
+                "GBR", "GIH", "BEB", "ITU", "STU",
+                "PJL", "JPT", "CDX", "CHB", "CHS", 
+                "KHV", "PUR", "CLM", "MXL", "PEL")
 
 option_list = list(
   make_option(c('--subpops_data'), type='character', default=NULL,
@@ -58,16 +68,35 @@ data$XTR_A <- data$XTR / data$chr8
 data$PAR1_A <- data$PAR1 / data$chr8
 
 # plot data on a line
-data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_PAR1)])
-p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) + geom_point(aes(y=X_PAR1, shape="X_PAR1"), size=2)
-p1 = p1 + coord_cartesian(ylim=c(0.6,1.2)) 
-p1 = p1 + labs(color='Super\nPopulation', x='Population', y='Relative Ratios')
-p1 = p1 + geom_point(aes(y=X_A, shape="X_A"), size=2) + geom_hline(yintercept = 1)
-p1 = p1 + scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"), 
-                             labels=c(expression("X"[pi] / "A"[pi]), expression("X"[pi] / "PAR"[pi])),
-                             values=c(4,1)) + theme_bw() + theme(legend.text.align = 0) + theme(axis.text.x = element_text(angle=45,hjust=1))
+data$SUPERPOP <- factor(data$SUPERPOP, levels=c('AFR', 'EUR', 'SAS', 'EAS', 'AMR'))
+data$POP <- factor(data$POP, levels=pop_levels)
 
-ggsave(plot = p1, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
+p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) + geom_point(aes(y=X_PAR1, shape="X_PAR1"), size=2, stroke=1.5) + theme_pubr() +
+  coord_cartesian(ylim=c(0.6,1.2)) + labs(color='Super\nPopulation', x='Population', y='Relative Ratios') + 
+  geom_point(aes(y=X_A, shape="X_A"), size=2, stroke=1.5) + geom_hline(yintercept = 1) + 
+  scale_color_manual(values=cbbPalette) +
+  scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"), 
+                     labels=c(expression(bold("X"[pi] / "A"[pi])), expression(bold("X"[pi] / "PAR"[pi]))), 
+                     values=c(4,1)) + theme(legend.text.align = 0) + 
+  theme(axis.text.x = element_text(angle=45,hjust=1)) + 
+  guides(color=FALSE, shape=guide_legend(direction='vertical',title=NULL)) + 
+  theme(legend.position=c(0.8,0.85), legend.text=element_text(size=14,face='bold'),
+        legend.background=element_rect(fill = 'lightgrey')) +
+  theme(axis.title.x = element_text(size=16, face = "bold"),
+        axis.title.y = element_text(size=16, face = "bold"))
+
+a <- text_grob("Africa", size=16, face='bold')
+b <- text_grob("Europe", size=16, face='bold')
+c <- text_grob("S. Asia", size=16, face='bold')
+d <- text_grob("E. Asia", size=16, face='bold')
+e <- text_grob("Amer.", size=16, face='bold')
+
+gt <- gtable_row('name-row', widths = unit(c(6/25,5/25,5/25,5/25,4/25), 'npc'), grobs=list(a,b,c,d,e))
+
+p <- ggarrange(as_ggplot(gt), p1, ncol=1, nrow=2, align='v', heights = c(0.2,1))
+
+
+ggsave(plot = p, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
 
 # -----------------------------------------------------------------
 # p2 = ggplot(data, aes(x=POP, y=X_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
