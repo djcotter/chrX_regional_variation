@@ -56,17 +56,17 @@ data <- na.omit(data)
 model <- lm(R_squared ~ pi, data=data)
 label1 <- paste("R^2 ==", summary(model)$r.squared, sep=" ")
 
-LD2 <- read.delim(opt$LD2, header=FALSE)
-pi2 <- read.delim(opt$diversity2, header=FALSE)
-
-pi2$adj_position <- sapply(pi2$V2, function(x){(((x+(x+opt$winSize))/2)/1000000)})
-pi2$region <- sapply(pi2$adj_position, function(x){if(x<=2.699){"PAR1"}else if(x >= 88.1 & x <= 93.1){"XTR"}else if(x>=154.9){"PAR2"}else{"nonPAR"}})
-
-data2 <- data.frame (chr="chrX", adj_position=pi2$adj_position, region=pi2$region, R_squared=LD2$V3, pi=pi2$V4)
-data2 <- na.omit(data2)
-
-model2 <- lm(R_squared ~ pi, data=data2)
-label2 <- paste("R^2 ==", summary(model2)$r.squared, sep=" ")
+# LD2 <- read.delim(opt$LD2, header=FALSE)
+# pi2 <- read.delim(opt$diversity2, header=FALSE)
+# 
+# pi2$adj_position <- sapply(pi2$V2, function(x){(((x+(x+opt$winSize))/2)/1000000)})
+# pi2$region <- sapply(pi2$adj_position, function(x){if(x<=2.699){"PAR1"}else if(x >= 88.1 & x <= 93.1){"XTR"}else if(x>=154.9){"PAR2"}else{"nonPAR"}})
+# 
+# data2 <- data.frame (chr="chrX", adj_position=pi2$adj_position, region=pi2$region, R_squared=LD2$V3, pi=pi2$V4)
+# data2 <- na.omit(data2)
+# 
+# model2 <- lm(R_squared ~ pi, data=data2)
+# label2 <- paste("R^2 ==", summary(model2)$r.squared, sep=" ")
 
 group.colors = c(PAR1="red", nonPAR="black", XTR="blue", PAR2="red")
 group.shapes = c(PAR1=17, nonPAR=20, XTR=15, PAR2=19)
@@ -96,30 +96,32 @@ p1 <- ggplot(data, aes(x=R_squared, y=pi)) + theme_pubr() +
   labs(title="0 kb from Genes") + 
   theme(title=element_text(size=18, face='bold'))
 
-p2 <- ggplot(data2, aes(x=R_squared, y=pi)) + theme_pubr() +
-  geom_point(aes(shape=region, color=region, size=region)) +
-  scale_colour_manual(name="Region",
-                      breaks=c("PAR1", "nonPAR", "XTR", "PAR2"),
-                      values=group.colors) +
-  scale_shape_manual(name="Region",
-                     breaks=c("PAR1", "nonPAR", "XTR", "PAR2"),
-                     values=group.shapes) +
-  scale_size_manual(name="Region",
-                    breaks=c("PAR1", "nonPAR", "XTR", "PAR2"),
-                    values=group.sizes) +
-  xlab(bquote(bold('Linkage Disequilibrium (Average '* R^2*')'))) +
-  ylab(bquote(bold('Diversity ('*pi*')'))) +
-  annotate("text", x=0.65, y=max(data2$pi)-mean(data2$pi)/2,
-           label=label2, parse=TRUE, fontface=2, size=7) +
-  geom_smooth(aes(x=data2$R_squared, y=data2$pi),
-              method=lm, color="green", size=1) +
-  theme(axis.title = element_text(size=16, face="bold"),
-        axis.text = element_text(size=14),
-        legend.title = element_text(size=16, face='bold'),
-        legend.text = element_text(size=14, face='bold')) +
-  labs(title="10 kb from Genes") +
-  theme(title=element_text(size=18, face='bold'))
+# p2 <- ggplot(data2, aes(x=R_squared, y=pi)) + theme_pubr() +
+#   geom_point(aes(shape=region, color=region, size=region)) +
+#   scale_colour_manual(name="Region",
+#                       breaks=c("PAR1", "nonPAR", "XTR", "PAR2"),
+#                       values=group.colors) +
+#   scale_shape_manual(name="Region",
+#                      breaks=c("PAR1", "nonPAR", "XTR", "PAR2"),
+#                      values=group.shapes) +
+#   scale_size_manual(name="Region",
+#                     breaks=c("PAR1", "nonPAR", "XTR", "PAR2"),
+#                     values=group.sizes) +
+#   xlab(bquote(bold('Linkage Disequilibrium (Average '* R^2*')'))) +
+#   ylab(bquote(bold('Diversity ('*pi*')'))) +
+#   annotate("text", x=0.65, y=max(data2$pi)-mean(data2$pi)/2,
+#            label=label2, parse=TRUE, fontface=2, size=7) +
+#   geom_smooth(aes(x=data2$R_squared, y=data2$pi),
+#               method=lm, color="green", size=1) +
+#   theme(axis.title = element_text(size=16, face="bold"),
+#         axis.text = element_text(size=14),
+#         legend.title = element_text(size=16, face='bold'),
+#         legend.text = element_text(size=14, face='bold')) +
+#   labs(title="10 kb from Genes") +
+#   theme(title=element_text(size=18, face='bold'))
 
-p <- ggarrange(p1, p2, ncol=1, nrow=2, align='v', common.legend = TRUE, legend='right')
+# p <- ggarrange(p1, p2, ncol=1, nrow=2, align='v', common.legend = TRUE, legend='right')
+
+p <- p1
 
 ggsave(plot = p, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
