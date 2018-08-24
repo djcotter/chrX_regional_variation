@@ -36,7 +36,7 @@ POPS = POPULATIONS + SUBPOPULATIONS
 
 # select a "sex" category to use for analysis of chrX and chr8
 # use "males", "females", or "individuals" (for both)
-SEX = 'females'
+SEX = 'individuals'
 
 # select the pairwise substitution rates to use for divergence correction
 CORRECTION = ['uncorrected',
