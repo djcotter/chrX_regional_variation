@@ -66,10 +66,10 @@ data$XTR_A_h <- data$XTR_h / data$chr8_h
 data$SUPERPOP <- factor(data$SUPERPOP, levels=c('AFR', 'EUR', 'SAS', 'EAS', 'AMR'))
 data$POP <- factor(data$POP, levels=pop_levels)
 
-p_PAR1 = ggplot(data, aes(x=POP, y=PAR1_A, fill=SUPERPOP)) + geom_col() + theme_pubr() + 
+p_PAR1 = ggplot(data, aes(x=POP, y=PAR1_A, fill=SUPERPOP)) + geom_col(color='black') + theme_pubr() + 
   theme(axis.text.x = element_text(angle=45,hjust=1)) + 
   labs(x='Population', y=expression(bold("PAR1"[pi] / "A"[pi]))) + 
-  geom_errorbar(aes(ymin=PAR1_A_l, ymax=PAR1_A_h), width=0.5) + 
+  geom_errorbar(aes(ymin=PAR1_A_l, ymax=PAR1_A_h), width=0.5, size=0.8) + 
   coord_cartesian(ylim=c(0,1.35)) + geom_hline(yintercept=1.0) + 
   geom_hline(yintercept=0.75, linetype='dashed') + 
   theme(axis.text.x = element_blank(), axis.title.x = element_blank(),
@@ -78,10 +78,10 @@ p_PAR1 = ggplot(data, aes(x=POP, y=PAR1_A, fill=SUPERPOP)) + geom_col() + theme_
 
 
 #data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
-p_XTR = ggplot(data, aes(x=POP, y=XTR_A, fill=SUPERPOP)) + geom_col() + theme_pubr() + 
+p_XTR = ggplot(data, aes(x=POP, y=XTR_A, fill=SUPERPOP)) + geom_col(color='black') + theme_pubr() + 
   theme(axis.text.x = element_text(angle=45,hjust=1)) + 
   labs(fill='Super\nPopulation', x='Population', y=expression(bold("XTR"[pi] / "A"[pi]))) + 
-  geom_errorbar(aes(ymin=XTR_A_l, ymax=XTR_A_h), width=0.5) + 
+  geom_errorbar(aes(ymin=XTR_A_l, ymax=XTR_A_h), width=0.5, size=0.8) + 
   coord_cartesian(ylim=c(0,1.35)) + geom_hline(yintercept=1.0) + 
   geom_hline(yintercept=0.75, linetype='dashed') + 
   theme(axis.text.x = element_blank(), axis.title.x = element_blank(),
@@ -89,10 +89,10 @@ p_XTR = ggplot(data, aes(x=POP, y=XTR_A, fill=SUPERPOP)) + geom_col() + theme_pu
   scale_fill_manual(values=cbbPalette) + theme(plot.margin = unit(c(1,1,1,1), 'mm'))
 
 #data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$X_A)])
-p_X = ggplot(data, aes(x=POP, y=X_A, fill=SUPERPOP)) + geom_col() + theme_pubr() + 
+p_X = ggplot(data, aes(x=POP, y=X_A, fill=SUPERPOP)) + geom_col(color='black') + theme_pubr() + 
   theme(axis.text.x = element_text(angle=45,hjust=1)) + 
   labs(fill='Super\nPopulation', x='Population', y=expression(bold("X"[pi] / "A"[pi]))) + 
-  geom_errorbar(aes(ymin=X_A_l, ymax=X_A_h), width=0.5) + 
+  geom_errorbar(aes(ymin=X_A_l, ymax=X_A_h), width=0.5, size=0.8) + 
   coord_cartesian(ylim=c(0,1.35)) + geom_hline(yintercept=1.0) + 
   geom_hline(yintercept=0.75, linetype='dashed') + 
   theme(axis.title.x = element_text(size=16, face = "bold"),
