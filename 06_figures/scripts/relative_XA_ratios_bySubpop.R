@@ -71,8 +71,12 @@ data$PAR1_A <- data$PAR1 / data$chr8
 data$SUPERPOP <- factor(data$SUPERPOP, levels=c('AFR', 'EUR', 'SAS', 'EAS', 'AMR'))
 data$POP <- factor(data$POP, levels=pop_levels)
 
-p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) + geom_point(aes(y=X_PAR1, shape="X_PAR1"), size=2, stroke=1.5) + theme_pubr() +
+p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) + 
+  geom_point(aes(y=X_PAR1), shape=1, size=3, stroke=1.5, color='black') +
+  geom_point(aes(y=X_PAR1), shape=1, size=1, stroke=1.5, color='black') +
+  geom_point(aes(y=X_PAR1, shape="X_PAR1"), size=2, stroke=1.5) + theme_pubr() +
   coord_cartesian(ylim=c(0.6,1.2)) + labs(color='Super\nPopulation', x='Population', y='Relative Ratios') + 
+  geom_point(aes(y=X_A), shape=4, size=1.5, stroke=2.8, color='black') +
   geom_point(aes(y=X_A, shape="X_A"), size=2, stroke=1.5) + geom_hline(yintercept = 1) + 
   scale_color_manual(values=cbbPalette) +
   scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"), 
