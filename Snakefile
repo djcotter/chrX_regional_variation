@@ -27,7 +27,7 @@ POPULATIONS = sorted(json.load(open(config['POP_CODES']))['Populations'])
 SUBPOPULATIONS = sorted(json.load(open(config['POP_CODES']))['Subpopulations'])
 
 # select the filter from the configfile that should be used
-FILTER = ['filter8']
+FILTER = ['filter4']
 WINDOW = ['100kb']
 LD_BIN = ['300kb']
 
