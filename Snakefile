@@ -850,14 +850,14 @@ rule format_report:
                                   '{pops}_chrX_{group}_{window}_windows_' +
                                   '{correction}_{filter_iter}_{ld_bin}_' +
                                   'LDbin_correlation.pdf'),
-                        pops=POPS, group=SEX,
+                        pops=POPS, group='females',
                         correction=CORRECTION, window=WINDOW,
                         ld_bin=LD_BIN, filter_iter='filter1'),
         figS2b = expand(path.join('06_figures', 'results',
                                   '{pops}_chrX_{group}_{window}_windows_' +
                                   '{correction}_{filter_iter}_{ld_bin}_' +
                                   'LDbin_correlation.pdf'),
-                        pops=POPS, group=SEX,
+                        pops=POPS, group='females',
                         correction=CORRECTION, window=WINDOW,
                         ld_bin=LD_BIN, filter_iter='filter4'),
         figS3 = expand(path.join('06_figures', 'results',
