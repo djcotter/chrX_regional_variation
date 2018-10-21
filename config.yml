@@ -67,6 +67,16 @@ filters:
     - hg19_ampliconic_regions.txt
     - hg19_lowDiversity_regions.txt
 
+filter_descriptions:
+  filter1: 0kb
+  filter2: 1kb
+  filter3: 5kb
+  filter4: 10kb
+  filter5: 20kb
+  filter6: 50kb
+  filter7: 100kb
+  filter8: 10kb
+
 # windows for Analysis
 windows:
   100kb:
@@ -100,7 +110,7 @@ rheMac2-hg19-corrected:
   chr8: 0.055
   chr9: 0.05
 canFam3-hg19-corrected:
-  chrX: 0.02
+  chrX: 0.01
   chrY: 0.02
   chr8: 0.02
   chr9: 0.025

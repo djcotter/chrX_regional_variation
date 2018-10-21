@@ -13,6 +13,8 @@ option_list = list(
               help="path to windowed diversity file"),
   make_option(c('-o', '--output'), type='character', default=NULL,
               help="path to output files"),
+  make_option(c('--filter'), type='character', default=NULL,
+              help="how many kb were filtered with the provided files"),
   make_option(c('--winSize'), type='integer', default=100000,
               help='size of the window included in the LD_data file.'),
   make_option(c('--width'), type='double', default=8.0,
@@ -29,7 +31,7 @@ opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 opt$units = tolower(opt$units)
 
-if(is.null(opt$LD) || is.null(opt$diversity) || is.null(opt$output)) {
+if(is.null(opt$LD) || is.null(opt$diversity) || is.null(opt$output) || is.null(opt$filter)) {
   print_help(opt_parser)
   stop("Input and Output files must be specified.", call.=FALSE)
 }
@@ -93,7 +95,7 @@ p1 <- ggplot(data, aes(x=R_squared, y=pi)) + theme_pubr() +
         axis.text = element_text(size=14),
         legend.title = element_text(size=16, face='bold'),
         legend.text = element_text(size=14, face='bold')) +
-  labs(title="0 kb from Genes") + 
+  labs(title=paste(opt$filter, "filtered from genes", sep=" ")) + 
   theme(title=element_text(size=18, face='bold'))
 
 # p2 <- ggplot(data2, aes(x=R_squared, y=pi)) + theme_pubr() +
