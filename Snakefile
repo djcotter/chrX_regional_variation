@@ -820,7 +820,7 @@ rule plot_dstance_fromGenes_plots:
     shell:
         "Rscript {params.script} --filter1 {input.filter1} --filter2 "
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
-        "--filter5 {input.filter5} -o1 {output.o1} -o2 {output.o2}"
+        "--filter5 {input.filter5} --output1 {output.o1} --output2 {output.o2}"
 
 rule format_report:
     input:
