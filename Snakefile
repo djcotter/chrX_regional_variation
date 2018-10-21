@@ -40,10 +40,7 @@ POPS = 'YRI'
 SEX = 'individuals'
 
 # select the pairwise substitution rates to use for divergence correction
-CORRECTION = ['uncorrected',
-              # 'rheMac2-hg19-corrected',
-              # 'calJac3-hg19-corrected',
-              'canFam3-hg19-corrected']
+CORRECTION = ['canFam3-hg19-corrected']
 
 
 # Global variables ------------------------------------------------------------
@@ -73,66 +70,61 @@ wildcard_constraints:
 # Global Rules ----------------------------------------------------------------
 rule all:
     input:
-        # chrX analyzed by region for all pops
-        expand('04_window_analysis/results/' +
-               '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
-               '_diversity_wPvals.bed',
-               pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
-               correction=CORRECTION),
-        # windoweded graphs of diversity results
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
-               '_diversity.png',
-               pops=POPS, group_chr=GROUP_CHR,
-               filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
-        # windowed graphs of males and females across chrX
-        expand('06_figures/results/' +
-               '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
-               '{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
-        # windowed graphs of diversity across the PAB
-        expand('06_figures/results/' +
-               '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
-               pops=POPS, filter_iter=FILTER, window=WINDOW,
-               correction=CORRECTION),
-        # output for ld_window_analysis
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
-               '95bootstrapCI_{plotSize}Mb.png',
-               pops=POPS, group_chr="chrX_females",
-               window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
-        # output for diversity split by chr/region
-        # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
-        #        '{filter_iter}_{correction}_byChrRegion.png',
-        #        pop=POPS, filter_iter=FILTER, group=SEX,
+        path.join('07_report', 'report.pdf')
+        # # chrX analyzed by region for all pops
+        # expand('04_window_analysis/results/' +
+        #        '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
+        #        '_diversity_wPvals.bed',
+        #        pops=POPS, group_chr=SEX + '_chrX', filter_iter=FILTER,
         #        correction=CORRECTION),
-        # output for ratios tables
-        expand('06_figures/results/' +
-               '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
-               pop=POPS, group=SEX, filter_iter=FILTER,
-               correction=CORRECTION),
-        # ld vs pi correlation plots
-        expand('06_figures/results/' +
-               '{pops}_{group_chr}_{window}_windows_{correction}' +
-               '_{filter_iter}_{ld_bin}_LDbin_correlation.png',
-               pops=POPS, group_chr="chrX_females", correction=CORRECTION,
-               window=WINDOW, ld_bin=LD_BIN, filter_iter=FILTER),
-        # diversity ratios figure
-        expand('06_figures/results/' +
-               'subpops_X-A_PAR-A_XTR-A_ratios_{correction}_{filter_iter}.png',
-               correction=CORRECTION, filter_iter=FILTER),
-        # demography corrected PARvX figure
-        expand('06_figures/results/' +
-               'subpops_X-PAR_X-A_demography_corrected_ratios_{correction}' +
-               '_{filter_iter}.png', correction=CORRECTION,
-               filter_iter=FILTER),
-        # ld results for chr8
-        expand('05_ld_windows/results/{pop}_{group_chr}_{window}' +
-               '_windows_{filter_iter}_{ld_bin}_LDbins_95bootstrapCI.txt',
-               pop=POPS, group_chr=['chr8_individuals'],
-               window=['wholeChr'], filter_iter=FILTER, ld_bin=LD_BIN)
+        # # windoweded graphs of diversity results
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{filter_iter}_{window}_{correction}' +
+        #        '_diversity.png',
+        #        pops=POPS, group_chr=GROUP_CHR,
+        #        filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+        # # windowed graphs of males and females across chrX
+        # expand('06_figures/results/' +
+        #        '{pops}_chrX_malesAndFemales_{filter_iter}_{window}_' +
+        #        '{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+        # # windowed graphs of diversity across the PAB
+        # expand('06_figures/results/' +
+        #        '{pops}_PAB_{filter_iter}_{window}_{correction}_diversity.png',
+        #        pops=POPS, filter_iter=FILTER, window=WINDOW,
+        #        correction=CORRECTION),
+        # # output for ld_window_analysis
+        # expand('06_figures/results/' +
+        #        '{pops}_{group_chr}_{window}_windows_{ld_bin}_LDbins_' +
+        #        '95bootstrapCI_{plotSize}Mb.png',
+        #        pops=POPS, group_chr="chrX_females",
+        #        window=WINDOW, ld_bin=LD_BIN, plotSize=PLOT_LENGTH),
+        # # output for diversity split by chr/region
+        # # expand('06_figures/results/{pop}_{group}_totalDiversity_' +
+        # #        '{filter_iter}_{correction}_byChrRegion.png',
+        # #        pop=POPS, filter_iter=FILTER, group=SEX,
+        # #        correction=CORRECTION),
+        # # output for ratios tables
+        # expand('06_figures/results/' +
+        #        '{pop}_{group}_{filter_iter}_{correction}_ratios.txt',
+        #        pop=POPS, group=SEX, filter_iter=FILTER,
+        #        correction=CORRECTION),
+        # # diversity ratios figure
+        # expand('06_figures/results/' +
+        #        'subpops_X-A_PAR-A_XTR-A_ratios_{correction}_{filter_iter}.png',
+        #        correction=CORRECTION, filter_iter=FILTER),
+        # # demography corrected PARvX figure
+        # expand('06_figures/results/' +
+        #        'subpops_X-PAR_X-A_demography_corrected_ratios_{correction}' +
+        #        '_{filter_iter}.png', correction=CORRECTION,
+        #        filter_iter=FILTER),
+        # # ld results for chr8
+        # expand('05_ld_windows/results/{pop}_{group_chr}_{window}' +
+        #        '_windows_{filter_iter}_{ld_bin}_LDbins_95bootstrapCI.txt',
+        #        pop=POPS, group_chr=['chr8_individuals'],
+        #        window=['wholeChr'], filter_iter=FILTER, ld_bin=LD_BIN)
 
 rule parse_populations:
     input:
@@ -447,7 +439,7 @@ rule plot_windowed_diversity:
     output:
         path.join('06_figures', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_{correction}' +
-                  '_diversity.png')
+                  '_diversity.{ext}')
     shell:
         "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom} "
         "--maxHeight {params.height}"
@@ -467,7 +459,7 @@ rule plot_sex_specific_chrX_windows:
     output:
         path.join('06_figures', 'results',
                   '{pop}_chrX_malesAndFemales_{filter_iter}_{window}' +
-                  '_{correction}_diversity.png')
+                  '_{correction}_diversity.{ext}')
     shell:
         "Rscript {params.R_script} --males {input.chrX_males} --females "
         "{input.chrX_females} --maxHeight {params.height} -o {output}"
@@ -490,7 +482,7 @@ rule plot_PAB_diversity:
     output:
         path.join('06_figures', 'results',
                   '{pop}_PAB_{filter_iter}_{window}_{correction}' +
-                  '_diversity.png')
+                  '_diversity.{ext}')
     shell:
         "Rscript {params.R_script} --chrX_females {input.chrX_females} "
         "--chrX_males {input.chrX_males} --chrY {input.chrY} "
@@ -530,26 +522,6 @@ rule window_analysis_wholeChr:
         "python {params.window_calcs} --diversity {input.filtered_diversity} "
         "--callable {input.filtered_callable} --windows {input.windows} "
         "--replicates {params.replicates} --output {output}"
-
-# rule plot_diversity_byRegion_byWholeChr:
-#     input:
-#         chrX = path.join('04_window_analysis', 'results',
-#                          '{pop}_{group}_chrX_{filter_iter}_byRegion' +
-#                          '_{correction}_diversity.bed'),
-#         chrY = path.join('04_window_analysis', 'results',
-#                          '{pop}_males_chrY_{filter_iter}_wholeChr' +
-#                          '_{correction}_diversity.bed'),
-#         chr8 = path.join('04_window_analysis', 'results',
-#                          '{pop}_{group}_chr8_{filter_iter}_wholeChr' +
-#                          '_{correction}_diversity.bed')
-#     params:
-#         R_script = ''
-#     output:
-#         path.join('06_figures', 'results',
-#                   '{pop}_{group}_totalDiversity_{filter_iter}_{correction}' +
-#                   '_byChrRegion.png')
-#     shell:
-#         "touch {output}"
 
 rule calculate_A_ratios:
     input:
@@ -618,7 +590,7 @@ rule plot_A_Ratios_across_subpops:
     output:
         path.join('06_figures', 'results',
                   'subpops_X-A_PAR-A_XTR-A_ratios_{correction}' +
-                  '_{filter_iter}.png')
+                  '_{filter_iter}.{ext}')
     params:
         Rscript = path.join('06_figures', 'scripts',
                             'plot_subpop_diversity_ratios.R')
@@ -631,8 +603,8 @@ rule plot_relative_XvPAR_XvA_ratios:
                   'subpops_{filter_iter}_{correction}_ratios_table.txt')
     output:
         path.join('06_figures', 'results',
-                  'subpops_X-PAR_X-A_demography_corrected_ratios' +
-                  '_{correction}_{filter_iter}.png')
+                  'subpops_X-PAR_X-A_demography-corrected-ratios' +
+                  '_{correction}_{filter_iter}.{ext}')
     params:
         Rscript = path.join('06_figures', 'scripts',
                             'relative_XA_ratios_bySubpop.R')
@@ -762,7 +734,7 @@ rule plot_ld_windows:
     output:
         path.join('06_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{filter_iter}' +
-                  '_{ld_bin}_LDbins_95bootstrapCI_{LDplotSize}Mb.png')
+                  '_{ld_bin}_LDbins_95bootstrapCI_{LDplotSize}Mb.{ext}')
     params:
         R_script = path.join('06_figures', 'scripts',
                              'plot_LD_bins.R'),
@@ -783,11 +755,134 @@ rule plot_ld_pi_correlation:
                        '{correction}_diversity.bed')
     params:
         R_script = path.join('06_figures', 'scripts',
-                             'ld_pi_correlation.R')
+                             'ld_pi_correlation.R'),
+        distance_filtered = lambda wildcards: \
+            config["filter_descriptions"][wildcards.filter_iter]
     output:
         path.join('06_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{correction}' +
-                  '_{filter_iter}_{ld_bin}_LDbin_correlation.png')
+                  '_{filter_iter}_{ld_bin}_LDbin_correlation.{ext}')
     shell:
         "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
-        "--output {output}"
+        "--filter {params.distance_filtered} --output {output}"
+
+rule plot_divergence_ratios_byFilter:
+    input:
+        path.join('data', 'substitution_rates',
+                  'divergence_ratios_JC69-corrected_filter1-5.txt')
+    params:
+        script = path.join('06_figures', 'scripts',
+                           'divergence_diversity_ratios_byFilter.R')
+    output:
+        path.join('06_figures', 'results',
+                  'divergence_ratios_byFilter.{ext}')
+    shell:
+        "Rscript {params.script} --divergenceRatios {input} -o {output}"
+
+rule plot_LD_byRegion:
+    input:
+        chrX = path.join('05_ld_windows', 'results',
+                         'YRI_chrX_females_byRegion_windows_{filter_iter}_' +
+                         '300kb_LDbins_95bootstrapCI.txt'),
+        chr8 = path.join('05_ld_windows', 'results',
+                         'YRI_chr8_individuals_wholeChr_windows_' +
+                         '{filter_iter}_300kb_LDbins_95bootstrapCI.txt')
+    params:
+        script = path.join('06_figures', 'scripts', 'plot_LD_byRegion.R')
+    output:
+        path.join('06_figures', 'results', 'LD_byRegion_{filter_iter}.{ext}')
+    shell:
+        "Rscript {params.script} --chrX {input.chrX} "
+        "--chr8 {input.chr8} -o {output}"
+
+rule plot_dstance_fromGenes_plots:
+    input:
+        filter1 = path.join('06_figures', 'results',
+                            'subpops_filter1_{correction}_ratios_table.txt'),
+        filter2 = path.join('06_figures', 'results',
+                            'subpops_filter2_{correction}_ratios_table.txt'),
+        filter3 = path.join('06_figures', 'results',
+                            'subpops_filter3_{correction}_ratios_table.txt'),
+        filter4 = path.join('06_figures', 'results',
+                            'subpops_filter4_{correction}_ratios_table.txt'),
+        filter5 = path.join('06_figures', 'results',
+                            'subpops_filter5_{correction}_ratios_table.txt')
+    params:
+        script = path.join('06_figures', 'scripts',
+                           'distanceFromGenes_allPops.R')
+    output:
+        o1 = path.join('06_figures', 'results',
+                       'allPops_{correction}_diversityRatios' +
+                       '_wDistanceFromGenes.{ext}'),
+        o2 = path.join('06_figures', 'results',
+                       'allPops_{correction}_relativeDiversityRatios_' +
+                       'wDistanceFromGenes.{ext}')
+    shell:
+        "Rscript {params.script} --filter1 {input.filter1} --filter2 "
+        "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
+        "--filter5 {input.filter5} -o1 {output.o1} -o2 {output.o2}"
+
+rule format_report:
+    input:
+        fig1 = expand(path.join('06_figures', 'results',
+                                '{pops}_{group}_chrX_{filter_iter}_{window}_' +
+                                '{correction}_diversity.pdf'),
+                      pops=POPS, group=SEX,
+                      filter_iter=FILTER, window=WINDOW,
+                      correction=CORRECTION),
+        fig2 = expand(path.join('06_figures', 'results',
+                                'subpops_X-A_PAR-A_XTR-A_ratios_' +
+                                '{correction}_{filter_iter}.pdf'),
+                      correction=CORRECTION,
+                      filter_iter=FILTER),
+        fig3 = path.join('06_figures', 'results',
+                         'divergence_ratios_byFilter.pdf'),
+        fig4 = expand(path.join('06_figures', 'results',
+                                'allPops_{correction}_diversityRatios_' +
+                                'wDistanceFromGenes.pdf'),
+                      correction=CORRECTION),
+        fig5 = expand(path.join('06_figures', 'results',
+                                'allPops_{correction}_relativeDiversity' +
+                                'Ratios_wDistanceFromGenes.pdf'),
+                      correction=CORRECTION),
+        figS1 = path.join('06_figures', 'results', 'LD_byRegion_filter1.png'),
+        figS2a = expand(path.join('06_figures', 'results',
+                                  '{pops}_chrX_{group}_{window}_windows_' +
+                                  '{correction}_{filter_iter}_{ld_bin}_' +
+                                  'LDbin_correlation.pdf'),
+                        pops=POPS, group=SEX,
+                        correction=CORRECTION, window=WINDOW,
+                        ld_bin=LD_BIN, filter_iter='filter1'),
+        figS2b = expand(path.join('06_figures', 'results',
+                                  '{pops}_chrX_{group}_{window}_windows_' +
+                                  '{correction}_{filter_iter}_{ld_bin}_' +
+                                  'LDbin_correlation.pdf'),
+                        pops=POPS, group=SEX,
+                        correction=CORRECTION, window=WINDOW,
+                        ld_bin=LD_BIN, filter_iter='filter4'),
+        figS3 = expand(path.join('06_figures', 'results',
+                                 'subpops_X-PAR_X-A_demography-corrected' +
+                                 '-ratios_{correction}_{filter_iter}.pdf'),
+                       correction=CORRECTION, filter_iter=FILTER),
+        template = path.join('07_report', 'template.tex'),
+        abstract = path.join('07_report', 'abstract.txt')
+    output:
+        path.join('07_report', 'report.tex')
+    run:
+        shell("sed -e 's+FIGURE1+{input.fig1}+g' {input.template} > {output}")
+        shell("sed -i -e 's+FIGURE2+{input.fig2}+g' {output}")
+        shell("sed -i -e 's+FIGURE3+{input.fig3}+g' {output}")
+        shell("sed -i -e 's+FIGURE4+{input.fig4}+g' {output}")
+        shell("sed -i -e 's+FIGURE5+{input.fig5}+g' {output}")
+        shell("sed -i -e 's+FIGURES1+{input.figS1}+g' {output}")
+        shell("sed -i -e 's+FIGURES2A+{input.figS2a}+g' {output}")
+        shell("sed -i -e 's+FIGURES2B+{input.figS2b}+g' {output}")
+        shell("sed -i -e 's+FIGURES3+{input.figS3}+g' {output}")
+
+rule create_report:
+    input:
+        path.join('07_report', 'report.tex')
+    output:
+        path.join('07_report', 'report.pdf')
+    shell:
+        "tectonic {input}"

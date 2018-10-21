@@ -1,0 +1,89 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{authblk}
+\newcommand*{\MyPath}{..}
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+
+\title{A Very Simple \LaTeXe{} Template}
+\author[1,2]{Daniel J. Cotter}
+\author[1]{Timothy H. Webster}
+\author[1]{Melissa A. Wilson Sayres}
+\affil[1]{Arizona State University}
+\affil[2]{Stanford University}
+
+\date{\today}
+
+\renewcommand\Authands{ and }
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{abstract.txt}
+\end{abstract}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURE1}
+  \caption{Figure 1 Caption}
+  \label{fig:fig1}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURE2}
+  \caption{Figure 2 Caption}
+  \label{fig:fig2}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURE3}
+  \caption{Figure 3 Caption}
+  \label{fig:fig3}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURE4}
+  \caption{Figure 4 Caption}
+  \label{fig:fig4}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURE5}
+  \caption{Figure 5 Caption}
+  \label{fig:fig5}
+\end{figure}
+
+\beginsupplement
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURES1}
+  \caption{Figure S1 Caption}
+  \label{fig:figS1}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth]{\MyPath/FIGURES2A}
+    \caption{Figure S2a caption.}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth]{\MyPath/FIGURES2B}
+    \caption{Figure S2b caption.}
+  \end{subfigure}
+  \caption{Figure S2 caption.}
+  \label{fig:figS2}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{\MyPath/FIGURES3}
+  \caption{Figure S3 Caption}
+  \label{fig:figS3}
+\end{figure}
+
+\end{document}
