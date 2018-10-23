@@ -24,44 +24,48 @@
 \maketitle
 
 \begin{abstract}
-\input{abstract.txt}
+\input{text/abstract.txt}
 \end{abstract}
+
+\section{Figures}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURE1}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURE1}}}}
+  \caption{\input{text/figure1.txt}}
   \label{fig:fig1}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURE2}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURE2}}}}
+  \caption{\input{text/figure2.txt}}
   \label{fig:fig2}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURE3}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURE3}}}}
+  \caption{\input{text/figure3.txt}}
   \label{fig:fig3}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURE4}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURE4}}}}
+  \caption{\input{text/figure4.txt}}
   \label{fig:fig4}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURE5}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURE5}}}}
+  \caption{\input{text/figure5.txt}}
   \label{fig:fig5}
 \end{figure}
 
+\clearpage
+\section{Supplemental Figures}
 \beginsupplement
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURES1}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURES1}}}}
+  \caption{\input{text/figureS1.txt}}
   \label{fig:figS1}
 \end{figure}
 
@@ -69,20 +73,32 @@
   \centering
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth]{\MyPath/FIGURES2A}
-    \caption{File Path: {\tiny\texttt{\detokenize{FIGURES2A}}}}
+    \caption{0 kb filitered from genes}
   \end{subfigure}
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth]{\MyPath/FIGURES2B}
-    \caption{File Path: {\tiny\texttt{\detokenize{FIGURES2B}}}}
+    \caption{10 kb filitered from genes}
   \end{subfigure}
-  \caption{Figure S2 caption.}
+  \caption{\input{text/figureS2.txt}}
   \label{fig:figS2}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{\MyPath/FIGURES3}
-  \caption{File Path: {\tiny\texttt{\detokenize{FIGURES3}}}}
+  \caption{\input{text/figureS2.txt}}
   \label{fig:figS3}
 \end{figure}
+
+\clearpage
+\section{Paths to Figures}
+Figure 1 File Path: {\tiny\texttt{\detokenize{FIGURE1}}}
+Figure 2 File Path: {\tiny\texttt{\detokenize{FIGURE2}}}
+Figure 3 File Path: {\tiny\texttt{\detokenize{FIGURE3}}}
+Figure 4 File Path: {\tiny\texttt{\detokenize{FIGURE4}}}
+Figure 5 File Path: {\tiny\texttt{\detokenize{FIGURE5}}}
+Figure S1 File Path: {\tiny\texttt{\detokenize{FIGURES1}}}
+Figure S2a File Path: {\tiny\texttt{\detokenize{FIGURES2A}}}
+Figure S2b File Path: {\tiny\texttt{\detokenize{FIGURES2B}}}
+Figure S3 File Path: {\tiny\texttt{\detokenize{FIGURES3}}}
 
 \end{document}
