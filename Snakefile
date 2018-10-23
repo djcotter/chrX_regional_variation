@@ -865,7 +865,9 @@ rule format_report:
                                  '-ratios_{correction}_{filter_iter}.pdf'),
                        correction=CORRECTION, filter_iter=FILTER),
         template = path.join('07_report', 'template.tex'),
-        abstract = path.join('07_report', 'abstract.txt')
+        abstract = path.join('07_report', 'text', 'abstract.txt'),
+        captions = expand(path.join('07_report', 'text', 'figure{num}.txt'),
+                          num=['1', '2', '3', '4', '5', 'S1', 'S2', 'S3'])
     output:
         path.join('07_report', 'report.tex')
     run:
