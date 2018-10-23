@@ -2,3 +2,5 @@
 !.gitignore
 !template.tex
 !abstract.txt
+!text/
+!text/*
