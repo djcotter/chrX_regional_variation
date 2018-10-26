@@ -5,10 +5,10 @@ suppressPackageStartupMessages(require(gtable))
 
 # discrete colorblind pallete to use
 cbbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-pop_levels <- c("LWK", "GWD", "ACB", "ASW", "YRI", 
+pop_levels <- c("LWK", "GWD", "ACB", "ASW", "YRI",
                 "ESN", "CEU", "IBS", "TSI", "FIN",
                 "GBR", "GIH", "BEB", "ITU", "STU",
-                "PJL", "JPT", "CDX", "CHB", "CHS", 
+                "PJL", "JPT", "CDX", "CHB", "CHS",
                 "KHV", "PUR", "CLM", "MXL", "PEL")
 
 option_list = list(
@@ -71,19 +71,19 @@ data$PAR1_A <- data$PAR1 / data$chr8
 data$SUPERPOP <- factor(data$SUPERPOP, levels=c('AFR', 'EUR', 'SAS', 'EAS', 'AMR'))
 data$POP <- factor(data$POP, levels=pop_levels)
 
-p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) + 
+p1 = ggplot(data, aes(x=POP, color=SUPERPOP)) +
   geom_point(aes(y=X_PAR1), shape=1, size=3, stroke=1.5, color='black') +
   geom_point(aes(y=X_PAR1), shape=1, size=1, stroke=1.5, color='black') +
   geom_point(aes(y=X_PAR1, shape="X_PAR1"), size=2, stroke=1.5) + theme_pubr() +
-  coord_cartesian(ylim=c(0.6,1.2)) + labs(color='Super\nPopulation', x='Population', y='Relative Ratios') + 
+  coord_cartesian(ylim=c(0.6,1.2)) + labs(color='Super\nPopulation', x='Population', y='Relative Ratios') +
   geom_point(aes(y=X_A), shape=4, size=1.5, stroke=2.8, color='black') +
-  geom_point(aes(y=X_A, shape="X_A"), size=2, stroke=1.5) + geom_hline(yintercept = 1) + 
+  geom_point(aes(y=X_A, shape="X_A"), size=2, stroke=1.5) + geom_hline(yintercept = 1) +
   scale_color_manual(values=cbbPalette) +
-  scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"), 
-                     labels=c(expression(bold("X"[pi] / "A"[pi])), expression(bold("X"[pi] / "PAR"[pi]))), 
-                     values=c(4,1)) + theme(legend.text.align = 0) + 
-  theme(axis.text.x = element_text(angle=45,hjust=1)) + 
-  guides(color=FALSE, shape=guide_legend(direction='vertical',title=NULL)) + 
+  scale_shape_manual("Ratio", breaks=c("X_A", "X_PAR1"),
+                     labels=c(expression(bold("X"[pi] / "A"[pi])), expression(bold("X"[pi] / "PAR"[pi]))),
+                     values=c(4,1)) + theme(legend.text.align = 0) +
+  theme(axis.text.x = element_text(angle=45,hjust=1)) +
+  guides(color=FALSE, shape=guide_legend(direction='vertical',title=NULL)) +
   theme(legend.position=c(0.8,0.85), legend.text=element_text(size=14,face='bold'),
         legend.background=element_rect(fill = 'lightgrey')) +
   theme(axis.title.x = element_text(size=16, face = "bold"),
@@ -106,13 +106,12 @@ ggsave(plot = p, file=opt$output, height=opt$height, width=opt$width, units=opt$
 # p2 = ggplot(data, aes(x=POP, y=X_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
 # p2 = p2 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
 # p2 = p2 + labs(color='Super\nPopulation', x='Population', y=expression("Relative X"[pi] / "A"[pi]))
-# 
+#
 # data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$XTR_A)])
 # p3 = ggplot(data, aes(x=POP, y=XTR_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
 # p3 = p3 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
 # p3 = p3 + labs(color='Super\nPopulation', x='Population', y=expression("Relative XTR"[pi] / "A"[pi]))
-# 
-# 
+#
 # data$POP <- factor(data$POP, levels=data$POP[order(data$SUPERPOP, data$PAR1_A)])
 # p4 = ggplot(data, aes(x=POP, y=PAR1_A, color=SUPERPOP)) + geom_point() + geom_hline(yintercept = 1)
 # p4 = p4 + coord_cartesian(ylim=c(0.6,1.2)) + theme(axis.text.x = element_text(angle=45,hjust=1))
