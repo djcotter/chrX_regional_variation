@@ -766,6 +766,28 @@ rule plot_ld_pi_correlation:
         "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
         "--filter {params.distance_filtered} --output {output}"
 
+rule plot_ld_pi_correlation_noFilter:
+    input:
+        ld = path.join('05_ld_windows', 'results', '{pop}_{chr}_{group}_' +
+                       '{window}_windows_filter0' +
+                       '_{ld_bin}_LDbins_95bootstrapCI.txt'),
+        pi = path.join('04_window_analysis', 'results',
+                       '{pop}_{group}_{chr}_{filter_iter}_{window}_' +
+                       '{correction}_diversity.bed')
+    params:
+        R_script = path.join('06_figures', 'scripts',
+                             'ld_pi_correlation.R'),
+        distance_filtered = lambda wildcards: \
+            config["filter_descriptions"][wildcards.filter_iter]
+    output:
+        path.join('06_figures', 'results',
+                  '{pop}_{chr}_{group}_{window}_windows_{correction}' +
+                  '_{filter_iter}_{ld_bin}_LDbin_correlation_' +
+                  'noFilterLD.{ext}')
+    shell:
+        "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
+        "--filter {params.distance_filtered} --output {output}"
+
 rule plot_divergence_ratios_byFilter:
     input:
         path.join('data', 'substitution_rates',

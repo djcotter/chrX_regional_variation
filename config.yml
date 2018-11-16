@@ -16,6 +16,8 @@ callable_sites:
 
 #chromosome filters
 filters:
+  filter0:
+    - centromere_telomere_hg19.bed
   filter1:
     - UCSC_refseq_gencode_gene_transcripts_hg19.bed
     - simple_repeats_hg19.bed
