@@ -70,7 +70,13 @@ wildcard_constraints:
 # Global Rules ----------------------------------------------------------------
 rule all:
     input:
-        path.join('07_report', 'report.pdf')
+        path.join('07_report', 'report.pdf'),
+        expand(path.join('06_figures', 'results',
+                         '{pop}_LD_byRegion_{ld_bin}_' +
+                         'LDbins_{filter_iter}.{ext}'),
+               pop=SUBPOPULATIONS, ld_bin=LD_BIN,
+               filter_iter='filter1', ext='pdf')
+
         # # chrX analyzed by region for all pops
         # expand('04_window_analysis/results/' +
         #        '{pops}_{group_chr}_{filter_iter}_byRegion_{correction}' +
@@ -626,7 +632,7 @@ rule subset_VCF_for_LD:
         pop_file = '01_populations/results/{pop}_{group}',
         vcf_file = lambda wildcards: config['chromosomes'][wildcards.chr]
     output:
-        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'))
+        path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
@@ -804,15 +810,16 @@ rule plot_divergence_ratios_byFilter:
 rule plot_LD_byRegion:
     input:
         chrX = path.join('05_ld_windows', 'results',
-                         'YRI_chrX_females_byRegion_windows_{filter_iter}_' +
-                         '300kb_LDbins_95bootstrapCI.txt'),
+                         '{pop}_chrX_females_byRegion_windows_{filter_iter}_' +
+                         '{ld_bin}_LDbins_95bootstrapCI.txt'),
         chr8 = path.join('05_ld_windows', 'results',
-                         'YRI_chr8_individuals_wholeChr_windows_' +
-                         '{filter_iter}_300kb_LDbins_95bootstrapCI.txt')
+                         '{pop}_chr8_individuals_wholeChr_windows_' +
+                         '{filter_iter}_{ld_bin}_LDbins_95bootstrapCI.txt')
     params:
         script = path.join('06_figures', 'scripts', 'plot_LD_byRegion.R')
     output:
-        path.join('06_figures', 'results', 'LD_byRegion_{filter_iter}.{ext}')
+        path.join('06_figures', 'results', '{pop}_LD_byRegion_{ld_bin}_' +
+                  'LDbins_{filter_iter}.{ext}')
     shell:
         "Rscript {params.script} --chrX {input.chrX} "
         "--chr8 {input.chr8} -o {output}"
@@ -867,7 +874,10 @@ rule format_report:
                                 'allPops_{correction}_relativeDiversity' +
                                 'Ratios_wDistanceFromGenes.pdf'),
                       correction=CORRECTION),
-        figS1 = path.join('06_figures', 'results', 'LD_byRegion_filter1.png'),
+        figS1 = expand(path.join('06_figures', 'results',
+                                 '{pop}_LD_byRegion_{ld_bin}_LDbins_' +
+                                 '{filter_iter}.pdf'),
+                       pop=POPS, ld_bin=LD_BIN, filter_iter='filter1'),
         figS2a = expand(path.join('06_figures', 'results',
                                   '{pops}_chrX_{group}_{window}_windows_' +
                                   '{correction}_{filter_iter}_{ld_bin}_' +
