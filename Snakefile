@@ -75,7 +75,7 @@ rule all:
                          '{pop}_LD_byRegion_{ld_bin}_' +
                          'LDbins_{filter_iter}.{ext}'),
                pop=SUBPOPULATIONS, ld_bin=LD_BIN,
-               filter_iter='filter1', ext='pdf')
+               filter_iter=['filter0', 'filter1'], ext='pdf')
 
         # # chrX analyzed by region for all pops
         # expand('04_window_analysis/results/' +
