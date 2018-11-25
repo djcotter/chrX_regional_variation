@@ -75,7 +75,7 @@ rule all:
                          '{pop}_LD_byRegion_{ld_bin}_' +
                          'LDbins_{filter_iter}.{ext}'),
                pop=SUBPOPULATIONS, ld_bin=LD_BIN,
-               filter_iter=['filter0', 'filter1'], ext='pdf')
+               filter_iter=['filter1'], ext='pdf')
 
         # # chrX analyzed by region for all pops
         # expand('04_window_analysis/results/' +
@@ -632,7 +632,7 @@ rule subset_VCF_for_LD:
         pop_file = '01_populations/results/{pop}_{group}',
         vcf_file = lambda wildcards: config['chromosomes'][wildcards.chr]
     output:
-        path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf')
+        temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'))
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
