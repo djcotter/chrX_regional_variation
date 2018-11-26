@@ -70,7 +70,7 @@ wildcard_constraints:
 # Global Rules ----------------------------------------------------------------
 rule all:
     input:
-        path.join('07_report', 'report.pdf'),
+        # path.join('07_report', 'report.pdf'),
         expand(path.join('06_figures', 'results',
                          '{pop}_LD_byRegion_{ld_bin}_' +
                          'LDbins_{filter_iter}.{ext}'),
@@ -824,7 +824,7 @@ rule plot_LD_byRegion:
         "Rscript {params.script} --chrX {input.chrX} "
         "--chr8 {input.chr8} -o {output}"
 
-rule plot_dstance_fromGenes_plots:
+rule plot_distance_fromGenes:
     input:
         filter1 = path.join('06_figures', 'results',
                             'subpops_filter1_{correction}_ratios_table.txt'),
