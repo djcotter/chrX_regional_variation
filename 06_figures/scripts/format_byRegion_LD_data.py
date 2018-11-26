@@ -2,8 +2,8 @@
 format_byRegion_data.py
 Daniel Cotter
 
-combine results of byRegion and wholeChr analyses to make a table of
-populations and their associated diversity in each region
+combine results of byRegion and wholeChr LD analyses to make a table of
+populations and their associated LD in each region
 -------------------------------------------------------------------------------
 
 """
@@ -16,13 +16,11 @@ from os.path import basename
 
 # parse arguments -------------------------------------------------------------
 parser = argparse.ArgumentParser(description="Combine all byRegion and "
-                                             "wholeChr data.")
+                                             "wholeChr8 LD data.")
 
 # Parse the command line
 parser.add_argument("--chrX_byRegion", nargs='+',
                     help="byRegion data for chrX")
-parser.add_argument("--chrY_wholeChr", nargs='+',
-                    help="byRegion data for chrY")
 parser.add_argument("--chr8_wholeChr", nargs='+',
                     help="byRegion data for chr8")
 parser.add_argument("--output", nargs="?", default=True,
@@ -72,31 +70,24 @@ for item in args.chrX_byRegion:
         temp = list(csv.reader(f, delimiter='\t'))
     temp_data[basename(item)[0:3]] = []
     for line in temp:
+        temp_data[basename(item)[0:3]].append(line[2])
         temp_data[basename(item)[0:3]].append(line[3])
-        temp_data[basename(item)[0:3]].append(line[6])
-        temp_data[basename(item)[0:3]].append(line[7])
-
-for item in args.chrY_wholeChr:
-    with open(item, 'rU') as f:
-        temp = list(csv.reader(f, delimiter='\t'))
-    temp_data[basename(item)[0:3]].append(float(temp[0][3]))
-    temp_data[basename(item)[0:3]].append(float(temp[0][6]))
-    temp_data[basename(item)[0:3]].append(float(temp[0][7]))
+        temp_data[basename(item)[0:3]].append(line[4])
 
 for item in args.chr8_wholeChr:
     with open(item, 'rU') as f:
         temp = list(csv.reader(f, delimiter='\t'))
+    temp_data[basename(item)[0:3]].append(float(temp[0][2]))
     temp_data[basename(item)[0:3]].append(float(temp[0][3]))
-    temp_data[basename(item)[0:3]].append(float(temp[0][6]))
-    temp_data[basename(item)[0:3]].append(float(temp[0][7]))
+    temp_data[basename(item)[0:3]].append(float(temp[0][4]))
 
 data = [['SUPERPOP', 'POP',
          'PAR1', 'PAR1_l', 'PAR1_h',
          'nonPAR', 'nonPAR_l', 'nonPAR_h',
          'XTR', 'XTR_l', 'XTR_h',
          'PAR2', 'PAR2_l', 'PAR2_h',
-         'chrY', 'chrY_l', 'chrY_h',
          'chr8', 'chr8_l', 'chr8_h']]
+
 for key in temp_data:
     newline = [pop_keys[key], key]
     for num in temp_data[key]:
