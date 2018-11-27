@@ -61,7 +61,12 @@ pop_keys = {'ACB': 'AFR',
             'PJL': 'SAS',
             'BEB': 'SAS',
             'STU': 'SAS',
-            'ITU': 'SAS'}
+            'ITU': 'SAS',
+            'AFR': 'AFR',
+            'EUR': 'EUR',
+            'SAS': 'SAS',
+            'EAS': 'EAS',
+            'AMR': 'AMR'}
 temp_data = {}
 
 # append all temp data info to list
