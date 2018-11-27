@@ -402,7 +402,7 @@ rule plot_windowed_diversity:
                   '_diversity.{ext}')
     shell:
         "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom} "
-        "--maxHeight {params.height} --width 13.46 --height 6.3 --units in"
+        "--maxHeight {params.height}"
 
 rule plot_sex_specific_chrX_windows:
     input:
