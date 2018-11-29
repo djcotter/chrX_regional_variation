@@ -774,7 +774,7 @@ rule prepare_LD_data_allSuperpops:
                    pops=POPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin),
         chr8 = lambda wildcards: \
-            expand(path.join('04_window_analysis', 'results',
+            expand(path.join('05_ld_windows', 'results',
                              '{pops}_chr8_individuals_wholeChr_windows_' +
                              '{filter}_{LDbin}_LDbins_95bootstrapCI.txt'),
                    pops=POPULATIONS, filter=wildcards.filter_iter,
