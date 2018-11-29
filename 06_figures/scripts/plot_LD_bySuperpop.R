@@ -45,7 +45,6 @@ if( !(opt$width > 0 && opt$height > 0) ){
 # begin script --------------------------------------------------------------------------------------------------------
 
 data <- read.delim(opt$pops_data, header=TRUE)
-data <- read.delim('~/Desktop/test_LDmerge_bySuperpop.txt', header=TRUE)
 
 data <- data %>% unite(col="PAR1", PAR1,PAR1_l,PAR1_h,sep="/")
 data <- data %>% unite(col="PAR2", PAR2,PAR2_l,PAR2_h,sep="/")
