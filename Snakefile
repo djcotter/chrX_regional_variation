@@ -893,7 +893,7 @@ rule plot_distance_fromGenes_normalized:
         "Rscript {params.script} --filter1 {input.filter1} --filter2 "
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
         "--filter5 {input.filter5} --output2 {output.o2} "
-        "--denom_pop {denom_pop}"
+        "--denom_pop {params.denom_pop}"
 
 rule format_report:
     input:
