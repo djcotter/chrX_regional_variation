@@ -756,7 +756,8 @@ rule prepare_LD_data_allPops:
                    pops=SUBPOPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin)
     params:
-        path.join('06_figures', 'scripts', 'format_byRegion_LD_data.py')
+        script = path.join('06_figures', 'scripts',
+                           'format_byRegion_LD_data.py')
     output:
         path.join('06_figures', 'results',
                   'LD_all_subpops_{filter_iter}_{ld_bin}_LDbins_' +
@@ -780,7 +781,8 @@ rule prepare_LD_data_allSuperpops:
                    pops=POPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin)
     params:
-        path.join('06_figures', 'scripts', 'format_byRegion_LD_data.py')
+        script = path.join('06_figures', 'scripts',
+                           'format_byRegion_LD_data.py')
     output:
         path.join('06_figures', 'results',
                   'LD_all_superpops_{filter_iter}_{ld_bin}_LDbins_' +
