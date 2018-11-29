@@ -750,13 +750,13 @@ rule prepare_LD_data_allPops:
                    pops=SUBPOPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin),
         chr8 = lambda wildcards: \
-            expand(path.join('04_window_analysis', 'results',
+            expand(path.join('05_ld_windows', 'results',
                              '{pops}_chr8_individuals_wholeChr_windows_' +
                              '{filter}_{LDbin}_LDbins_95bootstrapCI.txt'),
                    pops=SUBPOPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin)
     params:
-        path.join('06_figures', 'scripts', 'fornat_byRegion_LD_data.py')
+        path.join('06_figures', 'scripts', 'format_byRegion_LD_data.py')
     output:
         path.join('06_figures', 'results',
                   'LD_all_subpops_{filter_iter}_{ld_bin}_LDbins_' +
@@ -780,7 +780,7 @@ rule prepare_LD_data_allSuperpops:
                    pops=POPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin)
     params:
-        path.join('06_figures', 'scripts', 'fornat_byRegion_LD_data.py')
+        path.join('06_figures', 'scripts', 'format_byRegion_LD_data.py')
     output:
         path.join('06_figures', 'results',
                   'LD_all_superpops_{filter_iter}_{ld_bin}_LDbins_' +
