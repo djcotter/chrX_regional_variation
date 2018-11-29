@@ -883,7 +883,8 @@ rule plot_distance_fromGenes_normalized:
                             'subpops_filter5_{correction}_ratios_table.txt')
     params:
         script = path.join('06_figures', 'scripts',
-                           'distanceFromGenes_allPops.R')
+                           'distanceFromGenes_allPops.R'),
+        denom_pop = lambda wildcards: wildcards.denomPop
     output:
         o2 = path.join('06_figures', 'results',
                        'allPops_{correction}_diversityRatios_' +
@@ -892,7 +893,7 @@ rule plot_distance_fromGenes_normalized:
         "Rscript {params.script} --filter1 {input.filter1} --filter2 "
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
         "--filter5 {input.filter5} --output2 {output.o2} "
-        "--denom_pop {denomPop}"
+        "--denom_pop {denom_pop}"
 
 rule format_report:
     input:
