@@ -869,7 +869,7 @@ rule plot_distance_fromGenes_unnormalized:
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
         "--filter5 {input.filter5} --output1 {output.o1}"
 
-rule plot_distance_fromGenes_unnormalized:
+rule plot_distance_fromGenes_normalized:
     input:
         filter1 = path.join('06_figures', 'results',
                             'subpops_filter1_{correction}_ratios_table.txt'),
