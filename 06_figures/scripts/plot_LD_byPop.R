@@ -72,7 +72,7 @@ data <- data %>% gather(Region, LD, PAR1:chr8)
 data <- data %>% separate(LD, c("LD", "LD_l", "LD_h"), sep="/", convert=TRUE)
 data$Region <- factor(data$Region, c("PAR1", "XTR", "nonPAR", "PAR2", "chr8"))
 
-p_AFR_LD <- ggplot(subset(data, SUPERPOP=="AFR"), aes(x=Region, group=POP)) + theme_pubr() +
+p_AFR <- ggplot(subset(data, SUPERPOP=="AFR"), aes(x=Region, group=POP)) + theme_pubr() +
   geom_col(aes(y=LD, fill=POP), position='dodge', color='black') +
   coord_cartesian(ylim=c(0,0.7)) + scale_fill_manual("", values=AFR_color) +
   geom_errorbar(aes(ymin=LD_l, ymax=LD_h), position=position_dodge(width=0.9), width=0.75, size=0.8) +
@@ -80,7 +80,7 @@ p_AFR_LD <- ggplot(subset(data, SUPERPOP=="AFR"), aes(x=Region, group=POP)) + th
   coord_cartesian(ylim=c(0.3, 0.7)) +
   theme(axis.title=element_blank(), axis.text=element_text(size=14, angle=45, hjust=1))
 
-p_EUR_LD <- ggplot(subset(data, SUPERPOP=="EUR"), aes(x=Region, group=POP)) + theme_pubr() +
+p_EUR <- ggplot(subset(data, SUPERPOP=="EUR"), aes(x=Region, group=POP)) + theme_pubr() +
   geom_col(aes(y=LD, fill=POP), position='dodge', color='black') +
   coord_cartesian(ylim=c(0,0.7)) + scale_fill_manual("", values=EUR_color) +
   geom_errorbar(aes(ymin=LD_l, ymax=LD_h), position=position_dodge(width=0.9), width=0.75, size=0.8) +
@@ -88,7 +88,7 @@ p_EUR_LD <- ggplot(subset(data, SUPERPOP=="EUR"), aes(x=Region, group=POP)) + th
   coord_cartesian(ylim=c(0.3, 0.7)) +
   theme(axis.title=element_blank(), axis.text=element_text(size=14, angle=45, hjust=1))
 
-p_EAS_LD <- ggplot(subset(data, SUPERPOP=="EAS"), aes(x=Region, group=POP)) + theme_pubr() +
+p_EAS <- ggplot(subset(data, SUPERPOP=="EAS"), aes(x=Region, group=POP)) + theme_pubr() +
   geom_col(aes(y=LD, fill=POP), position='dodge', color='black') +
   coord_cartesian(ylim=c(0,0.7)) + scale_fill_manual("", values=EAS_color) +
   geom_errorbar(aes(ymin=LD_l, ymax=LD_h), position=position_dodge(width=0.9), width=0.75, size=0.8) +
@@ -96,7 +96,7 @@ p_EAS_LD <- ggplot(subset(data, SUPERPOP=="EAS"), aes(x=Region, group=POP)) + th
   coord_cartesian(ylim=c(0.3, 0.7)) +
   theme(axis.title=element_blank(), axis.text=element_text(size=14, angle=45, hjust=1))
 
-p_SAS_LD <- ggplot(subset(data, SUPERPOP=="SAS"), aes(x=Region, group=POP)) + theme_pubr() +
+p_SAS <- ggplot(subset(data, SUPERPOP=="SAS"), aes(x=Region, group=POP)) + theme_pubr() +
   geom_col(aes(y=LD, fill=POP), position='dodge', color='black') +
   coord_cartesian(ylim=c(0,0.7)) + scale_fill_manual("", values=SAS_color) +
   geom_errorbar(aes(ymin=LD_l, ymax=LD_h), position=position_dodge(width=0.9), width=0.75, size=0.8) +
@@ -106,7 +106,7 @@ p_SAS_LD <- ggplot(subset(data, SUPERPOP=="SAS"), aes(x=Region, group=POP)) + th
 
 temp_AMR_data <- subset(data, SUPERPOP=="AMR")
 temp_AMR_data$POP <- factor(temp_AMR_data$POP, levels=c("PUR", "CLM", "MXL", "PEL"))
-p_AMR_LD <- ggplot(temp_AMR_data, aes(x=Region, group=POP)) + theme_pubr() +
+p_AMR <- ggplot(temp_AMR_data, aes(x=Region, group=POP)) + theme_pubr() +
   geom_col(aes(y=LD, fill=POP), position='dodge', color='black') +
   coord_cartesian(ylim=c(0,0.7)) + scale_fill_manual("", values=AMR_color) +
   geom_errorbar(aes(ymin=LD_l, ymax=LD_h), position=position_dodge(width=0.9), width=0.75, size=0.8) +
@@ -122,16 +122,17 @@ d <- text_grob("E. Asia", size=20, face='bold')
 e <- text_grob("Amer.", size=20, face='bold')
 gt <- gtable_row('name-row', widths = unit(c(.2,.2,.2,.2,.2), 'npc'), grobs=list(a,b,c,d,e))
 
-p <- ggarrange(p_AFR_LD, p_EUR_LD, p_SAS_LD, p_EAS_LD, p_AMR_LD,
-               ncol=5, nrow=1, legend='none')
-
-p1 <- ggarrange(gt, p, ncol=1, nrow=2, heights=c(0.1,1))
+p <- ggarrange(as_ggplot(a), as_ggplot(b), as_ggplot(c), as_ggplot(d), as_ggplot(e), 
+               p_AFR, p_EUR, p_SAS, p_EAS, p_AMR,
+               ncol=5, nrow=2, legend='none', align='v',
+               heights=c(0.1,1))
 
 blank <- rectGrob(gp=gpar(col="white"))
 xAxis <- text_grob("Region", size=16, face='bold')
 yAxis <- text_grob(expression(bold("Average R"^"2")), size=16, face='bold', rot=90)
+gt <- ggarrange(blank, yAxis, ncol=1, nrow=2, heights= c(0.1,1))
 
-p2 <- ggarrange(yAxis, p1, blank, xAxis, ncol=2, nrow=2,
-                heights=c(1,0.05), widths=c(0.05,1))
+p2 <- ggarrange(gt, p, blank, xAxis, ncol=2, nrow=2,
+                heights=c(1,0.1), widths=c(0.05,1))
 
 ggsave(plot = p2, file=opt$output, height=opt$height, width=opt$width, units=opt$units)

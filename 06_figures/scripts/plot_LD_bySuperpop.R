@@ -105,16 +105,17 @@ d <- text_grob("E. Asia", size=20, face='bold')
 e <- text_grob("Amer.", size=20, face='bold')
 gt <- gtable_row('name-row', widths = unit(c(.2,.2,.2,.2,.2), 'npc'), grobs=list(a,b,c,d,e))
 
-p <- ggarrange(p_AFR, p_EUR, p_SAS, p_EAS, p_AMR,
-               ncol=5, nrow=1, legend='none')
-
-p1 <- ggarrange(gt, p, ncol=1, nrow=2, heights=c(0.1,1))
+p <- ggarrange(as_ggplot(a), as_ggplot(b), as_ggplot(c), as_ggplot(d), as_ggplot(e), 
+               p_AFR, p_EUR, p_SAS, p_EAS, p_AMR,
+               ncol=5, nrow=2, legend='none', align='v',
+               heights=c(0.1,1))
 
 blank <- rectGrob(gp=gpar(col="white"))
 xAxis <- text_grob("Region", size=16, face='bold')
 yAxis <- text_grob(expression(bold("Average R"^"2")), size=16, face='bold', rot=90)
+gt <- ggarrange(blank, yAxis, ncol=1, nrow=2, heights= c(0.1,1))
 
-p2 <- ggarrange(yAxis, p1, blank, xAxis, ncol=2, nrow=2,
+p2 <- ggarrange(gt, p, blank, xAxis, ncol=2, nrow=2,
                 heights=c(1,0.1), widths=c(0.05,1))
 
 ggsave(plot = p2, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
