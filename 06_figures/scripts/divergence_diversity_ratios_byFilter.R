@@ -55,8 +55,8 @@ p1 <- ggplot(data, aes(x=region, y=divergence)) + theme_pubr() +
 p2 <- ggplot(data, aes(x=region2, y=div_ratio)) + theme_pubr() +
   geom_col(aes(fill=filter), position="dodge", color='black') + 
   labs(x="", y="Divergence Ratio", fill="Filter") + scale_fill_grey() + 
-  scale_x_discrete("Genomic Position", labels=c("PAR1/A", "XTR/A", "chrX/A", "PAR2/A", ""),
-                   limits=c("PAR1/A", "XTR/A", "X/A", "PAR2/A", "PAR1/A")) +
+  scale_x_discrete("Genomic Position", labels=c("PAR1/A", "XTR/A", "chrX/A", "PAR2/A"),
+                   limits=c("PAR1/A", "XTR/A", "X/A", "PAR2/A")) +
   geom_hline(yintercept=1) +
   theme(axis.title.x = element_text(size=14, face = "bold"),
         axis.title.y = element_text(size=14, face = "bold")) +

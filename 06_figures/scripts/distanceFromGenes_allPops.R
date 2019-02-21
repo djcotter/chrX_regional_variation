@@ -464,6 +464,7 @@ if(! is.null(opt$output2) ) {
 }
 
 if( ! is.null(opt$output3) ) {
-  p3 <- ggarrange(p1, p2, nrow=2, ncol=1, labels='AUTO')
+  p3 <- ggarrange(p1, p2, nrow=2, ncol=1, labels=c('a)', 'b)'),
+                  font.label = list(size=24))
   ggsave(p3, file=opt$output3, height=opt$height*2, width=opt$width, units=opt$units)
 }
