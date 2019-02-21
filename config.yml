@@ -60,6 +60,14 @@ filters:
     - CpG_islands_hg19.bed
     - hg19_ampliconic_regions.txt
     - hg19_lowDiversity_regions.txt
+  filter1S:
+    - UCSC_refseq_gencode_gene_transcripts_0-1kbFromGenesInvert_hg19.bed
+  filter2S:
+    - UCSC_refseq_gencode_gene_transcripts_1-5kbFromGenesInvert_hg19.bed
+  filter3S:
+    - UCSC_refseq_gencode_gene_transcripts_5-10kbFromGenesInvert_hg19.bed
+  filter4S:
+    - UCSC_refseq_gencode_gene_transcripts_10-20kbFromGenesInvert_hg19.bed
   filter_all:
     - UCSC_refseq_gencode_gene_transcripts_hg19.bed
     - simple_repeats_hg19.bed
