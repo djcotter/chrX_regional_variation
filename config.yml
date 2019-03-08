@@ -68,6 +68,10 @@ filters:
     - UCSC_refseq_gencode_gene_transcripts_5-10kbFromGenesInvert_hg19.bed
   filter4S:
     - UCSC_refseq_gencode_gene_transcripts_10-20kbFromGenesInvert_hg19.bed
+  filter5S:
+    - UCSC_refseq_gencode_gene_transcripts_20-50kbFromGenesInvert_hg19.bed
+  filter6S:
+    - UCSC_refseq_gencode_gene_transcripts_50-100kbFromGenesInvert_hg19.bed
   filter_all:
     - UCSC_refseq_gencode_gene_transcripts_hg19.bed
     - simple_repeats_hg19.bed
