@@ -15,6 +15,7 @@ import re
 
 # maybe go back and use actual mean ???
 
+
 # Bootstrap functions ---------------------------------------------------------
 def rand_samples(data_array):
     """

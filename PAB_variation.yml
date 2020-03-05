@@ -17,7 +17,6 @@ dependencies:
   - cython
   - plink2
   - libpng
-  - tectonic
   # R packages:
   - r-base
   - r-optparse
