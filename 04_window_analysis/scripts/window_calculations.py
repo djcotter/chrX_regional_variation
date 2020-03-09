@@ -15,39 +15,39 @@ import argparse
 import numpy as np
 
 # parse arguments -------------------------------------------------------------
-parser = argparse.ArgumentParser(description="Calculate windowed diversity" +
+parser = argparse.ArgumentParser(description="Calculate windowed diversity"
                                  " across a chromosome.")
 
 # Parse the command line
 parser.add_argument("--windows", required=False,
-                    help="Windowed Interval file defining how the analysis" +
+                    help="Windowed Interval file defining how the analysis"
                     " should be split up across the current chromosome.")
 parser.add_argument("--callable", required=True,
-                    help="BED file consisting of filtered callable sites" +
+                    help="BED file consisting of filtered callable sites"
                     " distributed across the current chromosome.")
 parser.add_argument("--diversity", required=True,
-                    help="BED file containing all filtered SNPs and pi" +
+                    help="BED file containing all filtered SNPs and pi"
                     " calculated at each site.")
 parser.add_argument("--output", nargs="?", default=True,
-                    help="Path to output file. If no output file is" +
+                    help="Path to output file. If no output file is"
                     " provided, default is standard out.")
-parser.add_argument("--sliding", action='store_true', help="This indicates" +
-                    " that the window file contains sliding windows, and" +
-                    " slightly alters the algorithm that is used. This" +
-                    " method is more inefficient than one involving" +
+parser.add_argument("--sliding", action='store_true', help="This indicates"
+                    " that the window file contains sliding windows, and"
+                    " slightly alters the algorithm that is used. This"
+                    " method is more inefficient than one involving"
                     " nonoverlapping windows")
-parser.add_argument("--chrX_windows", action='store_true', help="This flag" +
-                    " indicates that the analysis should be performed on the" +
-                    " X chromosome using windows that correspond to PAR1," +
-                    " nonPAR, XTR, and PAR2. No windows need to be provided" +
+parser.add_argument("--chrX_windows", action='store_true', help="This flag"
+                    " indicates that the analysis should be performed on the"
+                    " X chromosome using windows that correspond to PAR1,"
+                    " nonPAR, XTR, and PAR2. No windows need to be provided"
                     " for this analysis.")
 parser.add_argument("--replicates", nargs='?', type=int, default=100,
-                    help="number of times the bootstrap " +
+                    help="number of times the bootstrap "
                     "should be run. Default is 100.")
-parser.add_argument("--test", nargs="?", default=False, help="If specified," +
-                    " the script will output results of a filter test to" +
-                    " the provided path. Test1 calculates pi for the region" +
-                    " defined as nonPAR + PARs + XTR. Test2 calculates" +
+parser.add_argument("--test", nargs="?", default=False, help="If specified,"
+                    " the script will output results of a filter test to"
+                    " the provided path. Test1 calculates pi for the region"
+                    " defined as nonPAR + PARs + XTR. Test2 calculates"
                     " pi for the region defined as nonPAR + XTR.")
 
 
