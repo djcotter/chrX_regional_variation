@@ -85,37 +85,41 @@ rule all:
         fig3 = path.join('06_figures', 'results',
                          'divergence_ratios_byFilter.pdf'),
         fig4 = expand(path.join('06_figures', 'results',
-                                'allPops_{correction}_diversityRatios_'
-                                'wDistanceFromGenes_unnormalized.pdf'),
-                      correction=CORRECTION),
-        fig5 = expand(path.join('06_figures', 'results',
-                                'allPops_{correction}_diversityRatios_'
-                                'wDistanceFromGenes_{denomPop}_'
-                                'normalized.pdf'),
-                      correction=CORRECTION,
-                      denomPop='MSL'),
-        figS1 = expand(path.join('06_figures', 'results',
-                                 '{pop}_LD_byRegion_{ld_bin}_LDbins_'
-                                 '{filter_iter}.pdf'),
-                       pop=POPS, ld_bin=LD_BIN, filter_iter='filter1'),
-        figS2a = expand(path.join('06_figures', 'results',
+                                'LD_allSuperpops_byRegion_'
+                                '{ld_bin}_LDbins_{filter_iter}.pdf'),
+                      ld_bin=LD_BIN, filter_iter=FILTER),
+        fig5a = expand(path.join('06_figures', 'results',
+                                 'allPops_{correction}_diversityRatios_'
+                                 'wDistanceFromGenes_unnormalized.pdf'),
+                       correction=CORRECTION),
+        fig5b = expand(path.join('06_figures', 'results',
+                                 'allPops_{correction}_diversityRatios_'
+                                 'wDistanceFromGenes_{denomPop}_'
+                                 'normalized.pdf'),
+                       correction=CORRECTION,
+                       denomPop='MSL'),
+        figS1a = expand(path.join('06_figures', 'results',
                                   '{pops}_chrX_{group}_{window}_windows_'
                                   '{correction}_{filter_iter}_{ld_bin}_'
                                   'LDbin_correlation.pdf'),
                         pops=POPS, group='females',
                         correction=CORRECTION, window=WINDOW,
                         ld_bin=LD_BIN, filter_iter='filter1'),
-        figS2b = expand(path.join('06_figures', 'results',
+        figS1b = expand(path.join('06_figures', 'results',
                                   '{pops}_chrX_{group}_{window}_windows_'
                                   '{correction}_{filter_iter}_{ld_bin}_'
                                   'LDbin_correlation.pdf'),
                         pops=POPS, group='females',
                         correction=CORRECTION, window=WINDOW,
                         ld_bin=LD_BIN, filter_iter='filter4'),
-        figS3 = expand(path.join('06_figures', 'results',
+        figS2 = expand(path.join('06_figures', 'results',
                                  'subpops_X-PAR_X-A_demography-corrected'
                                  '-ratios_{correction}_{filter_iter}.pdf'),
-                       correction=CORRECTION, filter_iter=FILTER)
+                       correction=CORRECTION, filter_iter=FILTER),
+        figS3 = expand(path.join('06_figures', 'results',
+                                 'LD_allSubpops_byRegion_'
+                                 '{ld_bin}_LDbins_{filter_iter}.pdf'),
+                       ld_bin=LD_BIN, filter_iter=FILTER),
 
 # Global Rules ----------------------------------------------------------------
 
