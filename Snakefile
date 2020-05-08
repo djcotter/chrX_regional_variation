@@ -120,6 +120,12 @@ rule all:
                                  'LD_allSubpops_byRegion_'
                                  '{ld_bin}_LDbins_{filter_iter}.pdf'),
                        ld_bin=LD_BIN, filter_iter=FILTER),
+        temp = expand(path.join('04_window_analysis', 'results',
+                                'subpops_wPvals',
+                                '{pop}_{group}_chrX_{filter_iter}'
+                                '_byRegion_{correction}_diversity_wPvals.bed'),
+                      pop=SUBPOPULATIONS, group=SEX, filter_iter=FILTER,
+                      correction=CORRECTION)
 
 # Global Rules ----------------------------------------------------------------
 
@@ -412,7 +418,7 @@ rule permute_chrX_regions:
                                        'permute_chrX_windows.py'),
         replicates = 10000
     output:
-        path.join('04_window_analysis', 'results',
+        path.join('04_window_analysis', 'results', 'subpops_wPvals',
                   '{pop}_{group}_{chr}_{filter_iter}_byRegion_{correction}'
                   '_diversity_wPvals.bed')
     shell:

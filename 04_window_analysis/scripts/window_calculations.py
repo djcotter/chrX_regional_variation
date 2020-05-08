@@ -68,7 +68,7 @@ def rand_samples(data_array):
     """
     array_len = len(data_array)
     if array_len > 0:
-        indices = np.random.random_integers(0, array_len - 1, array_len)
+        indices = np.random.randint(0, array_len, array_len)
         return np.take(data_array, indices)
     else:
         return np.asarray([0])
@@ -76,7 +76,7 @@ def rand_samples(data_array):
 
 def bootstrap_CI_mean(data_array, replicates, called_sites):
     """
-    Bootstraps the data to get a 95% confidence interval for the
+    Bootstraps the data to get a 95% confidence interval
     """
     resamples = []
     for i in range(replicates):

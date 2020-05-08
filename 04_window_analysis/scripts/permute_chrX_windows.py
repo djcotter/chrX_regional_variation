@@ -15,7 +15,7 @@ import csv
 import numpy as np
 
 # parse the command line ------------------------------------------------------
-parser = argparse.ArgumentParser(description="Calculate windowed diversity" +
+parser = argparse.ArgumentParser(description="Calculate windowed diversity"
                                  " across a chromosome.")
 
 # Parse the command line
@@ -24,10 +24,10 @@ parser.add_argument("--byWindow", required=True,
 parser.add_argument("--byRegion", required=True,
                     help="Region diversity calculated across chrX")
 parser.add_argument("--output", nargs="?", default=True,
-                    help="Path to output file. If no output file is" +
+                    help="Path to output file. If no output file is"
                     " provided, default is standard out.")
 parser.add_argument("--replicates", nargs='?', type=int, default=100,
-                    help="number of times the permutation should be run. " +
+                    help="number of times the permutation should be run. "
                     "Default is 100.")
 
 # check that commands are there
