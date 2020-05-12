@@ -71,61 +71,69 @@ wildcard_constraints:
 # All -------------------------------------------------------------------------
 rule all:
     input:
-        fig1 = expand(path.join('06_figures', 'results',
+        fig1 = expand(path.join('results',
                                 '{pops}_{group}_chrX_{filter_iter}_{window}_'
                                 '{correction}_diversity.pdf'),
                       pops='YRI', group=SEX,
                       filter_iter=FILTER, window=WINDOW,
                       correction=CORRECTION),
-        fig2 = expand(path.join('06_figures', 'results',
+        fig2 = expand(path.join('results',
                                 'subpops_X-A_PAR-A_XTR-A_ratios_'
                                 '{correction}_{filter_iter}.pdf'),
                       correction=CORRECTION,
                       filter_iter=FILTER),
-        fig3 = path.join('06_figures', 'results',
+        fig3 = path.join('results',
                          'divergence_ratios_byFilter.pdf'),
-        fig4 = expand(path.join('06_figures', 'results',
+        fig4 = expand(path.join('results',
                                 'LD_allSuperpops_byRegion_'
                                 '{ld_bin}_LDbins_{filter_iter}.pdf'),
                       ld_bin=LD_BIN, filter_iter=FILTER),
-        fig5a = expand(path.join('06_figures', 'results',
+        fig5a = expand(path.join('results',
                                  'allPops_{correction}_diversityRatios_'
                                  'wDistanceFromGenes_unnormalized.pdf'),
                        correction=CORRECTION),
-        fig5b = expand(path.join('06_figures', 'results',
+        fig5b = expand(path.join('results',
                                  'allPops_{correction}_diversityRatios_'
                                  'wDistanceFromGenes_{denomPop}_'
                                  'normalized.pdf'),
                        correction=CORRECTION,
                        denomPop='MSL'),
-        figS1a = expand(path.join('06_figures', 'results',
+        figS1a = expand(path.join('results',
                                   '{pops}_chrX_{group}_{window}_windows_'
                                   '{correction}_{filter_iter}_{ld_bin}_'
                                   'LDbin_correlation.pdf'),
                         pops=POPS, group='females',
                         correction=CORRECTION, window=WINDOW,
                         ld_bin=LD_BIN, filter_iter='filter1'),
-        figS1b = expand(path.join('06_figures', 'results',
+        figS1b = expand(path.join('results',
                                   '{pops}_chrX_{group}_{window}_windows_'
                                   '{correction}_{filter_iter}_{ld_bin}_'
                                   'LDbin_correlation.pdf'),
                         pops=POPS, group='females',
                         correction=CORRECTION, window=WINDOW,
                         ld_bin=LD_BIN, filter_iter='filter4'),
-        figS2 = expand(path.join('06_figures', 'results',
+        figS2 = expand(path.join('results',
                                  'subpops_X-PAR_X-A_demography-corrected'
                                  '-ratios_{correction}_{filter_iter}.pdf'),
                        correction=CORRECTION, filter_iter=FILTER),
-        figS3 = expand(path.join('06_figures', 'results',
+        figS3 = expand(path.join('results',
                                  'LD_allSubpops_byRegion_'
                                  '{ld_bin}_LDbins_{filter_iter}.pdf'),
                        ld_bin=LD_BIN, filter_iter=FILTER),
-        temp = expand(path.join('04_window_analysis', 'results',
-                                'subpops_wPvals',
-                                '{pop}_{group}_chrX_{filter_iter}'
-                                '_byRegion_{correction}_diversity_wPvals.bed'),
-                      pop=SUBPOPULATIONS, group=SEX, filter_iter=FILTER,
-                      correction=CORRECTION)
+        figS4A_D = expand(path.join('results',
+                                    'allPops_{correction}_diversityRatios_'
+                                    'wDistanceFromGenes_{denomPop}_'
+                                    'normalized.pdf'),
+                          correction=CORRECTION,
+                          denomPop=['TSI', 'PJL', 'KHV', 'PUR']),
+        tableS2 = expand(path.join('results',
+                                   'allPops_{group}_chrX_{filter_iter}_'
+                                   '{correction}_diversity_byRegion.csv'),
+                         group=SEX, filter_iter=FILTER, correction=CORRECTION),
+        tableS3 = expand(path.join('results',
+                                   'YRI_{correction}_diversity_'
+                                   'withDistanceFromGenes.csv'),
+                         correction=CORRECTION)
 
 # Global Rules ----------------------------------------------------------------
 
@@ -604,6 +612,92 @@ rule plot_relative_XvPAR_XvA_ratios:
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
+rule create_supp_table_allPops:
+    input:
+        lambda wildcards: expand(
+            path.join(
+                '04_window_analysis', 'results',
+                'subpops_wPvals',
+                '{pop}_{group}_chrX_{filter_iter}'
+                '_byRegion_{correction}_diversity_wPvals.bed'),
+            pop=SUBPOPULATIONS, group=SEX,
+            filter_iter=wildcards.filter_iter,
+            correction=wildcards.correction)
+    params:
+        Rscript = path.join('04_window_analysis', 'scripts',
+                            'make_diversity_tables_allPops.R'),
+        folder = path.join('04_window_analysis', 'results', 'subpops_wPvals')
+    output:
+        path.join('04_window_analysis', 'results',
+                  'allPops_{group}_chrX_{filter_iter}_{correction}_diversity_'
+                  'byRegion.csv')
+    shell:
+        "Rscript {params.Rscript} --folder {params.folder} -o {output}"
+
+rule move_supp_table_files:
+    input:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_{chr}_{filter_iter}_wholeChr'
+                  '_{correction}_diversity.bed')
+    output:
+        path.join('04_window_analysis', 'results', 'diversity_byFilter'
+                  '{pop}_{group}_{chr}_{filter_iter}_wholeChr'
+                  '_{correction}_diversity.bed')
+    shell:
+        "cp {input} {output}"
+
+rule move_chrX_supp_table_files:
+    input:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_chrX_{filter_iter}_byRegion'
+                  '_{correction}_diversity.bed')
+    output:
+        path.join('04_window_analysis', 'results', 'diversity_byFilter'
+                  '{pop}_{group}_chrX_{filter_iter}_byRegion'
+                  '_{correction}_diversity.bed')
+    shell:
+        "cp {input} {output}"
+
+rule create_supp_table_distanceFromGenes:
+    input:
+        chrX = lambda wildcards: expand(
+            path.join(
+                '04_window_analysis', 'results',
+                'diversity_byFilter',
+                '{pop}_{group}_chrX_{filter_iter}'
+                '_byRegion_{correction}_diversity.bed'),
+            pop='YRI', group=SEX,
+            filter_iter=['filter' + str(i) for i in range(1, 8)],
+            correction=['uncorrected', wildcards.correction]),
+        chrY = lambda wildcards: expand(
+            path.join(
+                '04_window_analysis', 'results',
+                'diversity_byFilter',
+                '{pop}_{group}_chrY_{filter_iter}'
+                '_wholeChr_{correction}_diversity.bed'),
+            pop='YRI', group='males',
+            filter_iter=['filter' + str(i) for i in range(1, 8)],
+            correction=['uncorrected', wildcards.correction]),
+        chr8 = lambda wildcards: expand(
+            path.join(
+                '04_window_analysis', 'results',
+                'diversity_byFilter',
+                '{pop}_{group}_chrY_{filter_iter}'
+                '_wholeChr_{correction}_diversity.bed'),
+            pop='YRI', group='males',
+            filter_iter=['filter' + str(i) for i in range(1, 8)],
+            correction=['uncorrected', wildcards.correction])
+    params:
+        Rscript = path.join('04_window_analysis', 'scripts',
+                            'make_diversity_table_distanceFromGenes.R'),
+        folder = path.join('04_window_analysis', 'results',
+                           'diversity_byFilter')
+    output:
+        path.join('04_window_analysis', 'results',
+                  'YRI_{correction}_diversity_withDistanceFromGenes.csv')
+    shell:
+        "Rscript {params.Rscript} --folder {params.folder} -o {output}"
+
 # LD analysis -----------------------------------------------------------------
 rule cythonize_ld_script:
     input:
@@ -622,7 +716,6 @@ rule subset_VCF_for_LD:
         temp(path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'))
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
-
 
 rule filter_vcf:
     input:
@@ -936,3 +1029,20 @@ rule plot_distance_fromGenes_normalized:
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
         "--filter5 {input.filter5} --output2 {output.o2} "
         "--denom_pop {params.denom_pop}"
+
+# move results to final folder ------------------------------------------------
+rule move_figure_output:
+    input:
+        path.join('06_figures', 'results', '{file}')
+    output:
+        path.join('results', '{file}')
+    shell:
+        "cp {input} {output}"
+
+rule move_table_output:
+    input:
+        path.join('04_window_analysis', 'results', '{file}')
+    output:
+        path.join('results', '{file}')
+    shell:
+        "cp {input} {output}"

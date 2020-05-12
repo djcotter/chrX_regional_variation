@@ -89,7 +89,7 @@ def bootstrap_CI_mean(data_array, replicates, called_sites):
 # Script ----------------------------------------------------------------------
 # Open Window Coordinates File and read to a list
 if args.chrX_windows is not True:
-    with open(args.windows, 'rU') as f:
+    with open(args.windows, 'r') as f:
         window_coordinates = list(csv.reader(f, delimiter='\t'))
 else:
     # these windows correspond to GRCh37 (hg19)
@@ -100,10 +100,10 @@ else:
           ["PAR2", 154931044, 155260560]]
 
 # Open diversity file
-diversity = csv.reader(open(args.diversity, 'rU'), delimiter='\t')
+diversity = csv.reader(open(args.diversity, 'r'), delimiter='\t')
 
 # Open callable sites file
-callable = csv.reader(open(args.callable, 'rU'), delimiter='\t')
+callable = csv.reader(open(args.callable, 'r'), delimiter='\t')
 
 # initialize an empty data array
 data = []
