@@ -18,8 +18,6 @@ dependencies:
   - plink2
   - libpng
   # R packages:
-  - r-base
-  - r-optparse
-  - r-ggplot2
-  - r-ggpubr
   - r-tidyverse
+  - r-optparse
+  - r-ggpubr
