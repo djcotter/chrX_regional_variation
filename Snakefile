@@ -640,7 +640,7 @@ rule move_supp_table_files:
                   '{pop}_{group}_{chr}_{filter_iter}_wholeChr'
                   '_{correction}_diversity.bed')
     output:
-        path.join('04_window_analysis', 'results', 'diversity_byFilter'
+        path.join('04_window_analysis', 'results', 'diversity_byFilter',
                   '{pop}_{group}_{chr}_{filter_iter}_wholeChr'
                   '_{correction}_diversity.bed')
     shell:
@@ -652,7 +652,7 @@ rule move_chrX_supp_table_files:
                   '{pop}_{group}_chrX_{filter_iter}_byRegion'
                   '_{correction}_diversity.bed')
     output:
-        path.join('04_window_analysis', 'results', 'diversity_byFilter'
+        path.join('04_window_analysis', 'results', 'diversity_byFilter',
                   '{pop}_{group}_chrX_{filter_iter}_byRegion'
                   '_{correction}_diversity.bed')
     shell:
