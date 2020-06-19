@@ -19,7 +19,7 @@ option_list = list(
               help='size of the window included in the LD_data file.'),
   make_option(c('--width'), type='double', default=8.0,
               help='width for figure'),
-  make_option(c('--height'), type='double', default=12.0,
+  make_option(c('--height'), type='double', default=8.0,
               help='height for figure'),
   make_option(c('--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']"),
@@ -57,6 +57,7 @@ data <- na.omit(data)
 
 model <- lm(R_squared ~ pi, data=data)
 label1 <- paste("R^2 ==", summary(model)$r.squared, sep=" ")
+label2 <- paste("P ==", summary(model)$coefficients[2,4], sep=" ")
 
 # LD2 <- read.delim(opt$LD2, header=FALSE)
 # pi2 <- read.delim(opt$diversity2, header=FALSE)
@@ -87,8 +88,11 @@ p1 <- ggplot(data, aes(x=R_squared, y=pi)) + theme_pubr() +
                     values=group.sizes) +
   xlab(bquote(bold('Linkage Disequilibrium (Average '* R^2*')'))) + 
   ylab(bquote(bold('Diversity ('*pi*')'))) + 
-  annotate("text", x=0.65, y=max(data$pi)-mean(data$pi)/2, 
-           label=label1, parse=TRUE, fontface=2, size=7) + 
+  coord_cartesian(xlim=c(0.35,0.85), ylim=c(0,0.003)) +
+  annotate("text", x=0.65, y=0.0028, 
+           label=label1, parse=TRUE, fontface=2, size=7) +
+  annotate("text", x=0.65, y=0.0026,
+           label=label2, parse=TRUE, fontface=2, size=7) +
   geom_smooth(aes(x=data$R_squared, y=data$pi), 
               method=lm, color="green", size=1) +
   theme(axis.title = element_text(size=16, face="bold"),
@@ -96,8 +100,9 @@ p1 <- ggplot(data, aes(x=R_squared, y=pi)) + theme_pubr() +
         legend.title = element_text(size=16, face='bold'),
         legend.text = element_text(size=14, face='bold')) +
   labs(title=paste(opt$filter, "filtered from genes", sep=" ")) + 
-  theme(title=element_text(size=18, face='bold'))
+  theme(title=element_text(size=18, face='bold')) 
 
+p1
 # p2 <- ggplot(data2, aes(x=R_squared, y=pi)) + theme_pubr() +
 #   geom_point(aes(shape=region, color=region, size=region)) +
 #   scale_colour_manual(name="Region",
