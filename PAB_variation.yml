@@ -22,4 +22,4 @@ dependencies:
   - r-optparse
   - r-ggplot2
   - r-ggpubr
-  - r-tidyr
+  - r-tidyverse
