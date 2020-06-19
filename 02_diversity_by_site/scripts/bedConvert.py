@@ -11,7 +11,7 @@ import csv
 
 script, input_file, output_file = argv
 
-with open(input_file, 'rU') as f:
+with open(input_file, 'r') as f:
     positions = list(csv.reader(f, delimiter='\t'))
 
 with open(output_file, 'w') as csvfile:
