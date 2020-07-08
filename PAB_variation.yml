@@ -8,7 +8,7 @@ dependencies:
   - python=3
   - snakemake
   - pyvcf
-  - samtools
+  - samtools=1.9
   - bedtools
   - vcftools
   - bcftools
