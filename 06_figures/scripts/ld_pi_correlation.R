@@ -88,11 +88,11 @@ p1 <- ggplot(data, aes(x=R_squared, y=pi)) + theme_pubr() +
                     values=group.sizes) +
   xlab(bquote(bold('Linkage Disequilibrium (Average '* R^2*')'))) + 
   ylab(bquote(bold('Diversity ('*pi*')'))) + 
-  coord_cartesian(xlim=c(0.35,0.85), ylim=c(0,0.003)) +
-  annotate("text", x=0.65, y=0.0028, 
-           label=label1, parse=TRUE, fontface=2, size=7) +
-  annotate("text", x=0.65, y=0.0026,
-           label=label2, parse=TRUE, fontface=2, size=7) +
+  coord_cartesian(xlim=c(0.35,0.85), ylim=c(0,0.008)) +
+  annotate("text", x=0.65, y=0.006, 
+           label=label1, parse=TRUE, fontface=2, size=5.5) +
+  annotate("text", x=0.65, y=0.0055,
+           label=label2, parse=TRUE, fontface=2, size=5.5) +
   geom_smooth(aes(x=data$R_squared, y=data$pi), 
               method=lm, color="green", size=1) +
   theme(axis.title = element_text(size=16, face="bold"),
