@@ -133,7 +133,9 @@ rule all:
         tableS3 = expand(path.join('results', 'tables',
                                    'YRI_{correction}_diversity_'
                                    'withDistanceFromGenes.csv'),
-                         correction=CORRECTION)
+                         correction=CORRECTION),
+        tableS4 = path.join('results', 'tables',
+                            'gene_density_by_region.csv')
 
 # Global Rules ----------------------------------------------------------------
 
@@ -1029,6 +1031,18 @@ rule plot_distance_fromGenes_normalized:
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
         "--filter5 {input.filter5} --output2 {output.o2} "
         "--denom_pop {params.denom_pop}"
+
+rule calculate_gene_density:
+    input:
+        path.join('03_filters', 'raw_filters',
+                  'UCSC_refseq_gencode_gene_transcripts_hg19.bed')
+    params:
+        script = path.join('04_window_analysis', 'scripts', 'gene_density.R')
+    output:
+        path.join('04_window_analysis', 'results',
+                  'gene_density_by_region.csv')
+    shell:
+        "Rscript {params.script} --input {input} --output {output}"
 
 # move results to final folder ------------------------------------------------
 rule move_figure_output:
