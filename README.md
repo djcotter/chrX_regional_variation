@@ -28,8 +28,6 @@ Variant data is from The 1000 Genomes Project phase3 VCF files for chrX, chrY, &
 
 - **chr8:** [ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz "chr8")
 
-- **chr9:** [ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz "chr9")
-
 #### Genome masks
 The strict mask as provided by The 1000 genomes Project is used for identifying monomorphic sites. It is provided as a whole genome bed file:
 
@@ -105,6 +103,6 @@ Population codes can be found [here](http://www.internationalgenome.org/faq/whic
 Run the analysis using `snakemake` once all of the raw data files are downloaded. Navigate to the top of the project directory and type the following commands:
 
 ```shell
-source activate PAB_variation
+conda activate PAB_variation
 snakemake
 ```
