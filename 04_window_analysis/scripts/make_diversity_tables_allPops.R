@@ -3,8 +3,10 @@ suppressPackageStartupMessages(require(optparse))
 suppressPackageStartupMessages(require(ggpubr))
 
 option_list = list(
-  make_option(c('--folder'), type='character', default=NULL,
-              help="path to folder with all files"),
+  make_option(c('--folder1'), type='character', default=NULL,
+              help="path to folder with chrX files"),
+  make_option(c('--folder2'), type='character', default=NULL,
+              help="path to folder with chr8 files"),
   make_option(c('-o', '--output'), type='character', default=NULL,
               help="path to output files")
 )
@@ -12,7 +14,7 @@ option_list = list(
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
-if(is.null(opt$folder) || is.null(opt$output)) {
+if(is.null(opt$folder1) || is.null(opt$folder2) || is.null(opt$output)) {
   print_help(opt_parser)
   stop("Input and Output files must be specified.", call.=FALSE)
 }
@@ -32,7 +34,8 @@ pop_codes <- c(rep('AFR', 7), rep('AMR', 4),
 # Colect input files ------------------------------------------
 
 main_df <- NULL
-my_files <- dir(opt$folder, "*.bed", full.names=TRUE)
+# chrX files
+my_files <- dir(opt$folder1, "*.bed", full.names=TRUE)
 for (file in my_files) {
   filename <- tools::file_path_sans_ext(basename(file)) %>% str_split('_')
   filename <- filename[[1]]
@@ -47,6 +50,26 @@ for (file in my_files) {
   new_df <- df %>% select(superpop, pop, region, pi, pVal) %>%
     rename(`Super Population` = superpop, `Population`=pop,
           `Region`=region, `Diversity (pi)`=pi, `P Value (vs nonPAR)`=pVal)
+  main_df = rbind(main_df, new_df)
+}
+
+# chr8 files
+my_files2 <- dir(opt$folder2, "*.bed", full.names=TRUE)
+for (file in my_files2) {
+  filename <- tools::file_path_sans_ext(basename(file)) %>% str_split('_')
+  filename <- filename[[1]]
+  pop <- filename[1]
+  superpop <- pop_codes[pop]
+  df <- read.table(file, sep='\t', col.names = c('region', 'start', 'stop', 
+                                                 'pi', 'callable_sites', 'variants',
+                                                 'ci_l', 'ci_h'),
+                   stringsAsFactors = F)
+  
+  df$pop <- pop; df$superpop <- superpop
+  new_df <- df %>% select(superpop, pop, region, pi) %>%
+    mutate(pVal = '------') %>%
+    rename(`Super Population` = superpop, `Population`=pop,
+           `Region`=region, `Diversity (pi)`=pi, `P Value (vs nonPAR)`=pVal)
   main_df = rbind(main_df, new_df)
 }
 
