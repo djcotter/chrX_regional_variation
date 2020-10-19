@@ -8,6 +8,8 @@ analyze diversity and LD across chrX and chrY from 1000 genomes data
 Requires:
     conda
         to activate the included PAB_variation.yml environment
+    snakemake
+        included in the Conda environment
 """
 
 
@@ -127,7 +129,7 @@ rule all:
                           correction=CORRECTION,
                           denomPop=['TSI', 'PJL', 'KHV', 'PUR']),
         tableS2 = expand(path.join('results', 'tables',
-                                   'allPops_{group}_chrX_{filter_iter}_'
+                                   'allPops_{group}_{filter_iter}_'
                                    '{correction}_diversity_byRegion.csv'),
                          group=SEX, filter_iter=FILTER, correction=CORRECTION),
         tableS3 = expand(path.join('results', 'tables',
@@ -614,9 +616,21 @@ rule plot_relative_XvPAR_XvA_ratios:
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
+rule move_chr8_diversity_data:
+    input:
+        path.join('04_window_analysis', 'results',
+                  '{pop}_{group}_chr8_{filter_iter}_wholeChr'
+                  '_{correction}_diversity.bed')
+    output:
+        path.join('04_window_analysis', 'results', 'chr8_data',
+                  '{pop}_{group}_chr8_{filter_iter}_wholeChr'
+                  '_{correction}_diversity.bed')
+    shell:
+        "cp {input} {output}"
+
 rule create_supp_table_allPops:
     input:
-        lambda wildcards: expand(
+        chrX = lambda wildcards: expand(
             path.join(
                 '04_window_analysis', 'results',
                 'subpops_wPvals',
@@ -624,17 +638,26 @@ rule create_supp_table_allPops:
                 '_byRegion_{correction}_diversity_wPvals.bed'),
             pop=SUBPOPULATIONS, group=SEX,
             filter_iter=wildcards.filter_iter,
-            correction=wildcards.correction)
+            correction=wildcards.correction),
+        chr8 = lambda wildcards: expand(
+            path.join('04_window_analysis', 'results', 'chr8_data',
+                      '{pops}_{Group}_chr8_{filter}_wholeChr'
+                      '_{correction_div}_diversity.bed'),
+            pops=SUBPOPULATIONS, Group=SEX,
+            filter=wildcards.filter_iter,
+            correction_div=wildcards.correction)
     params:
         Rscript = path.join('04_window_analysis', 'scripts',
                             'make_diversity_tables_allPops.R'),
-        folder = path.join('04_window_analysis', 'results', 'subpops_wPvals')
+        folder1 = path.join('04_window_analysis', 'results', 'subpops_wPvals'),
+        folder2 = path.join('04_window_analysis', 'results', 'chr8_data')
     output:
         path.join('04_window_analysis', 'results',
-                  'allPops_{group}_chrX_{filter_iter}_{correction}_diversity_'
+                  'allPops_{group}_{filter_iter}_{correction}_diversity_'
                   'byRegion.csv')
     shell:
-        "Rscript {params.Rscript} --folder {params.folder} -o {output}"
+        "Rscript {params.Rscript} --folder1 {params.folder1} "
+        "--folder2 {params.folder2} -o {output}"
 
 rule move_supp_table_files:
     input:
