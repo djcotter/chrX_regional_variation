@@ -34,7 +34,7 @@ option_list = list(
 )
 
 opt_parser = OptionParser(option_list=option_list)
-opt = parse_args(opt_parser, c('--temp_directory', '06_FST/SUPERPOPS_filter4_temp', '--comparisons', 'SUPERPOPS', '--output', '06_FST/results/SUPERPOPS_filter4_FST_byRegion.csv'))
+opt = parse_args(opt_parser)
 
 if(is.null(opt$chrX_data) || is.null(opt$chr8_data) || is.null(opt$pop_data) || is.null(opt$output)) {
   print_help(opt_parser)
