@@ -60,7 +60,7 @@ DIVERSITY_SCRIPT = '02_diversity_by_site/scripts/Diversity_from_VCF_pyvcf_' + \
 GROUP = [SEX, SEX, 'males']
 GROUP_CHR = [x + '_' + y for x, y in zip(GROUP, CHR)]
 
-# Array containing the number of Mb for chrX ld 06_figures
+# Array containing the number of Mb for chrX ld 07_figures
 PLOT_LENGTH = ['15', '156']
 
 # Constrain wildcards globally
@@ -444,12 +444,12 @@ rule plot_windowed_diversity:
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_{correction}'
                   '_diversity.bed')
     params:
-        R_script = path.join('06_figures', 'scripts',
+        R_script = path.join('07_figures', 'scripts',
                              'plot_windowed_diversity.R'),
         chrom = lambda wildcards: wildcards.chr,
         height = lambda wildcards: config[wildcards.correction][wildcards.chr]
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_{group}_{chr}_{filter_iter}_{window}_{correction}'
                   '_diversity.{ext}')
     shell:
@@ -465,11 +465,11 @@ rule plot_sex_specific_chrX_windows:
                                  '{pop}_females_chrX_{filter_iter}_{window}'
                                  '_{correction}_diversity.bed')
     params:
-        R_script = path.join('06_figures', 'scripts',
+        R_script = path.join('07_figures', 'scripts',
                              'plot_chrX_maleFemale_diversity.R'),
         height = lambda wildcards: config[wildcards.correction]['chrX']
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_chrX_malesAndFemales_{filter_iter}_{window}'
                   '_{correction}_diversity.{ext}')
     shell:
@@ -488,11 +488,11 @@ rule plot_PAB_diversity:
                          '{pop}_males_chrY_{filter_iter}_{window}'
                          '_{correction}_diversity.bed')
     params:
-        R_script = path.join('06_figures', 'scripts',
+        R_script = path.join('07_figures', 'scripts',
                              'plot_PAB_diversity.R'),
         height = lambda wildcards: config[wildcards.correction]['chrX']
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_PAB_{filter_iter}_{window}_{correction}'
                   '_diversity.{ext}')
     shell:
@@ -501,7 +501,6 @@ rule plot_PAB_diversity:
         "--maxHeight {params.height} --output {output}"
 
 # Analysis by Region ----------------------------------------------------------
-
 rule get_wholeChr_bed:
     input:
         path.join('data', 'hg19_chromosome_coordinates.bed')
@@ -547,9 +546,9 @@ rule calculate_A_ratios:
                          '{pop}_{group}_chr8_{filter_iter}_wholeChr'
                          '_{correction}_diversity.bed')
     params:
-        script = '06_figures/scripts/ratios_table.py'
+        script = '07_figures/scripts/ratios_table.py'
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_{group}_{filter_iter}_{correction}_ratios.txt')
     shell:
         "python {params.script} --chrX {input.chrX} --chrY {input.chrY} "
@@ -578,10 +577,10 @@ rule prepare_subpop_ratio_plotting_data:
                    filter=wildcards.filter_iter,
                    correction_div=wildcards.correction)
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'subpops_{filter_iter}_{correction}_ratios_table.txt')
     params:
-        script = path.join('06_figures', 'scripts',
+        script = path.join('07_figures', 'scripts',
                            'format_byRegion_data.py')
     shell:
         "python {params.script} --chrX_byRegion {input.chrX} "
@@ -590,28 +589,28 @@ rule prepare_subpop_ratio_plotting_data:
 
 rule plot_A_Ratios_across_subpops:
     input:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'subpops_{filter_iter}_{correction}_ratios_table.txt')
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'subpops_X-A_PAR-A_XTR-A_ratios_{correction}'
                   '_{filter_iter}.{ext}')
     params:
-        Rscript = path.join('06_figures', 'scripts',
+        Rscript = path.join('07_figures', 'scripts',
                             'plot_subpop_diversity_ratios.R')
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
 rule plot_relative_XvPAR_XvA_ratios:
     input:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'subpops_{filter_iter}_{correction}_ratios_table.txt')
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'subpops_X-PAR_X-A_demography-corrected-ratios'
                   '_{correction}_{filter_iter}.{ext}')
     params:
-        Rscript = path.join('06_figures', 'scripts',
+        Rscript = path.join('07_figures', 'scripts',
                             'relative_XA_ratios_bySubpop.R')
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
@@ -742,7 +741,7 @@ rule subset_VCF_for_LD:
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
-rule filter_vcf:
+rule filter_vcf_for_LD:
     input:
         vcf = path.join('data', 'subset_LD_{chr}_{pop}_{group}.vcf'),
         targets = path.join('03_filters', 'results',
@@ -843,11 +842,11 @@ rule plot_ld_windows:
                   '{window}_windows_{filter_iter}'
                   '_{ld_bin}_LDbins_95bootstrapCI.txt')
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{filter_iter}'
                   '_{ld_bin}_LDbins_95bootstrapCI_{LDplotSize}Mb.{ext}')
     params:
-        R_script = path.join('06_figures', 'scripts',
+        R_script = path.join('07_figures', 'scripts',
                              'plot_LD_bins.R'),
         winSize = lambda wildcards:
             config["windows"][wildcards.window]["win_size"],
@@ -865,12 +864,12 @@ rule plot_ld_pi_correlation:
                        '{pop}_{group}_{chr}_{filter_iter}_{window}_'
                        '{correction}_diversity.bed')
     params:
-        R_script = path.join('06_figures', 'scripts',
+        R_script = path.join('07_figures', 'scripts',
                              'ld_pi_correlation.R'),
         distance_filtered = lambda wildcards: \
             config["filter_descriptions"][wildcards.filter_iter]
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{correction}'
                   '_{filter_iter}_{ld_bin}_LDbin_correlation.{ext}')
     shell:
@@ -886,12 +885,12 @@ rule plot_ld_pi_correlation_noFilter:
                        '{pop}_{group}_{chr}_{filter_iter}_{window}_'
                        '{correction}_diversity.bed')
     params:
-        R_script = path.join('06_figures', 'scripts',
+        R_script = path.join('07_figures', 'scripts',
                              'ld_pi_correlation.R'),
         distance_filtered = lambda wildcards: \
             config["filter_descriptions"][wildcards.filter_iter]
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   '{pop}_{chr}_{group}_{window}_windows_{correction}'
                   '_{filter_iter}_{ld_bin}_LDbin_correlation_'
                   'noFilterLD.{ext}')
@@ -914,16 +913,40 @@ rule prepare_LD_data_allPops:
                    pops=SUBPOPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin)
     params:
-        script = path.join('06_figures', 'scripts',
+        script = path.join('07_figures', 'scripts',
                            'format_byRegion_LD_data.py')
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'LD_all_subpops_{filter_iter}_{ld_bin}_LDbins_'
                   '95bootstrapCI.txt')
     shell:
         "python {params.script} --chrX_byRegion {input.chrX} --chr8_wholeChr "
         "{input.chr8} --output {output}"
 
+# FST Analyses ----------------------------------------------------------------
+rule calculate_FST:
+    input:
+        chrX = path.join('data', 'subset_LD_chrX_ALL_females_{filter_iter}'
+                         '_snpsONLY-mac-filtered.recode.vcf'),
+        chr8 = path.join('data', 'subset_LD_chr8_ALL_females_{filter_iter}'
+                         '_snpsONLY-mac-filtered.recode.vcf'),
+        pop_data = config['panel']
+    params:
+        script = path.join('06_FST', 'scripts', 'calculateFST_byRegion.R'),
+        comparisons = lambda wildcards: wildcards.comparisons
+    output:
+        tempDir = temp(
+            directory(path.join('06_FST',
+                                '{comparisons}_{filter_iter}_temp'))),
+        FST_table = path.join('06_FST', 'results',
+                              '{comparisons}_{filter_iter}_FST_byRegion.csv')
+    shell:
+        "Rscript {params.script} --chrX_data {input.chrX} "
+        "--chr8_data {input.chr8} --pop_data {input.pop_data} "
+        "--temp_directory {output.tempDir} --comparisons {params.comparisons} "
+        "--output {output.FST_table}"
+
+# Plot Results ----------------------------------------------------------------
 rule prepare_LD_data_allSuperpops:
     input:
         chrX = lambda wildcards: \
@@ -939,10 +962,10 @@ rule prepare_LD_data_allSuperpops:
                    pops=POPULATIONS, filter=wildcards.filter_iter,
                    LDbin=wildcards.ld_bin)
     params:
-        script = path.join('06_figures', 'scripts',
+        script = path.join('07_figures', 'scripts',
                            'format_byRegion_LD_data.py')
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'LD_all_superpops_{filter_iter}_{ld_bin}_LDbins_'
                   '95bootstrapCI.txt')
     shell:
@@ -954,10 +977,10 @@ rule plot_divergence_ratios_byFilter:
         path.join('data', 'substitution_rates',
                   'divergence_ratios_JC69-corrected_filter1-5.txt')
     params:
-        script = path.join('06_figures', 'scripts',
+        script = path.join('07_figures', 'scripts',
                            'divergence_diversity_ratios_byFilter.R')
     output:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'divergence_ratios_byFilter.{ext}')
     shell:
         "Rscript {params.script} --divergenceRatios {input} -o {output}"
@@ -971,9 +994,9 @@ rule plot_LD_byRegion:
                          '{pop}_chr8_individuals_wholeChr_windows_'
                          '{filter_iter}_{ld_bin}_LDbins_95bootstrapCI.txt')
     params:
-        script = path.join('06_figures', 'scripts', 'plot_LD_byRegion.R')
+        script = path.join('07_figures', 'scripts', 'plot_LD_byRegion.R')
     output:
-        path.join('06_figures', 'results', '{pop}_LD_byRegion_{ld_bin}_'
+        path.join('07_figures', 'results', '{pop}_LD_byRegion_{ld_bin}_'
                   'LDbins_{filter_iter}.{ext}')
     shell:
         "Rscript {params.script} --chrX {input.chrX} "
@@ -981,47 +1004,47 @@ rule plot_LD_byRegion:
 
 rule plot_LD_byRegion_allPops:
     input:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'LD_all_subpops_{filter_iter}_{ld_bin}_LDbins_'
                   '95bootstrapCI.txt')
     params:
-        script = path.join('06_figures', 'scripts', 'plot_LD_byPop.R')
+        script = path.join('07_figures', 'scripts', 'plot_LD_byPop.R')
     output:
-        path.join('06_figures', 'results', 'LD_allSubpops_byRegion_{ld_bin}_'
+        path.join('07_figures', 'results', 'LD_allSubpops_byRegion_{ld_bin}_'
                   'LDbins_{filter_iter}.{ext}')
     shell:
         "Rscript {params.script} --subpops_data {input} -o {output}"
 
 rule plot_LD_byRegion_allSuperpops:
     input:
-        path.join('06_figures', 'results',
+        path.join('07_figures', 'results',
                   'LD_all_superpops_{filter_iter}_{ld_bin}_LDbins_'
                   '95bootstrapCI.txt')
     params:
-        script = path.join('06_figures', 'scripts', 'plot_LD_bySuperpop.R')
+        script = path.join('07_figures', 'scripts', 'plot_LD_bySuperpop.R')
     output:
-        path.join('06_figures', 'results', 'LD_allSuperpops_byRegion_'
+        path.join('07_figures', 'results', 'LD_allSuperpops_byRegion_'
                   '{ld_bin}_LDbins_{filter_iter}.{ext}')
     shell:
         "Rscript {params.script} --pops_data {input} -o {output}"
 
 rule plot_distance_fromGenes_unnormalized:
     input:
-        filter1 = path.join('06_figures', 'results',
+        filter1 = path.join('07_figures', 'results',
                             'subpops_filter1_{correction}_ratios_table.txt'),
-        filter2 = path.join('06_figures', 'results',
+        filter2 = path.join('07_figures', 'results',
                             'subpops_filter2_{correction}_ratios_table.txt'),
-        filter3 = path.join('06_figures', 'results',
+        filter3 = path.join('07_figures', 'results',
                             'subpops_filter3_{correction}_ratios_table.txt'),
-        filter4 = path.join('06_figures', 'results',
+        filter4 = path.join('07_figures', 'results',
                             'subpops_filter4_{correction}_ratios_table.txt'),
-        filter5 = path.join('06_figures', 'results',
+        filter5 = path.join('07_figures', 'results',
                             'subpops_filter5_{correction}_ratios_table.txt')
     params:
-        script = path.join('06_figures', 'scripts',
+        script = path.join('07_figures', 'scripts',
                            'distanceFromGenes_allPops.R')
     output:
-        o1 = path.join('06_figures', 'results',
+        o1 = path.join('07_figures', 'results',
                        'allPops_{correction}_diversityRatios'
                        '_wDistanceFromGenes_unnormalized.{ext}')
     shell:
@@ -1031,22 +1054,22 @@ rule plot_distance_fromGenes_unnormalized:
 
 rule plot_distance_fromGenes_normalized:
     input:
-        filter1 = path.join('06_figures', 'results',
+        filter1 = path.join('07_figures', 'results',
                             'subpops_filter1_{correction}_ratios_table.txt'),
-        filter2 = path.join('06_figures', 'results',
+        filter2 = path.join('07_figures', 'results',
                             'subpops_filter2_{correction}_ratios_table.txt'),
-        filter3 = path.join('06_figures', 'results',
+        filter3 = path.join('07_figures', 'results',
                             'subpops_filter3_{correction}_ratios_table.txt'),
-        filter4 = path.join('06_figures', 'results',
+        filter4 = path.join('07_figures', 'results',
                             'subpops_filter4_{correction}_ratios_table.txt'),
-        filter5 = path.join('06_figures', 'results',
+        filter5 = path.join('07_figures', 'results',
                             'subpops_filter5_{correction}_ratios_table.txt')
     params:
-        script = path.join('06_figures', 'scripts',
+        script = path.join('07_figures', 'scripts',
                            'distanceFromGenes_allPops.R'),
         denom_pop = lambda wildcards: wildcards.denomPop
     output:
-        o2 = path.join('06_figures', 'results',
+        o2 = path.join('07_figures', 'results',
                        'allPops_{correction}_diversityRatios_'
                        'wDistanceFromGenes_{denomPop}_normalized.{ext}')
     shell:
@@ -1070,7 +1093,7 @@ rule calculate_gene_density:
 # move results to final folder ------------------------------------------------
 rule move_figure_output:
     input:
-        path.join('06_figures', 'results', '{file}')
+        path.join('07_figures', 'results', '{file}')
     output:
         path.join('results', 'figures', '{file}')
     shell:
