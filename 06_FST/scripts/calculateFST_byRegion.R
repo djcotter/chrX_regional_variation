@@ -1,6 +1,6 @@
 # install any required packages
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
+  install.packages("BiocManager", repos = "http://cran.us.r-project.org")
 }
 if (!requireNamespace("SNPRelate", quietly = TRUE)) {
   BiocManager::install("SNPRelate", update = FALSE)
