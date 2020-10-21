@@ -132,3 +132,5 @@ for (i in seq(1:length(pop_combos$V1))) {
     snpgdsClose(genofile)
   }
 }
+
+write.csv(main_df, file=opt$output, row.names=F, quote=T)

@@ -941,6 +941,7 @@ rule calculate_FST:
         FST_table = path.join('06_FST', 'results',
                               '{comparisons}_{filter_iter}_FST_byRegion.csv')
     shell:
+        "mkdir {output.tempDir} && "
         "Rscript {params.script} --chrX_data {input.chrX} "
         "--chr8_data {input.chr8} --pop_data {input.pop_data} "
         "--temp_directory {output.tempDir} --comparisons {params.comparisons} "
