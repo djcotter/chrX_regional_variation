@@ -1,0 +1,142 @@
+// from Hohenloe 2010: 1 - sum( (ni choose 2)/(n choose 2) )
+// ni is the count of allele i and n is the sum of ni
+function (float)piBySite(integer x, integer n) {
+	y = n - x;
+	if ( x == 1 ) {
+		a = 0;
+	} else {
+		a = (x * (x-1))/2;
+	}
+	if ( y == 1) {
+		b = 0;
+	} else {
+		b = (y * (y-1))/2;
+	}
+	c = (n*(n-1))/2;
+	val = 1 - (a+b)/c;
+	return(val);
+}
+
+function (float)calculatePi(integer sample_size) {
+	
+	// get mutations and mutation counts in a sample of p1
+	i1 = sample(p1.individuals, sample_size);
+	muts1 = unique(sortBy(i1.genomes.mutations, 'position'));
+	
+	pop1_size = i1.size();
+	mut_count1 = rep(0, length(muts1));
+	for (individual in i1) {
+		has_mut = individual.containsMutations(muts1);
+		has_mut = sapply(has_mut, "if (applyValue==T) return(1); else return(0);");
+		mut_count1 = mut_count1 + has_mut;
+	}
+	
+	// get mutations and mutation counts in a sample of p2
+	i2 = sample(p2.individuals, sample_size);
+	muts2 = unique(sortBy(i2.genomes.mutations, 'position'));
+	
+	pop2_size = i2.size();
+	mut_count2 = rep(0, length(muts2));
+	for (individual in i2) {
+		has_mut = individual.containsMutations(muts2);
+		has_mut = sapply(has_mut, "if (applyValue==T) return(1); else return(0);");
+		mut_count2 = mut_count2 + has_mut;
+	}
+	
+	// calculate pi for each mutated site in pops 1 and 2
+	pi_by_site1 = sapply(mut_count1, "piBySite(applyValue, sample_size);");
+	pi_by_site2 = sapply(mut_count2, "piBySite(applyValue, sample_size);");
+	
+	p1_r1_pi = sum(pi_by_site1[muts1.position < 50000])/50000;
+	p1_r2_pi = sum(pi_by_site1[muts1.position > 50000])/50000;
+	
+	p2_r1_pi = sum(pi_by_site2[muts2.position < 50000])/50000;
+	p2_r2_pi = sum(pi_by_site2[muts2.position > 50000])/50000;
+	
+	return(c(p1_r1_pi, p1_r2_pi, p2_r1_pi, p2_r2_pi));
+}
+
+// set up a simple neutral simulation
+// random seed = 2135283092282
+initialize() {
+	// set Seed
+	setSeed(2135283092282);
+	// define the number and size of the samples to calculate pi in every 20 gens at the end of the simulation
+	defineConstant("sampleSize", 100);
+	defineConstant("replicates", 250);
+	
+	// initialize a standard mutation rate
+	initializeMutationRate(2.36e-8);
+	
+	// m1 mutation type: neutral
+	initializeMutationType("m1", 0.5, "f", 0.0);
+	
+	// g1 genomic element type: uses m1 for all mutations
+	initializeGenomicElementType("g1", m1, 1.0);
+	
+	// two uniform chromosomes of length 50 kb with different recombination rates
+	defineConstant("r1_rate", 2e-7);
+	defineConstant("r2_rate", 1e-8);
+	initializeGenomicElement(g1, 0, 99999);
+	initializeRecombinationRate(c(r1_rate, 0.5, r2_rate), c(49999, 50000, 99999));
+}
+
+// create African population
+1 {
+	sim.addSubpop("p1", 7310);
+	// save the seed
+	defineConstant("simSeed", getSeed());
+	catn(paste(c("# seed:", simSeed, " r1_recomb_rate:", r1_rate, " r2_recomb_rate:", r2_rate), sep=""));
+	catn("gen pop popSize replicate sampleSize region pi");
+}
+
+// Expand the African population
+// 5920 generations ago
+52080 { p1.setSubpopulationSize(14474); }
+
+// Split non-Africans from Africans and set up migration between them
+// 2040 generations ago
+55960 {
+	sim.addSubpopSplit("p2", 1861, p1);
+	p1.setMigrationRates(c(p2), c(15e-5));
+	p2.setMigrationRates(c(p1), c(15e-5));
+}
+
+// Split p2 into European and East Asian subpopulations
+// 920 generations ago
+57080 {
+	sim.addSubpopSplit("p3", 554, p2);
+	p2.setSubpopulationSize(1032); // reduce European Size
+	
+	// Set migration rates for rest of sim
+	p1.setMigrationRates(c(p2, p3), c(2.5e-5, 0.78e-5));
+	p2.setMigrationRates(c(p1, p3), c(2.5e-5, 3.11e-5));
+	p3.setMigrationRates(c(p1, p2), c(0.78e-5, 3.11e-5));
+}
+
+// Make exponential growth in EUR and EAS
+57080:58001 {
+	t = sim.generation - 57080;
+	p2_size = round(1032 * exp(0.0038 * t));
+	p3_size = round(554 * exp(0.0048 * t));
+	
+	p2.setSubpopulationSize(asInteger(p2_size));
+	p3.setSubpopulationSize(asInteger(p3_size));
+}
+
+// Output pi per region in p1 and p2
+// from gen 55960 to present
+55960:58000 late() {
+	if (sim.generation % 20 == 0) {
+		t = sim.generation;
+		p1_size = p1.individuals.size();
+		p2_size = p2.individuals.size();
+		for (i in 1:replicates) {
+			a = calculatePi(sampleSize);
+			catn(paste(c(t, "p1", p1_size, i, sampleSize, "r1", a[0])));
+			catn(paste(c(t, "p1", p1_size, i, sampleSize, "r2", a[1])));
+			catn(paste(c(t, "p2", p2_size, i, sampleSize, "r1", a[2])));
+			catn(paste(c(t, "p2", p2_size, i, sampleSize, "r2", a[3])));
+		}
+	}
+}

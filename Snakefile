@@ -128,6 +128,7 @@ rule all:
                                     'normalized.pdf'),
                           correction=CORRECTION,
                           denomPop=['TSI', 'PJL', 'KHV', 'PUR']),
+        figures_S5 = path.join('results', 'figures', 'recombination_sim.pdf'),
         tableS2 = expand(path.join('results', 'tables',
                                    'allPops_{group}_{filter_iter}_'
                                    '{correction}_diversity_byRegion.csv'),
@@ -1088,6 +1089,17 @@ rule calculate_gene_density:
     output:
         path.join('04_window_analysis', 'results',
                   'gene_density_by_region.csv')
+    shell:
+        "Rscript {params.script} --input {input} --output {output}"
+
+# plot simulation results
+rule plot_sim_results:
+    input:
+        path.join('08_simulations', 'results', 'SLiM_output.txt')
+    output:
+        path.join('07_figures', 'results', 'recombination_sim.pdf')
+    params:
+        script = path.join('08_simulations', 'scripts', 'plot_simulations.R')
     shell:
         "Rscript {params.script} --input {input} --output {output}"
 
