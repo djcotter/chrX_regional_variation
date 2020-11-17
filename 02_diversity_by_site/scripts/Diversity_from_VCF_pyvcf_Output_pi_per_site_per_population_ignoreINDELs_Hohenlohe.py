@@ -214,7 +214,7 @@ for record in vcf_reader:
             allele_list = []
             for indv in pop[0]:
                 call = record.genotype(indv)
-                if call['GT'] is not None and call['GT'] is not '.' \
+                if call['GT'] is not None and call['GT'] != '.' \
                         and record.is_snp is True:
                     # call.gt_bases returns in the format "A/T",
                     # so this grabs the A and
@@ -235,7 +235,7 @@ for record in vcf_reader:
             allele_list = []
             for indv in pop[0]:
                 call = record.genotype(indv)
-                if call['GT'] is not None and call['GT'] is not '.' \
+                if call['GT'] is not None and call['GT'] != '.' \
                         and record.is_snp is True:
                     # call.gt_bases returns in the format "A"
                     # when processing haploid samples
