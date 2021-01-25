@@ -73,28 +73,28 @@ wildcard_constraints:
 # All -------------------------------------------------------------------------
 rule all:
     input:
-        fig1 = expand(path.join('results', 'figures',
-                                '{pops}_{group}_chrX_{filter_iter}_{window}_'
-                                '{correction}_diversity.pdf'),
-                      pops='YRI', group=SEX,
-                      filter_iter=FILTER, window=WINDOW,
-                      correction=CORRECTION),
-        fig2 = expand(path.join('results', 'figures',
-                                'subpops_X-A_PAR-A_XTR-A_ratios_'
-                                '{correction}_{filter_iter}.pdf'),
-                      correction=CORRECTION,
-                      filter_iter=FILTER),
-        fig3 = path.join('results', 'figures',
+        fig1_a = expand(path.join('results', 'figures',
+                                  '{pops}_{group}_chrX_{filter_iter}_{window}_'
+                                  '{correction}_diversity.pdf'),
+                        pops='YRI', group=SEX,
+                        filter_iter=FILTER, window=WINDOW,
+                        correction=CORRECTION),
+        fig1_b = expand(path.join('results', 'figures',
+                                  'subpops_X-A_PAR-A_XTR-A_ratios_'
+                                  '{correction}_{filter_iter}.pdf'),
+                        correction=CORRECTION,
+                        filter_iter=FILTER),
+        fig2 = path.join('results', 'figures',
                          'divergence_ratios_byFilter.pdf'),
-        fig4 = expand(path.join('results', 'figures',
+        fig3 = expand(path.join('results', 'figures',
                                 'LD_allSuperpops_byRegion_'
                                 '{ld_bin}_LDbins_{filter_iter}.pdf'),
                       ld_bin=LD_BIN, filter_iter=FILTER),
-        fig5a = expand(path.join('results', 'figures',
+        fig4a = expand(path.join('results', 'figures',
                                  'allPops_{correction}_diversityRatios_'
                                  'wDistanceFromGenes_unnormalized.pdf'),
                        correction=CORRECTION),
-        fig5b = expand(path.join('results', 'figures',
+        fig4b = expand(path.join('results', 'figures',
                                  'allPops_{correction}_diversityRatios_'
                                  'wDistanceFromGenes_{denomPop}_'
                                  'normalized.pdf'),
@@ -899,6 +899,7 @@ rule plot_ld_pi_correlation_noFilter:
         "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
         "--filter {params.distance_filtered} --output {output}"
 
+# Plot Results ----------------------------------------------------------------
 rule prepare_LD_data_allPops:
     input:
         chrX = lambda wildcards: \
@@ -924,31 +925,6 @@ rule prepare_LD_data_allPops:
         "python {params.script} --chrX_byRegion {input.chrX} --chr8_wholeChr "
         "{input.chr8} --output {output}"
 
-# FST Analyses ----------------------------------------------------------------
-rule calculate_FST:
-    input:
-        chrX = path.join('data', 'subset_LD_chrX_ALL_females_{filter_iter}'
-                         '_snpsONLY-mac-filtered.recode.vcf'),
-        chr8 = path.join('data', 'subset_LD_chr8_ALL_females_{filter_iter}'
-                         '_snpsONLY-mac-filtered.recode.vcf'),
-        pop_data = config['panel']
-    params:
-        script = path.join('06_FST', 'scripts', 'calculateFST_byRegion.R'),
-        comparisons = lambda wildcards: wildcards.comparisons
-    output:
-        tempDir = temp(
-            directory(path.join('06_FST',
-                                '{comparisons}_{filter_iter}_temp'))),
-        FST_table = path.join('06_FST', 'results',
-                              '{comparisons}_{filter_iter}_FST_byRegion.csv')
-    shell:
-        "mkdir {output.tempDir} && "
-        "Rscript {params.script} --chrX_data {input.chrX} "
-        "--chr8_data {input.chr8} --pop_data {input.pop_data} "
-        "--temp_directory {output.tempDir} --comparisons {params.comparisons} "
-        "--output {output.FST_table}"
-
-# Plot Results ----------------------------------------------------------------
 rule prepare_LD_data_allSuperpops:
     input:
         chrX = lambda wildcards: \
@@ -1080,6 +1056,31 @@ rule plot_distance_fromGenes_normalized:
         "--filter5 {input.filter5} --output2 {output.o2} "
         "--denom_pop {params.denom_pop}"
 
+# FST Analyses ----------------------------------------------------------------
+rule calculate_FST:
+    input:
+        chrX = path.join('data', 'subset_LD_chrX_ALL_females_{filter_iter}'
+                         '_snpsONLY-mac-filtered.recode.vcf'),
+        chr8 = path.join('data', 'subset_LD_chr8_ALL_females_{filter_iter}'
+                         '_snpsONLY-mac-filtered.recode.vcf'),
+        pop_data = config['panel']
+    params:
+        script = path.join('06_FST', 'scripts', 'calculateFST_byRegion.R'),
+        comparisons = lambda wildcards: wildcards.comparisons
+    output:
+        tempDir = temp(
+            directory(path.join('06_FST',
+                                '{comparisons}_{filter_iter}_temp'))),
+        FST_table = path.join('06_FST', 'results',
+                              '{comparisons}_{filter_iter}_FST_byRegion.csv')
+    shell:
+        "mkdir {output.tempDir} && "
+        "Rscript {params.script} --chrX_data {input.chrX} "
+        "--chr8_data {input.chr8} --pop_data {input.pop_data} "
+        "--temp_directory {output.tempDir} --comparisons {params.comparisons} "
+        "--output {output.FST_table}"
+
+# misc ------------------------------------------------------------------------
 rule calculate_gene_density:
     input:
         path.join('03_filters', 'raw_filters',
