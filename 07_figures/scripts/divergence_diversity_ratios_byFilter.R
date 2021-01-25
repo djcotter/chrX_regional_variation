@@ -47,8 +47,9 @@ data$region2 <- factor(data$region2, levels=c("PAR1/A", "XTR/A", "X/A", "PAR2/A"
 p1 <- ggplot(data, aes(x=region, y=divergence)) + theme_pubr() +
   geom_col(aes(fill=filter), position="dodge", color='black') + 
   labs(x="", y="Divergence", fill="Filter") + scale_fill_grey() + 
-  scale_x_discrete(labels=c("PAR1", "XTR", "chrX", "PAR2", "chr8")) +
-  theme(axis.title.y = element_text(size=14, face = "bold")) +
+  scale_x_discrete("Genomic Position", labels=c("PAR1", "XTR", "chrX", "PAR2", "chr8")) +
+  theme(axis.title.x = element_text(size=14, face = "bold"),
+        axis.title.y = element_text(size=14, face = "bold")) +
   theme(legend.title = element_text(size=14, face = "bold"),
         legend.text = element_text(size=10, face= "bold"))
 
@@ -66,4 +67,3 @@ p2 <- ggplot(data, aes(x=region2, y=div_ratio)) + theme_pubr() +
 p <- ggarrange(p1, p2, ncol=2, nrow=1, align="h", labels=c("a)", "b)"), common.legend = TRUE, legend="right" )
 
 ggsave(plot = p, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
-
