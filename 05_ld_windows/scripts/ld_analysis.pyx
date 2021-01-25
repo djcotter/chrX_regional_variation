@@ -299,6 +299,8 @@ def LD_loop_byRegion(input_file, int ld_bin_size):
     bootstrap = bootstrap_CI_mean(R2_values_to_array(R2_values), 1000)
     results.append([windows[1], windows[2], mean_LD(R2_values),
                     bootstrap[0], bootstrap[1]])
+
+    # reorder the results file to correspond to PAR1, XTR, nonPAR
     results_order = [0, 2, 1, 3]
     results = [results[i] for i in results_order]
 
