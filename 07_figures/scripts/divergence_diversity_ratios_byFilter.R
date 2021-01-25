@@ -7,9 +7,9 @@ option_list = list(
               help="path to preprepared divergence ratios summary"),
   make_option(c('-o', '--output'), type='character', default=NULL,
               help="path to output file"),
-  make_option(c('--width'), type='double', default=6.0,
+  make_option(c('--width'), type='double', default=8.0,
               help='width for figure'),
-  make_option(c('--height'), type='double', default=7.0,
+  make_option(c('--height'), type='double', default=3.0,
               help='height for figure'),
   make_option(c('--units'), type='character', default='in',
               help='units for the figure', metavar="['in', 'cm', 'mm']"),
@@ -63,6 +63,7 @@ p2 <- ggplot(data, aes(x=region2, y=div_ratio)) + theme_pubr() +
   theme(legend.title = element_text(size=14, face = "bold"),
         legend.text = element_text(size=10, face= "bold"))
 
-p <- ggarrange(p1, p2, ncol=1, nrow=2, align="v", labels=c("a)", "b)"), common.legend = TRUE, legend="right" )
+p <- ggarrange(p1, p2, ncol=2, nrow=1, align="h", labels=c("a)", "b)"), common.legend = TRUE, legend="right" )
 
 ggsave(plot = p, file=opt$output, height=opt$height, width=opt$width, units=opt$units)
+
