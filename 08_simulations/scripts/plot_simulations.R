@@ -52,19 +52,23 @@ df_ratio <- df %>%
 p1 <- ggplot(df_summ %>% subset(region=='r1'), aes(x=gen, y=mean_pi, color=pop)) + geom_line() + 
   geom_ribbon(aes(ymin=pi_l, ymax=pi_h), lty='dashed', alpha=0.1, show.legend = F) + theme_pubr() + coord_cartesian(ylim=c(0,0.0015)) +
   xlab('Generation') + ylab('Average genetic diversity\n(Region 1)') + labs(color="Population") +
-  scale_color_discrete(labels=c('AFR', 'EUR'))
+  scale_color_discrete(labels=c('AFR', 'EUR'), 
+                       guide = guide_legend(override.aes = list(size=2)))
 
 p2 <- ggplot(df_summ %>% subset(region=='r2'), aes(x=gen, y=mean_pi, color=pop)) + geom_line() + 
   geom_ribbon(aes(ymin=pi_l, ymax=pi_h), lty='dashed', alpha=0.1, show.legend = F) + theme_pubr() + coord_cartesian(ylim=c(0,0.0015)) +
   xlab('Generation') + ylab('Average genetic diversity\n(Region 2)') + labs(color="Population") +
-  scale_color_discrete(labels=c('AFR', 'EUR'))
+  scale_color_discrete(labels=c('AFR', 'EUR'), 
+                       guide = guide_legend(override.aes = list(size=2)))
 
 p3 <- ggplot(df_ratio, aes(x=gen, y=mean_pi, color=pop)) + geom_line() + 
   geom_ribbon(aes(ymin=pi_l, ymax=pi_h), lty='dashed', alpha=0.1, show.legend=F) + theme_pubr() +
   coord_cartesian(ylim=c(0.75,1.75)) + geom_hline(yintercept=1, lty='dashed') +
   xlab('Generation') + ylab('Average genetic diversity\n(Region 1/Region 2)') + labs(color="Population") +
-  scale_color_discrete(labels=c('AFR', 'EUR'))
+  scale_color_discrete(labels=c('AFR', 'EUR'), 
+                       guide = guide_legend(override.aes = list(size=2)))
 
 p <- ggarrange(p1,p2,p3, ncol=1, common.legend=T, labels = 'AUTO')
+p
 
 ggsave(p, filename=opt$output, height=opt$height, width=opt$width, units=opt$units)
