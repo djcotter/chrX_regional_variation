@@ -12,7 +12,7 @@ Arizona State University
 Clone this repository and make sure [conda](https://conda.io/docs/user-guide/install/index.html) is installed. Then use the provided *PAB_variation.yml* environment file to set up a new conda environment.
 
 ```shell
-conda env create -f PAB_variation.yml
+conda env create -f environment.yml
 ```
 
 ### Step 2: Get data
@@ -103,6 +103,6 @@ Population codes can be found [here](http://www.internationalgenome.org/faq/whic
 Run the analysis using `snakemake` once all of the raw data files are downloaded. Navigate to the top of the project directory and type the following commands:
 
 ```shell
-conda activate PAB_variation
+conda activate chrX_variation
 snakemake
 ```

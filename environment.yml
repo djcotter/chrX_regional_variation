@@ -1,11 +1,11 @@
-name: PAB_variation
+name: chrX_variation
 channels:
   - bioconda
   - conda-forge
   - r
   - defaults
 dependencies:
-  - python=3
+  - python=3.6
   - snakemake
   - pyvcf
   - samtools=1.9
@@ -15,7 +15,7 @@ dependencies:
   - sympy
   - numpy
   - cython
-  - plink2
+  - plink
   - libpng
   # R packages:
   - r-base=3.6.3
