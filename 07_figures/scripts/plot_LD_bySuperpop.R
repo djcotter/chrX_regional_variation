@@ -112,7 +112,7 @@ p <- ggarrange(as_ggplot(a), as_ggplot(b), as_ggplot(c), as_ggplot(d), as_ggplot
 
 blank <- rectGrob(gp=gpar(col="white"))
 xAxis <- text_grob("Region", size=16, face='bold')
-yAxis <- text_grob(expression(bold("Average R"^"2")), size=16, face='bold', rot=90)
+yAxis <- text_grob(expression(bold("Average r"^"2")), size=16, face='bold', rot=90)
 gt <- ggarrange(blank, yAxis, ncol=1, nrow=2, heights= c(0.1,1))
 
 p2 <- ggarrange(gt, p, blank, xAxis, ncol=2, nrow=2,

@@ -68,7 +68,6 @@ p3 <- ggplot(df_ratio, aes(x=gen, y=mean_pi, color=pop)) + geom_line() +
   scale_color_discrete(labels=c('AFR', 'EUR'), 
                        guide = guide_legend(override.aes = list(size=2)))
 
-p <- ggarrange(p1,p2,p3, ncol=1, common.legend=T, labels = 'AUTO')
-p
+p <- ggarrange(p1,p2,p3, ncol=1, common.legend=T, labels = c('a)', 'b)', 'c)'))
 
 ggsave(p, filename=opt$output, height=opt$height, width=opt$width, units=opt$units)
