@@ -1,9 +1,12 @@
-# Analyses from {paper}
-**Daniel Cotter, Timothy Webster, Melissa Wilson**
+# Analyses from X Chromosome Variation Paper
+**Daniel Cotter[1], Timothy Webster[2,3], Melissa Wilson[3,4]**
 
-Arizona State University
+**2018-2021**
 
-2018 - 2020
+1. Department of Genetics, Stanford University
+2. Department of Anthropology, University of Utah
+3. School of Life Sciences, Arizona State University
+4. Center for Evolution and Medicine, Biodesign Institute, Arizona State University
 
 ## Analysis Steps
 
