@@ -141,7 +141,7 @@ rule all:
                             'gene_density_by_region.csv')
 
 # Global Rules ----------------------------------------------------------------
-
+# create files for all populations stratified by sex
 rule parse_populations:
     input:
         panel = config['panel']
@@ -155,6 +155,7 @@ rule parse_populations:
     shell:
         'python {params.pop_parse} {input.panel} {params.out_dir}'
 
+# subset the main VCF files for each of the populations we study
 rule subset_VCF:
     input:
         pop_file = '01_populations/results/{Pop}_{group}',
@@ -164,6 +165,7 @@ rule subset_VCF:
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
+# calculate diversity for the autosome (chr8 here)
 rule calculate_pi_autosomes:
     input:
         group = '01_populations/results/{Pop}_{group}',
@@ -182,6 +184,7 @@ rule calculate_pi_autosomes:
         "--population_lists {input.group} --chrom_inc {params.chrom} "
         "--out_directory {params.out_dir}"
 
+# calculate diversity on the X chromosome
 rule calculate_pi_chrX:
     input:
         group = '01_populations/results/{Pop}_{group}',
@@ -197,6 +200,7 @@ rule calculate_pi_chrX:
         "--population_lists {input.group} --chrom_inc X "
         "--haploid --out_directory {params.out_dir}"
 
+# calculate diversity on the Y chromosome
 rule calculate_pi_chrY:
     input:
         group = '01_populations/results/{Pop}_{group}',
@@ -212,6 +216,7 @@ rule calculate_pi_chrY:
         "--population_lists {input.group} --chrom_inc Y "
         "--haploid --out_directory {params.out_dir}"
 
+# intersect bed files to create an overlapping filer for downstream analysis
 rule create_filter:
     input:
         lambda wildcards: expand(
@@ -225,6 +230,7 @@ rule create_filter:
         "cat {input} | grep {params.chrom} | sort -k1,1 -k2,2n | "
         "cut -f1,2,3 | bedtools merge -i stdin > {output}"
 
+# get the callable sites file for a given chromosome
 rule split_callable_sites:
     input:
         config['callable_sites']
@@ -235,6 +241,7 @@ rule split_callable_sites:
     shell:
         "grep {params.chrom} {input} > {output}"
 
+# create a bed file with the requested windows tiling a chromosome
 rule create_windows:
     input:
         'data/hg19_chromosome_coordinates.bed'
@@ -252,6 +259,7 @@ rule create_windows:
         "bedtools makewindows -b stdin -w {params.win}{params.slide} "
         "> {output}"
 
+# convert diversity output to bed format
 rule convert_diverstiy_to_bed:
     input:
         path.join('02_diversity_by_site', 'results',
@@ -265,6 +273,7 @@ rule convert_diverstiy_to_bed:
     shell:
         "python {params.bedConvert} {input} {output}"
 
+# remove any sites from the filter from the callable sites file
 rule filter_callable_sites:
     input:
         filter = '03_filters/results/complete_{chr}_{filter_iter}.bed',
@@ -276,6 +285,7 @@ rule filter_callable_sites:
         "bedtools subtract -a {input.callable_sites} -b {input.filter} "
         "> {output}"
 
+# grab only callable sites from the diversity file
 rule filter_diversity_by_site:
     input:
         diversity_by_site = path.join('02_diversity_by_site', 'results',
@@ -291,6 +301,7 @@ rule filter_diversity_by_site:
         "-b {input.filtered_callable} > {output}"
 
 # Window Analysis -------------------------------------------------------------
+# calculate diversity in windows across a chromosome
 rule window_analysis:
     input:
         filtered_diversity = path.join('04_window_analysis', 'inputs',
@@ -321,6 +332,8 @@ rule window_analysis:
         "--callable {input.filtered_callable} --windows {input.windows} "
         "{params.slide}--replicates {params.replicates} --output {output}"
 
+# calculate diversity in regions across the X chromosome
+# see results/tables/region_coordinates.txt for coordinates
 rule window_analysis_byRegion:
     input:
         filtered_diversity = path.join('04_window_analysis', 'inputs',
@@ -343,6 +356,7 @@ rule window_analysis_byRegion:
         "--callable {input.filtered_callable} --chrX_windows "
         "--replicates {params.replicates} --output {output}"
 
+# filter the output by removing windows with too few callable sites
 rule filter_windows_by_callable_sites:
     input:
         path.join('04_window_analysis', 'results',
@@ -366,6 +380,7 @@ rule filter_windows_by_callable_sites:
         "python {params.script} --input {input} --windowSize {params.winSize} "
         "--filter 0.1 --output {output}"
 
+# create a fake divergence file for uncorrected output
 rule create_pseudo_uncorrected_divergence:
     output:
         temp(path.join('data', 'substitution_rates',
@@ -374,6 +389,7 @@ rule create_pseudo_uncorrected_divergence:
     shell:
         "touch {output}"
 
+# correct substitution rate files from data/substitution_rates folder
 rule divergence_JukesCantor69_correction:
     input:
         path.join('data', 'substitution_rates',
@@ -395,6 +411,7 @@ rule divergence_JukesCantor69_correction:
         else:
             shell("mv {input} {output}")
 
+# divide diversity by divergence by window or return uncorrected output
 rule windowed_divergence_correction:
     input:
         diversity = path.join('04_window_analysis', 'results',
@@ -418,6 +435,7 @@ rule windowed_divergence_correction:
         else:
             shell("cp {input.diversity} {output}")
 
+# permute chrX regions to calculate CIs
 rule permute_chrX_regions:
     input:
         byWindow_100kb = path.join('04_window_analysis', 'results',
@@ -439,6 +457,7 @@ rule permute_chrX_regions:
         "--byWindow {input.byWindow_100kb} --replicates {params.replicates} "
         "--output {output}"
 
+# plot diversity by windows
 rule plot_windowed_diversity:
     input:
         path.join('04_window_analysis', 'results',
@@ -457,6 +476,7 @@ rule plot_windowed_diversity:
         "Rscript {params.R_script} -i {input} -o {output} -c {params.chrom} "
         "--maxHeight {params.height}"
 
+# plot diversity on the X chromosome stratified by sex -- UNUSED
 rule plot_sex_specific_chrX_windows:
     input:
         chrX_males = path.join('04_window_analysis', 'results',
@@ -477,6 +497,7 @@ rule plot_sex_specific_chrX_windows:
         "Rscript {params.R_script} --males {input.chrX_males} --females "
         "{input.chrX_females} --maxHeight {params.height} -o {output}"
 
+# plot diversity across the pseudoautosomal bounday -- UNUSED
 rule plot_PAB_diversity:
     input:
         chrX_males = path.join('04_window_analysis', 'results',
@@ -502,6 +523,7 @@ rule plot_PAB_diversity:
         "--maxHeight {params.height} --output {output}"
 
 # Analysis by Region ----------------------------------------------------------
+# get a bed file defining the whole chromosome
 rule get_wholeChr_bed:
     input:
         path.join('data', 'hg19_chromosome_coordinates.bed')
@@ -512,6 +534,7 @@ rule get_wholeChr_bed:
     shell:
         'grep {params.chrom} {input} > {output}'
 
+# use the whole chromosome as the window for the window analysis
 rule window_analysis_wholeChr:
     input:
         filtered_diversity = path.join('04_window_analysis', 'inputs',
@@ -535,6 +558,7 @@ rule window_analysis_wholeChr:
         "--callable {input.filtered_callable} --windows {input.windows} "
         "--replicates {params.replicates} --output {output}"
 
+# calculate ratios for downstream analysis
 rule calculate_A_ratios:
     input:
         chrX = path.join('04_window_analysis', 'results',
@@ -555,6 +579,7 @@ rule calculate_A_ratios:
         "python {params.script} --chrX {input.chrX} --chrY {input.chrY} "
         "--chr8 {input.chr8} --output {output}"
 
+# prepare a summary file for all ratio data for plotting
 rule prepare_subpop_ratio_plotting_data:
     input:
         chrX = lambda wildcards: \
@@ -588,6 +613,7 @@ rule prepare_subpop_ratio_plotting_data:
         "--chr8_wholeChr {input.chr8} --chrY_wholeChr {input.chrY} "
         "--output {output}"
 
+# plot the ratios from the summary file above
 rule plot_A_Ratios_across_subpops:
     input:
         path.join('07_figures', 'results',
@@ -602,6 +628,7 @@ rule plot_A_Ratios_across_subpops:
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
+# plor the ratios from the summary file above
 rule plot_relative_XvPAR_XvA_ratios:
     input:
         path.join('07_figures', 'results',
@@ -616,6 +643,7 @@ rule plot_relative_XvPAR_XvA_ratios:
     shell:
         "Rscript {params.Rscript} --subpops_data {input} -o {output}"
 
+# move diversity data into a single folder
 rule move_chr8_diversity_data:
     input:
         path.join('04_window_analysis', 'results',
@@ -628,6 +656,8 @@ rule move_chr8_diversity_data:
     shell:
         "cp {input} {output}"
 
+# create a supplemental table for diversity across all populations
+# grab chrX data from output of permutation script
 rule create_supp_table_allPops:
     input:
         chrX = lambda wildcards: expand(
@@ -659,6 +689,7 @@ rule create_supp_table_allPops:
         "Rscript {params.Rscript} --folder1 {params.folder1} "
         "--folder2 {params.folder2} -o {output}"
 
+# move files for creating the distance from genes supplmental table
 rule move_supp_table_files:
     input:
         path.join('04_window_analysis', 'results',
@@ -671,6 +702,7 @@ rule move_supp_table_files:
     shell:
         "cp {input} {output}"
 
+# move files for creating the distance from genes supplmental table
 rule move_chrX_supp_table_files:
     input:
         path.join('04_window_analysis', 'results',
@@ -683,6 +715,7 @@ rule move_chrX_supp_table_files:
     shell:
         "cp {input} {output}"
 
+# use files to create distance from genes supplemental table
 rule create_supp_table_distanceFromGenes:
     input:
         chrX = lambda wildcards: expand(
@@ -724,6 +757,7 @@ rule create_supp_table_distanceFromGenes:
         "Rscript {params.Rscript} --folder {params.folder} -o {output}"
 
 # LD analysis -----------------------------------------------------------------
+# compile the LD window calculation modules using cython
 rule cythonize_ld_script:
     input:
         ld_analysis = '05_ld_windows/scripts/ld_analysis.pyx',
@@ -733,6 +767,7 @@ rule cythonize_ld_script:
     shell:
         "python {input.setup} build_ext --inplace"
 
+# subset the VCF for each population of interest
 rule subset_VCF_for_LD:
     input:
         pop_file = '01_populations/results/{Pop}_{group}',
@@ -742,6 +777,7 @@ rule subset_VCF_for_LD:
     shell:
         "bcftools view -S {input.pop_file} {input.vcf_file} > {output}"
 
+# filter the VCF for snpsonly and minor allele count > 1
 rule filter_vcf_for_LD:
     input:
         vcf = path.join('data', 'subset_LD_{chr}_{Pop}_{group}.vcf'),
@@ -761,6 +797,7 @@ rule filter_vcf_for_LD:
         "--min-ac 1:minor | vcftools --vcf - "
         "--exclude-bed temp_{params.filter}.bed --recode --out {params.prefix}"
 
+# calculate LD using plink at all variants within 1 MB of each other
 rule calculate_ld:
     input:
         path.join('data', 'subset_LD_{chr}_{Pop}_{group}_{filter_iter}'
@@ -778,6 +815,7 @@ rule calculate_ld:
         "--threads {threads} "
         "--ld-window 700000 --ld-window-kb 1100 --out {params.out_path}"
 
+# calculate average LD by window
 rule ld_window_analysis:
     input:
         LD = path.join('data', '{Pop}_{chr}_{group}_{filter_iter}'
@@ -799,6 +837,7 @@ rule ld_window_analysis:
         "--windows {input.windows} --binSize {params.LD_bin} "
         "--output {output}"
 
+# calculate average LD by window for each chrX region
 rule ld_window_analysis_byRegion:
     input:
         LD = path.join('data', '{Pop}_{chr}_{group}_{filter_iter}'
@@ -818,6 +857,7 @@ rule ld_window_analysis_byRegion:
         "--byRegion --binSize {params.LD_bin} "
         "--output {output}"
 
+# calculate average LD across whole chromosomes
 rule ld_window_analysis_wholeChr_Y_autosomes:
     input:
         LD = path.join('data', '{Pop}_{chr}_{group}_{filter_iter}'
@@ -837,6 +877,7 @@ rule ld_window_analysis_wholeChr_Y_autosomes:
         "python {params.script} --plink_ld {input.LD} --windows "
         "{input.windows} --binSize {params.LD_bin} --output {output}"
 
+# plot LD by window -- UNUSED
 rule plot_ld_windows:
     input:
         path.join('05_ld_windows', 'results', '{Pop}_{chr}_{group}_'
@@ -856,6 +897,7 @@ rule plot_ld_windows:
         "Rscript {params.R_script} -i {input} --winSize {params.winSize} "
         "--zoom {params.plot_size} -o {output} --maxHeight 1"
 
+# plot the correlation between LD and diversity
 rule plot_ld_pi_correlation:
     input:
         ld = path.join('05_ld_windows', 'results', '{Pop}_{chr}_{group}_'
@@ -877,6 +919,7 @@ rule plot_ld_pi_correlation:
         "Rscript {params.R_script} --LD {input.ld} --diversity {input.pi} "
         "--filter {params.distance_filtered} --output {output}"
 
+# plot the correlation between LD and diversity without filtering -- UNUSED
 rule plot_ld_pi_correlation_noFilter:
     input:
         ld = path.join('05_ld_windows', 'results', '{Pop}_{chr}_{group}_'
@@ -900,6 +943,7 @@ rule plot_ld_pi_correlation_noFilter:
         "--filter {params.distance_filtered} --output {output}"
 
 # Plot Results ----------------------------------------------------------------
+# prepare LD data across all pops for chrX and chr8 to be plotted
 rule prepare_LD_data_allPops:
     input:
         chrX = lambda wildcards: \
@@ -925,6 +969,7 @@ rule prepare_LD_data_allPops:
         "python {params.script} --chrX_byRegion {input.chrX} --chr8_wholeChr "
         "{input.chr8} --output {output}"
 
+# prepare LD data across all superpops for chrX and chr8 to be plotted
 rule prepare_LD_data_allSuperpops:
     input:
         chrX = lambda wildcards: \
@@ -950,6 +995,9 @@ rule prepare_LD_data_allSuperpops:
         "python {params.script} --chrX_byRegion {input.chrX} --chr8_wholeChr "
         "{input.chr8} --output {output}"
 
+# plot ratios of divergence to between regions with different filers
+# This file is provided in the data directory and is composed of ratios of
+# similarly provided files
 rule plot_divergence_ratios_byFilter:
     input:
         path.join('data', 'substitution_rates',
@@ -963,6 +1011,7 @@ rule plot_divergence_ratios_byFilter:
     shell:
         "Rscript {params.script} --divergenceRatios {input} -o {output}"
 
+# plot LD by region for a given population
 rule plot_LD_byRegion:
     input:
         chrX = path.join('05_ld_windows', 'results',
@@ -980,6 +1029,7 @@ rule plot_LD_byRegion:
         "Rscript {params.script} --chrX {input.chrX} "
         "--chr8 {input.chr8} -o {output}"
 
+# plot LD by region for all populations
 rule plot_LD_byRegion_allPops:
     input:
         path.join('07_figures', 'results',
@@ -993,6 +1043,7 @@ rule plot_LD_byRegion_allPops:
     shell:
         "Rscript {params.script} --subpops_data {input} -o {output}"
 
+# plot LD by region grouped for all superpopulations
 rule plot_LD_byRegion_allSuperpops:
     input:
         path.join('07_figures', 'results',
@@ -1006,6 +1057,7 @@ rule plot_LD_byRegion_allSuperpops:
     shell:
         "Rscript {params.script} --pops_data {input} -o {output}"
 
+# plot diversity ratios as a function of distance from genes
 rule plot_distance_fromGenes_unnormalized:
     input:
         filter1 = path.join('07_figures', 'results',
@@ -1030,6 +1082,8 @@ rule plot_distance_fromGenes_unnormalized:
         "{input.filter2} --filter3 {input.filter3} --filter4 {input.filter4} "
         "--filter5 {input.filter5} --output1 {output.o1}"
 
+# plot diversity ratios as a function of distance from genes
+# after specifying a population to normalize to (default = "MSL")
 rule plot_distance_fromGenes_normalized:
     input:
         filter1 = path.join('07_figures', 'results',
@@ -1057,6 +1111,7 @@ rule plot_distance_fromGenes_normalized:
         "--denom_pop {params.denom_pop}"
 
 # FST Analyses ----------------------------------------------------------------
+# calculate pairwise FST in regions and output a table -- UNUSED
 rule calculate_FST:
     input:
         chrX = path.join('data', 'subset_LD_chrX_ALL_females_{filter_iter}'
@@ -1081,6 +1136,7 @@ rule calculate_FST:
         "--output {output.FST_table}"
 
 # misc ------------------------------------------------------------------------
+# calculate the fraction of sequence tiled by gene annotations
 rule calculate_gene_density:
     input:
         path.join('03_filters', 'raw_filters',
@@ -1105,6 +1161,7 @@ rule plot_sim_results:
         "Rscript {params.script} --input {input} --output {output}"
 
 # move results to final folder ------------------------------------------------
+# move all figures to results/figures folder (uploaded to github)
 rule move_figure_output:
     input:
         path.join('07_figures', 'results', '{file}')
@@ -1113,6 +1170,7 @@ rule move_figure_output:
     shell:
         "cp {input} {output}"
 
+# move all tables to results/tables folder (uploaded to github)
 rule move_table_output:
     input:
         path.join('04_window_analysis', 'results', '{file}')
