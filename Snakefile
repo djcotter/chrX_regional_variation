@@ -1,5 +1,6 @@
 """
-PAB_variation.Snakefile
+chrX_regional_variation
+Snakefile
 Daniel Cotter
 
 analyze diversity and LD across chrX and chrY from 1000 genomes data
