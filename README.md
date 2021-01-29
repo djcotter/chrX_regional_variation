@@ -1,7 +1,7 @@
 # Analyses from X Chromosome Variation Paper
 **Daniel Cotter[1], Timothy Webster[2,3], Melissa Wilson[3,4]**
 
-**2018-2021**
+**2021**
 
 1. Department of Genetics, Stanford University
 2. Department of Anthropology, University of Utah
