@@ -112,6 +112,6 @@ snakemake
 
 An example of this process for the `YRI` population is presented below:
 
-![](images/sample_YRI_dag.pdf)
+![](./sample_images/sample_YRI_dag.pdf)
 
 This workflow contains 34 jobs while the workflow for all of the figures in the paper contains 1,737 jobs.
