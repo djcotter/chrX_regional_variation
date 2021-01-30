@@ -112,6 +112,6 @@ snakemake
 
 An example of this process for the `YRI` population is presented below:
 
-![Image of DAG for YRI sample](https://github.com/djcotter/chrX_regional_variation/blob/master/sample_images/sample_YRI_dag.pdf)
+![Image of DAG for YRI sample](./sample_images/sample_YRI_dag.png)
 
 This workflow contains 34 jobs while the workflow for all of the figures in the paper contains 1,737 jobs.
